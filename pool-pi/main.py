@@ -17,7 +17,7 @@ MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for co
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
-                    partiy=serial.PARITY_NONE,
+                    parity=serial.PARITY_NONE,
                     stopbits=serial.STOPBITS_TWO)
 
 DLE = binascii.unhexlify('10')
@@ -26,7 +26,7 @@ ETX = binascii.unhexlify('03')
 
 while (True):
     # Read Serial Bus
-    if (ser.in_waiting() != 0):
+    if (ser.in_waiting != 0):
         # We have data to read form the serial line
         serChar = ser.read()
 
