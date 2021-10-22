@@ -22,16 +22,20 @@ ser = serial.Serial(port='/dev/ttyAMA0',
 
 def readSerialBus():
     global looking_for_start
+    global buffer
+    global buffer_full
     if (ser.in_waiting != 0):
         # We have data to read form the serial line
         serChar = ser.read()
         if (looking_for_start):
             if (serChar == DLE):
-                buffer.append(serChar)
+                #buffer.append(serChar)
+                buffer += serChar
                 serChar = ser.read()
                 if (serChar == STX):
                     # We have found the start!
-                    buffer.append(serChar)
+                    #buffer.append(serChar)
+                    buffer += serChar
                     looking_for_start = False
                 else:
                     # Haven't actually found start,
@@ -39,22 +43,29 @@ def readSerialBus():
         else:
             #Looking for end
             if (serChar == DLE):
-                buffer.append(serChar)
+                #buffer.append(serChar)
+                buffer += serChar
                 serChar = ser.read()
                 if (serChar == ETX):
                     # We have found the end!
-                    buffer.append(serChar)
+                    #buffer.append(serChar)
+                    buffer += serChar
                     looking_for_start = True
                     buffer_full = True
                 else:
                     # Haven't actually found end
-                    buffer.append(serChar)
+                    #buffer.append(serChar)
+                    buffer += serChar
             else:
-                buffer.append(serChar)
+                buffer += serChar
+                #buffer.append(serChar)
 
 
 def parseBuffer():
     global buffer_full
+    global looking_for_start
+    global ready_to_send
+    global buffer
     if (buffer_full):
         # Confirm checksum
         # Get message
