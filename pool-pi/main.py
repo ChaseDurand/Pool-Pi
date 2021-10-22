@@ -1,9 +1,8 @@
 import serial
-import binascii
-import string
 from gpiozero import LED
+from commands import *
 
-buffer = []
+buffer = bytearray()
 buffer_full = False
 command_queue = []
 ready_to_send = False
@@ -20,16 +19,12 @@ ser = serial.Serial(port='/dev/ttyAMA0',
                     parity=serial.PARITY_NONE,
                     stopbits=serial.STOPBITS_TWO)
 
-DLE = binascii.unhexlify('10')
-STX = binascii.unhexlify('02')
-ETX = binascii.unhexlify('03')
 
-while (True):
-    # Read Serial Bus
+def readSerialBus():
+    global looking_for_start
     if (ser.in_waiting != 0):
         # We have data to read form the serial line
         serChar = ser.read()
-
         if (looking_for_start):
             if (serChar == DLE):
                 buffer.append(serChar)
@@ -57,15 +52,51 @@ while (True):
             else:
                 buffer.append(serChar)
 
-    # Parse Buffer
+
+def parseBuffer():
+    global buffer_full
     if (buffer_full):
+        # Confirm checksum
+        # Get message
         print(buffer)
         buffer.clear()
         looking_for_start == True
         buffer_full = False
+        ready_to_send = True
 
-    # Send to Serial Bus
+
+def sendCommand():
+    global command_queue
+    global ready_to_send
     if (len(command_queue) != 0 and ready_to_send == True):
         # do stuff
+        send_enable.on()
         ser.write()
         ser.flush()
+        send_enable.off()
+        ready_to_send = False
+
+
+def getCommand():
+    return
+
+
+def updateModel():
+    return
+
+
+while (True):
+    # Read Serial Bus
+    readSerialBus()
+
+    # Parse Buffer
+    parseBuffer()
+
+    # Update pool model
+    updateModel()
+
+    # Check for new commands
+    getCommand()
+
+    # Send to Serial Bus
+    sendCommand()
