@@ -69,7 +69,10 @@ def parseBuffer():
     if (buffer_full):
         # Confirm checksum
         # Get message
-        print(buffer)
+        if (buffer == KEEP_ALIVE[0]):
+            print(KEEP_ALIVE[1])
+        else:
+            print(buffer)
         buffer.clear()
         looking_for_start == True
         buffer_full = False
