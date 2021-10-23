@@ -38,8 +38,9 @@ def readSerialBus():
         buffer += STX
         while (True):
             buffer += ser.read_until(DLE, 80)
-            buffer += ser.read()
-            if (buffer[-1] == ETX):
+            serChar = ser.read() #TODO Some conversion is taking place when storing to buffer and it affects comparison, need to investigate
+            buffer += serChar
+            if (serChar == ETX):
                 break
 
         #add check for timeout
