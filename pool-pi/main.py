@@ -13,6 +13,7 @@ confirm_attempts = 0
 looking_for_start = True
 MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
 MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
+previous_message = (,)
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
@@ -38,7 +39,8 @@ def readSerialBus():
         buffer += STX
         while (True):
             buffer += ser.read_until(DLE, 80)
-            serChar = ser.read() #TODO Some conversion is taking place when storing to buffer and it affects comparison, need to investigate
+            serChar = ser.read(
+            )  #TODO Some conversion is taking place when storing to buffer and it affects comparison, need to investigate
             buffer += serChar
             if (serChar == ETX):
                 break
@@ -53,6 +55,7 @@ def parseBuffer():
     global looking_for_start
     global ready_to_send
     global buffer
+    global previous_message
     if (buffer_full):
         # Confirm checksum
         checksum = 0
@@ -63,8 +66,11 @@ def parseBuffer():
             print(buffer[-3])
         # Get message
         if (buffer == KEEP_ALIVE[0]):
-            print(KEEP_ALIVE[1])
+            if previous_message != KEEP_ALIVE:
+                print(KEEP_ALIVE[1])
+                previous_message = KEEP_ALIVE
         else:
+            previous_message = (,)
             print(buffer)
         buffer.clear()
         looking_for_start = True
@@ -87,10 +93,12 @@ def sendCommand():
 
 
 def getCommand():
+    #TODO
     return
 
 
 def updateModel():
+    #TODO
     return
 
 
