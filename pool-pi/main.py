@@ -75,7 +75,7 @@ def parseBuffer():
 
 
 def confirmChecksum(message):
-    target_checksum = buffer[-4] * 16 ^ 2 + buffer[
+    target_checksum = buffer[-4] * (16**2) + buffer[
         -3]  # Convert two byte checksum to single value
     checksum = 0
     for i in message[:-4]:
