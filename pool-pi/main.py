@@ -13,7 +13,7 @@ confirm_attempts = 0
 looking_for_start = True
 MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
 MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
-previous_message = (' ',' ')
+previous_message = NON_KEEP_ALIVE
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
@@ -58,24 +58,32 @@ def parseBuffer():
     global previous_message
     if (buffer_full):
         # Confirm checksum
-        checksum = 0
-        for i in buffer[:-4]:
-            checksum += i
-        if checksum != buffer[-3]:  #TODO accommodate two byte chcksums
-            print(checksum)
-            print(buffer[-3])
+        if (confirmChecksum(buffer) == False):
+            print("Checksum mismatch! ", buffer)
         # Get message
         if (buffer == KEEP_ALIVE[0]):
             if previous_message != KEEP_ALIVE:
                 print(KEEP_ALIVE[1])
                 previous_message = KEEP_ALIVE
         else:
-            previous_message = (' ',' ')
+            previous_message = NON_KEEP_ALIVE
             print(buffer)
         buffer.clear()
         looking_for_start = True
         buffer_full = False
         ready_to_send = True
+
+
+def confirmChecksum(message):
+    target_checksum = buffer[-4] * 16 ^ 2 + buffer[
+        -3]  # Convert two byte checksum to single value
+    checksum = 0
+    for i in message[:-4]:
+        checksum += i
+    if checksum == target_checksum:
+        return True
+    else:
+        return False
 
 
 def sendCommand():
