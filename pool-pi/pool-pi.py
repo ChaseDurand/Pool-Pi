@@ -110,18 +110,23 @@ def updateModel():
     return
 
 
-while (True):
-    # Read Serial Bus
-    readSerialBus()
+def main():
+    while (True):
+        # Read Serial Bus
+        readSerialBus()
 
-    # Parse Buffer
-    parseBuffer()
+        # Parse Buffer
+        parseBuffer()
 
-    # Update pool model
-    updateModel()
+        # Update pool model
+        updateModel()
 
-    # Check for new commands
-    getCommand()
+        # Check for new commands
+        getCommand()
 
-    # Send to Serial Bus
-    sendCommand()
+        # Send to Serial Bus
+        sendCommand()
+
+
+if __name__ == '__main__':
+    main()
