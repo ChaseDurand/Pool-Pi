@@ -25,11 +25,32 @@ def readSerialBus():
     global looking_for_start
     global buffer
     global buffer_full
-    if (ser.in_waiting != 0):
-        if (looking_for_start == False):
-            return
-        if (buffer_full == True):
-            return
+    if (ser.in_waiting == 0):
+        return
+    if (buffer_full == True):
+        return
+    serChar = ser.read()
+    if looking_for_start:
+        if serChar == DLE:
+            serChar = ser.read()
+            if serChar == STX:
+                #we have found start
+                buffer += DLE
+                buffer += STX
+            else:
+                #we have not found start
+                return
+    else:
+        #we are adding to buffer and looking for ETX
+        buffer += serChar
+        if serChar == ETX:
+            #confirm DLE ETX sequence
+            if buffer[-2] == DLE:
+                #We have found DLE ETX
+                buffer += ETX
+                buffer_full = True
+                return
+        '''
         serChar = ser.read()
         while (serChar != STX):
             serChar = ser.read()
@@ -38,16 +59,16 @@ def readSerialBus():
         buffer += DLE
         buffer += STX
         while (True):
-            buffer += ser.read_until(DLE, 80)
+            buffer += ser.read_until(DLE, 80)  #TODO change back to read()
             serChar = ser.read(
             )  #TODO Some conversion is taking place when storing to buffer and it affects comparison, need to investigate
             buffer += serChar
             if (serChar == ETX):
                 break
-
         #add check for timeout
         looking_for_start = False
         buffer_full = True
+        '''
 
 
 def parseBuffer():
