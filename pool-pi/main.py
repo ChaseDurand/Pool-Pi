@@ -36,7 +36,12 @@ def readSerialBus():
         #we have STX
         buffer += DLE
         buffer += STX
-        buffer += ser.read_until(ETX, 80)
+        while (True):
+            buffer += ser.read_until(DLE, 80)
+            buffer += ser.read()
+            if (buffer[-1] == ETX):
+                break
+
         #add check for timeout
         looking_for_start = False
         buffer_full = True
@@ -52,7 +57,7 @@ def parseBuffer():
         checksum = 0
         for i in buffer[:-4]:
             checksum += i
-        if checksum != buffer[-3]:
+        if checksum != buffer[-3]:  #TODO accommodate two byte chcksums
             print(checksum)
             print(buffer[-3])
         # Get message
