@@ -27,7 +27,7 @@ def readSerialBus():
     if (ser.in_waiting != 0):
         if (looking_for_start == False):
             return
-        if (buffer_full == False):
+        if (buffer_full == True):
             return
         serChar = ser.read()
         while (serChar != STX):
@@ -91,7 +91,7 @@ def parseBuffer():
         else:
             print(buffer)
         buffer.clear()
-        looking_for_start == True
+        looking_for_start = True
         buffer_full = False
         ready_to_send = True
 
