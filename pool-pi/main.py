@@ -25,6 +25,22 @@ def readSerialBus():
     global buffer
     global buffer_full
     if (ser.in_waiting != 0):
+        if (looking_for_start == False):
+            return
+        if (buffer_full == False):
+            return
+        serChar = ser.read()
+        while (serChar != STX):
+            serChar = ser.read()
+            #add timeout condition
+        #we have STX
+        buffer += DLE
+        buffer += STX
+        buffer += ser.read_until(ETX, 80)
+        #add check for timeout
+        looking_for_start = False
+        buffer_full = True
+        '''
         # We have data to read form the serial line
         serChar = ser.read()
         if (looking_for_start):
@@ -59,6 +75,7 @@ def readSerialBus():
             else:
                 buffer += serChar
                 #buffer.append(serChar)
+        '''
 
 
 def parseBuffer():
@@ -83,7 +100,9 @@ def sendCommand():
     global command_queue
     global ready_to_send
     if (len(command_queue) != 0 and ready_to_send == True):
-        # do stuff
+        # get command from queue and send
+        # need flag for indicating command needs to be confirmed
+        # need to initialize counters for command confirmation
         send_enable.on()
         ser.write()
         ser.flush()
