@@ -13,7 +13,7 @@ confirm_attempts = 0
 looking_for_start = True
 MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
 MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
-previous_message = (,)
+previous_message = (' ',' ')
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
@@ -70,7 +70,7 @@ def parseBuffer():
                 print(KEEP_ALIVE[1])
                 previous_message = KEEP_ALIVE
         else:
-            previous_message = (,)
+            previous_message = (' ',' ')
             print(buffer)
         buffer.clear()
         looking_for_start = True
