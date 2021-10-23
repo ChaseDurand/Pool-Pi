@@ -40,42 +40,6 @@ def readSerialBus():
         #add check for timeout
         looking_for_start = False
         buffer_full = True
-        '''
-        # We have data to read form the serial line
-        serChar = ser.read()
-        if (looking_for_start):
-            if (serChar == DLE):
-                #buffer.append(serChar)
-                buffer += serChar
-                serChar = ser.read()
-                if (serChar == STX):
-                    # We have found the start!
-                    #buffer.append(serChar)
-                    buffer += serChar
-                    looking_for_start = False
-                else:
-                    # Haven't actually found start,
-                    buffer.clear()
-        else:
-            #Looking for end
-            if (serChar == DLE):
-                #buffer.append(serChar)
-                buffer += serChar
-                serChar = ser.read()
-                if (serChar == ETX):
-                    # We have found the end!
-                    #buffer.append(serChar)
-                    buffer += serChar
-                    looking_for_start = True
-                    buffer_full = True
-                else:
-                    # Haven't actually found end
-                    #buffer.append(serChar)
-                    buffer += serChar
-            else:
-                buffer += serChar
-                #buffer.append(serChar)
-        '''
 
 
 def parseBuffer():
@@ -85,6 +49,12 @@ def parseBuffer():
     global buffer
     if (buffer_full):
         # Confirm checksum
+        checksum = 0
+        for i in buffer[2, len(buffer) - 6]:
+            checksum += i
+        if checksum != buffer[len(buffer) - 5]:
+            print('checksum error!')
+            return
         # Get message
         if (buffer == KEEP_ALIVE[0]):
             print(KEEP_ALIVE[1])
