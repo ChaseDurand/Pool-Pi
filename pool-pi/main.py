@@ -50,11 +50,11 @@ def parseBuffer():
     if (buffer_full):
         # Confirm checksum
         checksum = 0
-        for i in buffer[2, len(buffer) - 6]:
+        for i in buffer[:-4]:
             checksum += i
-        if checksum != buffer[len(buffer) - 5]:
-            print('checksum error!')
-            return
+        if checksum != buffer[-3]:
+            print(checksum)
+            print(buffer[-3])
         # Get message
         if (buffer == KEEP_ALIVE[0]):
             print(KEEP_ALIVE[1])
