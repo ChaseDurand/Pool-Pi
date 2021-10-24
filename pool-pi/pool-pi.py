@@ -22,6 +22,11 @@ ser = serial.Serial(port='/dev/ttyAMA0',
 
 
 def readSerialBus():
+    # Read data from the serial bus to build full buffer
+    # Serial commands begin with DLE STX and terminate with DLE ETX
+    # With the exception of searching for the two start bytes, this function only reads one byte to prevent blocking other processes
+    # When looking for start of message, looking_for_start is True
+    # When buffer is filled with a full command and ready to be parseed, set buffer_full to True
     global looking_for_start
     global buffer
     global buffer_full
@@ -34,48 +39,38 @@ def readSerialBus():
         if serChar == DLE:
             serChar = ser.read()
             if serChar == STX:
-                #we have found start
+                # We have found start (DLE STX)
                 buffer.clear()
                 buffer += DLE
                 buffer += STX
                 looking_for_start = False
                 return
             else:
-                #we have not found start
+                # We have found DLE but not DLE STX
                 return
         else:
-            #we only care about DLE to find potential start
+            # We are only interested in DLE to find potential start
             return
     else:
-        #we are adding to buffer and looking for ETX
+        # We are adding to buffer while looking for DLE ETX
         buffer += serChar
-        if((serChar == ETX) and (buffer[-2] == int.from_bytes(DLE,"big"))):
-            #We have found DLE ETX
+        # Check if we have found DLE ETX
+        if ((serChar == ETX) and (buffer[-2] == int.from_bytes(DLE, "big"))):
+            # We have found DLE ETX
             buffer_full = True
             looking_for_start = True
             return
-        '''
-        serChar = ser.read()
-        while (serChar != STX):
-            serChar = ser.read()
-            #add timeout condition
-        #we have STX
-        buffer += DLE
-        buffer += STX
-        while (True):
-            buffer += ser.read_until(DLE, 80)  #TODO change back to read()
-            serChar = ser.read(
-            )  #TODO Some conversion is taking place when storing to buffer and it affects comparison, need to investigate
-            buffer += serChar
-            if (serChar == ETX):
-                break
-        #add check for timeout
-        looking_for_start = False
-        buffer_full = True
-        '''
 
 
 def parseBuffer():
+
+    #TODO identify and account for possible x00
+    '''
+    The DLE, STX and Command/Data fields are added together to provide the 2-byte Checksum. If 
+    any of the bytes of the Command/Data Field or Checksum are equal to the DLE character (10H), a 
+    NULL character (00H) is inserted into the transmitted data stream immediately after that byte. That 
+    NULL character must then be removed by the receiver.
+    '''
     global buffer_full
     global looking_for_start
     global ready_to_send
@@ -100,8 +95,12 @@ def parseBuffer():
 
 
 def confirmChecksum(message):
+    # Check if the calculated checksum for messages equals the expected sent checksum
+    # Return True if checksums match, False if not
+    # Checksum is 4th and 3rd to last bytes of command (last bytes prior to DLE ETX)
+    # Checksum includes DLE STX and command/data
     target_checksum = buffer[-4] * (16**2) + buffer[
-        -3]  # Convert two byte checksum to single value
+        -3]  # Convert two byte checksum to single value #TODO change to int.from_bytes
     checksum = 0
     for i in message[:-4]:
         checksum += i
