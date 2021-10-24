@@ -35,21 +35,25 @@ def readSerialBus():
             serChar = ser.read()
             if serChar == STX:
                 #we have found start
+                buffer.clear()
                 buffer += DLE
                 buffer += STX
+                looking_for_start = False
+                return
             else:
                 #we have not found start
                 return
+        else:
+            #we only care about DLE to find potential start
+            return
     else:
         #we are adding to buffer and looking for ETX
         buffer += serChar
-        if serChar == ETX:
-            #confirm DLE ETX sequence
-            if buffer[-2] == DLE:
-                #We have found DLE ETX
-                buffer += ETX
-                buffer_full = True
-                return
+        if((serChar == ETX) and (buffer[-2] == int.from_bytes(DLE,"big"))):
+            #We have found DLE ETX
+            buffer_full = True
+            looking_for_start = True
+            return
         '''
         serChar = ser.read()
         while (serChar != STX):
