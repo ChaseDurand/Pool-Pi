@@ -92,7 +92,7 @@ def parseBuffer():
             if command == FRAME_UPDATE_DISPLAY[0]:
                 print('Display:', data)
             else:
-                print(command, buffer)
+                print(command, data)
         buffer.clear()
         looking_for_start = True
         buffer_full = False
