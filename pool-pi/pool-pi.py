@@ -87,7 +87,7 @@ def parseBuffer():
                 previous_message = KEEP_ALIVE
         else:
             previous_message = NON_KEEP_ALIVE
-            if buffer[2:3] == FRAME_UPDATE_DISPLAY[0]:
+            if buffer[2:4] == FRAME_UPDATE_DISPLAY[0]:
                 print('Display:', buffer[4:-4])
             else:
                 print(buffer)
