@@ -63,8 +63,6 @@ def readSerialBus():
 
 
 def parseBuffer():
-
-    #TODO identify and account for possible x00
     '''
     The DLE, STX and Command/Data fields are added together to provide the 2-byte Checksum. If 
     any of the bytes of the Command/Data Field or Checksum are equal to the DLE character (10H), a 
@@ -86,6 +84,15 @@ def parseBuffer():
                 print(KEEP_ALIVE[1])
                 previous_message = KEEP_ALIVE
         else:
+            #TODO identify and account for possible x00 after x10 (DLE)
+            while (True):
+                try:
+                    index_to_remove = buffer.index(DLE, 2, -2) + 1
+                    removed = buffer.pop(index_to_remove)
+                    if removed != b'\x00':
+                        print('Error, expected 00 but removed', removed)
+                except ValueError:
+                    break
             command = buffer[2:4]
             data = buffer[4:-4]
             previous_message = NON_KEEP_ALIVE
