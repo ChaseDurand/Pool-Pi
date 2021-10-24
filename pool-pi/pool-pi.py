@@ -87,7 +87,10 @@ def parseBuffer():
                 previous_message = KEEP_ALIVE
         else:
             previous_message = NON_KEEP_ALIVE
-            print(buffer)
+            if buffer[2:3] == FRAME_UPDATE_DISPLAY[0]:
+                print('Display:', buffer[4:-4])
+            else:
+                print(buffer)
         buffer.clear()
         looking_for_start = True
         buffer_full = False
