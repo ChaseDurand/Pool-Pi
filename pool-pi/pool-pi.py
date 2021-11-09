@@ -6,7 +6,7 @@ buffer = bytearray()
 buffer_full = False
 command_queue = []
 ready_to_send = False
-send_enable = LED(2)
+send_enable = LED(17)
 send_enable.off()
 sending_attempts = 0
 confirm_attempts = 0
@@ -89,6 +89,7 @@ def parseBuffer():
                 try:
                     index_to_remove = buffer.index(DLE, 2, -2) + 1
                     removed = buffer.pop(index_to_remove)
+                    #TODO fix unknown bug here
                     if removed != b'\x00':
                         print('Error, expected 00 but removed', removed)
                 except ValueError:
