@@ -8,7 +8,7 @@ NON_KEEP_ALIVE = ('', '')
 
 FRAME_UPDATE_LEDS = (b'\x01\x02', "FRAME_UPDATE_LEDS")
 FRAME_UPDATE_DISPLAY = (b'\x01\x03', "FRAME_UPDATE_DISPLAY")
-DISPLAY_AIRTEMP = 'Air Temp'
+DISPLAY_AIRTEMP = (b'\x41\x69\x72\x20\x54\x65\x6D\x70')  #'Air Temp'
 '''
 regular display updates:
 Gas heater status
