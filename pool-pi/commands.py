@@ -8,3 +8,14 @@ NON_KEEP_ALIVE = ('', '')
 
 FRAME_UPDATE_LEDS = (b'\x01\x02', "FRAME_UPDATE_LEDS")
 FRAME_UPDATE_DISPLAY = (b'\x01\x03', "FRAME_UPDATE_DISPLAY")
+DISPLAY_AIRTEMP = 'Air Temp'
+'''
+regular display updates:
+Gas heater status
+Pool temp
+Air temp
+Chlorinator percent
+Chlorinator status
+Day time
+Inspect cell
+'''

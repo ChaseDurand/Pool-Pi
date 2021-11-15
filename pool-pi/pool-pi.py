@@ -98,6 +98,8 @@ def parseBuffer():
             data = buffer[4:-4]
             previous_message = NON_KEEP_ALIVE
             if command == FRAME_UPDATE_DISPLAY[0]:
+                if DISPLAY_AIRTEMP in data:
+                    print('air temp update')
                 print('Display:', data)
             else:
                 print(command, data)
