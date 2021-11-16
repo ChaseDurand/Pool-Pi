@@ -114,7 +114,11 @@ def parseBuffer():
                     print('check system update', sep='')
                 else:
                     print('unclassified display update', end='')
-                print(data.decode('utf-8'))
+                try:
+                    print(data.decode('utf-8'))
+                except UnicodeDecodeError as e:
+                    print(e)
+                    print(data)
             else:
                 print(command, data)
         buffer.clear()
