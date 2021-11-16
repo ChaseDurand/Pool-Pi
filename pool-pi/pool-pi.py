@@ -99,8 +99,22 @@ def parseBuffer():
             previous_message = NON_KEEP_ALIVE
             if command == FRAME_UPDATE_DISPLAY[0]:
                 if DISPLAY_AIRTEMP in data:
-                    print('air temp update')
-                print('Display:', data)
+                    print('air temp update:', end='')
+                elif DISPLAY_POOLTEMP in data:
+                    print('pooltemp update:', end='')
+                elif DISPLAY_GASHEATER in data:
+                    print('gas heater update:', end='')
+                elif DISPLAY_CHLORINATOR_PERCENT in data:
+                    print('chlorinator percent update:', end='')
+                elif DISPLAY_CHLORINATOR_STATUS in data:
+                    print('chlorinator status update:', end='')
+                elif DISPLAY_DATE in data:
+                    print('date update:', end='')
+                elif DISPLAY_CHECK in data:
+                    print('check system update', sep='')
+                else:
+                    print('unclassified display update', end='')
+                print(data)
             else:
                 print(command, data)
         buffer.clear()
