@@ -117,8 +117,13 @@ def parseBuffer():
                 try:
                     print(data.decode('utf-8'))
                 except UnicodeDecodeError as e:
-                    print(e)
-                    print(data)
+                    try:
+                        print(data.replace(
+                            b'\xba',
+                            b'\x3a').decode('utf-8'))  #: is encoded as xBA
+                    except UnicodeDecodeError as e:
+                        print(e)
+                        print(data)
             else:
                 print(command, data)
         buffer.clear()
