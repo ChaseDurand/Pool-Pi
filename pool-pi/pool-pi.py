@@ -113,7 +113,7 @@ def parseBuffer():
                 elif DISPLAY_DATE in data:
                     print('date update:', end='')
                 elif DISPLAY_CHECK in data:
-                    print('check system update', sep='')
+                    print('check system update', end='')
                 else:
                     print('unclassified display update', end='')
                 try:
