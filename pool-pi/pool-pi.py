@@ -100,10 +100,10 @@ def parseBuffer():
             if command == FRAME_UPDATE_DISPLAY[0]:
                 if DISPLAY_AIRTEMP in data:
                     print('air temp update:', end='')
-                    data = data.replace(b'\xdf', b'\xc2\xb0')
+                    data = data.replace(b'\x5f', b'\xc2\xb0')
                 elif DISPLAY_POOLTEMP in data:
                     print('pooltemp update:', end='')
-                    data = data.replace(b'\xdf', b'\xc2\xb0')
+                    data = data.replace(b'\x5f', b'\xc2\xb0')
                 elif DISPLAY_GASHEATER in data:
                     print('gas heater update:', end='')
                 elif DISPLAY_CHLORINATOR_PERCENT in data:
