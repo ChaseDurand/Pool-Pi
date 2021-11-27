@@ -15,6 +15,9 @@ DISPLAY_CHLORINATOR_PERCENT = 'Pool Chlorinator'.encode('utf-8')
 DISPLAY_CHLORINATOR_STATUS = 'Chlorinator'.encode('utf-8')
 DISPLAY_DATE = 'day'.encode('utf-8')
 DISPLAY_CHECK = 'Check System'.encode('utf-8')
+
+LED_HEATER = 1
+LED_VALVE3 = 2
 '''
 regular display updates:
 Gas heater status

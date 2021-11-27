@@ -98,40 +98,51 @@ def parseBuffer():
             data = buffer[4:-4]
             previous_message = NON_KEEP_ALIVE
             if command == FRAME_UPDATE_DISPLAY[0]:
-                if DISPLAY_AIRTEMP in data:
-                    print('air temp update:', end='')
-                    data = data.replace(b'\x5f', b'\xc2\xb0')
-                elif DISPLAY_POOLTEMP in data:
-                    print('pooltemp update:', end='')
-                    data = data.replace(b'\x5f', b'\xc2\xb0')
-                elif DISPLAY_GASHEATER in data:
-                    print('gas heater update:', end='')
-                elif DISPLAY_CHLORINATOR_PERCENT in data:
-                    print('chlorinator percent update:', end='')
-                elif DISPLAY_CHLORINATOR_STATUS in data:
-                    print('chlorinator status update:', end='')
-                elif DISPLAY_DATE in data:
-                    print('date update:', end='')
-                elif DISPLAY_CHECK in data:
-                    print('check system update', end='')
-                else:
-                    print('unclassified display update', end='')
-                try:
-                    print(data.decode('utf-8'))
-                except UnicodeDecodeError as e:
-                    try:
-                        print(data.replace(
-                            b'\xba',
-                            b'\x3a').decode('utf-8'))  #: is encoded as xBA
-                    except UnicodeDecodeError as e:
-                        print(e)
-                        print(data)
+                parseDisplay(data)
+            elif command == FRAME_UPDATE_LEDS[0]:
+                parseLEDs(data)
             else:
                 print(command, data)
         buffer.clear()
         looking_for_start = True
         buffer_full = False
         ready_to_send = True
+
+
+def parseDisplay(data):
+    if DISPLAY_AIRTEMP in data:
+        print('air temp update:', end='')
+        data = data.replace(b'\x5f', b'\xc2\xb0')
+    elif DISPLAY_POOLTEMP in data:
+        print('pooltemp update:', end='')
+        data = data.replace(b'\x5f', b'\xc2\xb0')
+    elif DISPLAY_GASHEATER in data:
+        print('gas heater update:', end='')
+    elif DISPLAY_CHLORINATOR_PERCENT in data:
+        print('chlorinator percent update:', end='')
+    elif DISPLAY_CHLORINATOR_STATUS in data:
+        print('chlorinator status update:', end='')
+    elif DISPLAY_DATE in data:
+        print('date update:', end='')
+    elif DISPLAY_CHECK in data:
+        print('check system update', end='')
+    else:
+        print('unclassified display update', end='')
+    try:
+        print(data.decode('utf-8'))
+    except UnicodeDecodeError as e:
+        try:
+            print(data.replace(b'\xba',
+                               b'\x3a').decode('utf-8'))  #: is encoded as xBA
+        except UnicodeDecodeError as e:
+            print(e)
+            print(data)
+    return
+
+
+def parseLEDs(data):
+
+    return
 
 
 def confirmChecksum(message):
