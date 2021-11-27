@@ -20,27 +20,13 @@ DISPLAY_CHECK = 'Check System'.encode('utf-8')
 LED_1 = [(1 << 0, 'Heater 1'), (1 << 1, 'Valve 3'), (1 << 2, 'Check System'),
          (1 << 3, 'Pool'), (1 << 4, 'Spa'), (1 << 5, 'Filter'),
          (1 << 6, 'Lights'), (1 << 7, 'AUX 1')]
-# LEDs 2
-LED_AUX2 = 1 << 0
-LED_SERVICE = 1 << 1
-LED_AUX3 = 1 << 2
-LED_AUX4 = 1 << 3
-LED_AUX5 = 1 << 4
-LED_AUX6 = 1 << 5
-LED_VALVE4_HEATER2 = 1 << 6
-LED_SPILLOVER = 1 << 7
-# LEDs 3
-LED_SYSTEMOFF = 1 << 0
-LED_AUX7 = 1 << 1
-LED_AUX8 = 1 << 2
-LED_AUX9 = 1 << 3
-LED_AUX10 = 1 << 4
-LED_AUX11 = 1 << 5
-LED_AUX12 = 1 << 6
-LED_AUX13 = 1 << 7
-# LEDs 4
-LED_AUX14 = 1 << 0
-LED_SUPERCHLORINATE = 1 << 1
+LED_2 = [(1 << 0, 'AUX 2'), (1 << 1, 'Service'), (1 << 2, 'AUX 3'),
+         (1 << 3, 'AUX 4'), (1 << 4, 'AUX 5'), (1 << 5, 'AUX 6'),
+         (1 << 6, 'Valve 4 / Heater 2'), (1 << 7, 'Spillover')]
+LED_3 = [(1 << 0, 'System Off'), (1 << 1, 'Aux 7'), (1 << 2, 'AUX 8'),
+         (1 << 3, 'AUX 9'), (1 << 4, 'AUX 10'), (1 << 5, 'AUX 11'),
+         (1 << 6, 'AUX 12'), (1 << 7, 'AUX 13')]
+LED_4 = [(1 << 0, 'AUX 14'), (1 << 1, 'Super Chlorinate')]
 '''
 regular display updates:
 Gas heater status
