@@ -17,15 +17,16 @@ DISPLAY_SALT_LEVEL = 'Salt Level'.encode('utf-8')
 DISPLAY_DATE = 'day'.encode('utf-8')
 DISPLAY_CHECK = 'Check System'.encode('utf-8')
 
-# LEDs 1
-LED_HEATER1 = 1 << 0
-LED_VALVE3 = 1 << 1
-LED_CHECKSYSTEM = 1 << 2
-LED_POOL = 1 << 3
-LED_SPA = 1 << 4
-LED_FILTER = 1 << 5
-LED_LIGHTS = 1 << 6
-LED_AUX1 = 1 << 7
+LED_1 = [
+    (1 << 0, 'Heater 1'),
+    (1 << 1, 'Valve 3'),
+    (1 << 2, 'Check System'),
+    (1 << 3, 'Pool',
+    (1 << 4, 'Spa'),
+    (1 << 5, 'Filter'),
+    (1 << 6, 'Lights'),
+    (1 << 7, 'AUX 1')
+]
 # LEDs 2
 LED_AUX2 = 1 << 0
 LED_SERVICE = 1 << 1

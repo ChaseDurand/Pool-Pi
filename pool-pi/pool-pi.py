@@ -144,6 +144,9 @@ def parseDisplay(data):
 
 def parseLEDs(data):
     print('led update', data)
+    for item in LED_1:
+        if item[0] & data[0]:
+            print('     ', item[1])
     return
 
 
