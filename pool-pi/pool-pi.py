@@ -126,6 +126,8 @@ def parseDisplay(data):
         print('date update:', end='')
     elif DISPLAY_CHECK in data:
         print('check system update', end='')
+    elif DISPLAY_SALT_LEVEL in data:
+        print('salt level update:', end='')
     else:
         print('unclassified display update', end='')
     try:

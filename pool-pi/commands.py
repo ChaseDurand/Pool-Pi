@@ -13,6 +13,7 @@ DISPLAY_POOLTEMP = 'Pool Temp'.encode('utf-8')
 DISPLAY_GASHEATER = 'Gas Heater'.encode('utf-8')
 DISPLAY_CHLORINATOR_PERCENT = 'Pool Chlorinator'.encode('utf-8')
 DISPLAY_CHLORINATOR_STATUS = 'Chlorinator'.encode('utf-8')
+DISPLAY_SALT_LEVEL = 'Salt Level'.encode('utf-8')
 DISPLAY_DATE = 'day'.encode('utf-8')
 DISPLAY_CHECK = 'Check System'.encode('utf-8')
 
