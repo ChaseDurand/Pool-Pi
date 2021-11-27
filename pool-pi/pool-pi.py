@@ -143,7 +143,7 @@ def parseDisplay(data):
 
 
 def parseLEDs(data):
-
+    print('led update', data)
     return
 
 
