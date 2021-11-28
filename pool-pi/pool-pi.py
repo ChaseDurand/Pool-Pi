@@ -25,6 +25,8 @@ MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirm
 MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
 previous_message = NON_KEEP_ALIVE
 
+salt_level = 0  #test salt level variable for web proof of concept
+
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
                     parity=serial.PARITY_NONE,
@@ -120,6 +122,7 @@ def parseBuffer():
 
 
 def parseDisplay(data):
+    global salt_level
     if DISPLAY_AIRTEMP in data:
         print('air temp update:', end='')
         data = data.replace(b'\x5f', b'\xc2\xb0')
@@ -137,7 +140,10 @@ def parseDisplay(data):
     elif DISPLAY_CHECK in data:
         print('check system update', end='')
     elif DISPLAY_SALT_LEVEL in data:
+        #parse salt level and store
+        salt_level = data.split()[-2]
         print('salt level update:', end='')
+        print(salt_level, 'PPM')
     else:
         print('unclassified display update', end='')
     try:
