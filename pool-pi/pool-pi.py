@@ -141,7 +141,7 @@ def parseDisplay(data):
         print('check system update', end='')
     elif DISPLAY_SALT_LEVEL in data:
         #parse salt level and store
-        salt_level = data.split()[-2]
+        salt_level = data.decode('utf-8').split()[-2]
         print('salt level update:', end='')
         print(salt_level, 'PPM')
     else:
