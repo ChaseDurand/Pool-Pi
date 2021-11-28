@@ -1,6 +1,15 @@
 import serial
 from gpiozero import LED
 from commands import *
+from flask import Flask
+
+app = Flask(__name__)
+
+
+@app.route("/")
+def hello_world():
+    return "<p>Hello, World!</p>"
+
 
 buffer = bytearray()
 buffer_full = False
