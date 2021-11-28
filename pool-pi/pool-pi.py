@@ -2,6 +2,7 @@ import serial
 from gpiozero import LED
 from commands import *
 from flask import Flask
+import threading
 
 app = Flask(__name__)
 
@@ -228,5 +229,6 @@ def main():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
-    main()
+    threading.Thread(
+        target=lambda: app.run(debug=False, host='0.0.0.0')).start()
+    threading.Thread(target=main).start()
