@@ -1,15 +1,15 @@
 import serial
 from gpiozero import LED
 from commands import *
-from flask import Flask
+from flask import Flask, render_template
 import threading
 
 app = Flask(__name__)
 
 
 @app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+def index():
+    return render_template('index.html')
 
 
 buffer = bytearray()
@@ -26,6 +26,7 @@ MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for co
 previous_message = NON_KEEP_ALIVE
 
 salt_level = 0  #test salt level variable for web proof of concept
+flag_data_changed = False  #True if there is new data for site, false if no new data
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
@@ -123,6 +124,7 @@ def parseBuffer():
 
 def parseDisplay(data):
     global salt_level
+    global flag_data_changed
     if DISPLAY_AIRTEMP in data:
         print('air temp update:', end='')
         data = data.replace(b'\x5f', b'\xc2\xb0')
@@ -141,7 +143,10 @@ def parseDisplay(data):
         print('check system update', end='')
     elif DISPLAY_SALT_LEVEL in data:
         #parse salt level and store
+        previous_salt_level = salt_level
         salt_level = data.decode('utf-8').split()[-3]
+        if salt_level != previous_salt_level:
+            flag_data_changed = True
         print('salt level update:', end='')
         print(salt_level, 'PPM')
     else:
@@ -212,6 +217,11 @@ def getCommand():
 
 
 def updateModel():
+    global flag_data_changed
+    if not flag_data_changed:
+        return
+
+    flag_data_changed = False
     #TODO
     return
 
