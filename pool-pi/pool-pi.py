@@ -3,13 +3,17 @@ from gpiozero import LED
 from commands import *
 from flask import Flask, render_template
 import threading
+import datetime
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    now = datetime.datetime.now()
+    timeString = now.strftime("%Y-%m-%d %H:%M")
+    templateData = {'title': 'HELLO!', 'time': timeString}
+    return render_template('index.html', **templateData)
 
 
 buffer = bytearray()
@@ -166,6 +170,8 @@ def parseDisplay(data):
 def parseLEDs(data):
     print('led update', data)
     #TODO clean this up to reuse code
+    #TODO expand to next 4 bytes to determine blinking status
+    #Look at corrosponding LED bit flags to determine which LEDs are on
     for item in LED_1:
         if item[0] & data[0]:
             print('     ', item[1])
