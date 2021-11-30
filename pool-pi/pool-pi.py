@@ -1,13 +1,12 @@
 import serial
 from gpiozero import LED
 from commands import *
-from flask import Flask, render_template, session, request, \
-    copy_current_request_context
-from flask_socketio import SocketIO, emit, join_room, leave_room, \
-    close_room, rooms, disconnect
+from flask import Flask, render_template, session, request
+from flask_socketio import SocketIO, emit
 from threading import Lock
 from threading import Thread
 from model import model
+import uuid
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -15,7 +14,7 @@ from model import model
 async_mode = None
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
+app.config['SECRET_KEY'] = uuid.uuid4().hex
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
@@ -219,6 +218,7 @@ def parseDisplay(data):
         if salt_level != previous_salt_level:
             flag_data_changed = True
         print('salt level update:', end='')
+        model.salinity = salt_level
         print(salt_level, 'PPM')
     else:
         print('unclassified display update', end='')
@@ -294,33 +294,45 @@ def getCommand():
 
 def updateModel():
     global flag_data_changed
-
     global model
-    socketio.emit('display', {'data': model.display})
+    # socketio.emit('display', {'data': model.display})
 
     if not flag_data_changed:
         return
-    socketio.emit('salinity', {'data': salt_level})
+    # socketio.emit('salinity', {'data': salt_level})
     flag_data_changed = False
     #TODO
+    return
+
+
+def sendModel():
+    global model
+    socketio.emit('model', model.toJSON)
     return
 
 
 def main():
     while (True):
         # Read Serial Bus
+        # If new serial data is available, read from the buffer
         readSerialBus()
 
         # Parse Buffer
+        # If a full serial message has been found, decode it
         parseBuffer()
 
         # Update pool model
+        # If we have new data, update the local model
         updateModel()
+
+        # Update webview
+        sendModel()
 
         # Check for new commands
         getCommand()
 
         # Send to Serial Bus
+        # If we have pending commands from the web, send
         sendCommand()
 
 

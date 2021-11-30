@@ -52,20 +52,11 @@
                 $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
             });
 
-
-            // Handler for the current salt level.
-            socket.on('salinity', function(msg) {
-               $('#salinity').text(msg.data)
-            });
-
-            // Handler for air temp
-            socket.on('air_temp', function(msg) {
-               $('#air-temp').text(msg.data)
-            });
-
-            // Handler for display
-            socket.on('display', function(msg){
-               $('#display').text(msg.data)
+            // Handler for the model update
+            socket.on('model', function(msg){
+               $('#display').text(msg.data.display)
+               $('#salinity').text(msg.data.salinity)
+               $('#air-temp').text(msg.data.air_temp)
             });
 
             // Handlers for the different forms in the page.
@@ -85,14 +76,10 @@
 <body>
     <h1>Pool-Pi</h1>
     <p>
-      Async mode is: <b>{{ async_mode }}</b><br>
-      Current transport is: <b><span id="transport"></span></b><br>
-    </p>
-    <p>
       Average ping/pong latency: <b><span id="ping-pong"></span>ms</b><br>
       Current salinity is: <b><span id="salinity"></span>PPM</b><br>
       Current air temp is: <b><span id="air-temp"></span>°F</b><br>
-      Display: <b><span id="display"></span>°F</b><br>
+      Display: <b><span id="display"></span></b><br>
     </p>
     <h2>Send:</h2>
     <form id="emit" method="POST" action='#'>

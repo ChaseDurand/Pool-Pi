@@ -1,6 +1,23 @@
-# Represents the states of the system
+import json
+
+
+# Represents the state of the system
 class model:
     display = ""
+    salinity = 0
+    air_temp = 0
+    pool_temp = 0
+    degrees_F = True
+    gas_heater_status = False
+    chlorinator_status = False
+    day = "Nullday"
+    time = ""
+
+    def toJSON(self):
+        return json.dumps(self,
+                          default=lambda o: o.__dict__,
+                          sort_keys=True,
+                          indent=4)
 
 
 # Display
