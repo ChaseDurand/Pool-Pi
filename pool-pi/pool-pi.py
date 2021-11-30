@@ -26,10 +26,10 @@ def background_thread():
     while True:
         socketio.sleep(10)
         count += 1
-        socketio.emit('my_response', {
-            'data': 'Server generated event',
-            'count': salt_level
-        })
+        # socketio.emit('my_response', {
+        #     'data': 'Server generated event',
+        #     'count': salt_level
+        # })
         socketio.emit('my_response', {
             'data': 'Server generated event',
             'count': count
@@ -367,7 +367,7 @@ def updateModel():
     global flag_data_changed
     if not flag_data_changed:
         return
-    socketio.emit('my_response', {'data': 'Salt Level', 'count': salt_level})
+    socketio.emit('salinity', {'data': salt_level})
     flag_data_changed = False
     #TODO
     return
