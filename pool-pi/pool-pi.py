@@ -228,12 +228,12 @@ def parseDisplay(data):
     # Print data
     try:
         poolModel.display = data.decode('utf-8')
-        flag_data_changed == True
+        flag_data_changed = True
         print(poolModel.display)
     except UnicodeDecodeError as e:
         try:
             poolModel.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
-            flag_data_changed == True
+            flag_data_changed = True
             print(poolModel.display)  #: is encoded as xBA
         except UnicodeDecodeError as e:
             print(e)
@@ -319,7 +319,7 @@ def sendModel():
         'display': poolModel.display,
         'salinity': poolModel.salinity
     })
-    # flag_data_changed = False
+    flag_data_changed = False
     return
 
 
