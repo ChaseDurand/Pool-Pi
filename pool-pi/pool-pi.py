@@ -28,6 +28,10 @@ def background_thread():
         count += 1
         socketio.emit('my_response', {
             'data': 'Server generated event',
+            'count': salt_level
+        })
+        socketio.emit('my_response', {
+            'data': 'Server generated event',
             'count': count
         })
 
@@ -119,6 +123,11 @@ def disconnect_request():
 @socketio.event
 def my_ping():
     emit('my_pong')
+
+
+# @socketio.event
+# def salinity():
+#     emit('salinity')
 
 
 @socketio.event
