@@ -1,6 +1,6 @@
 /*!
- * Socket.IO v4.0.1
- * (c) 2014-2021 Guillermo Rauch
+ * Socket.IO v3.0.4
+ * (c) 2014-2020 Guillermo Rauch
  * Released under the MIT License.
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -12,7 +12,17 @@
 		exports["io"] = factory();
 	else
 		root["io"] = factory();
-})(self, function() {
+})((() => {
+      if (typeof self !== 'undefined') {
+          return self;
+      } else if (typeof window !== 'undefined') {
+          return window;
+      } else if (typeof global !== 'undefined') {
+          return global;
+      } else {
+          return Function('return this')();
+      }
+    })(), function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -151,7 +161,7 @@ function lookup(uri, opts) {
   }
 
   opts = opts || {};
-  var parsed = url_1.url(uri, opts.path);
+  var parsed = url_1.url(uri);
   var source = parsed.source;
   var id = parsed.id;
   var path = parsed.path;
@@ -172,7 +182,7 @@ function lookup(uri, opts) {
   }
 
   if (parsed.query && !opts.query) {
-    opts.query = parsed.queryKey;
+    opts.query = parsed.query;
   }
 
   return io.socket(parsed.path, opts);
@@ -215,7 +225,6 @@ Object.defineProperty(exports, "Manager", {
     return manager_2.Manager;
   }
 });
-exports["default"] = lookup;
 
 /***/ }),
 
@@ -236,6 +245,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -260,18 +273,20 @@ var eio = __webpack_require__(/*! engine.io-client */ "./node_modules/engine.io-
 
 var socket_1 = __webpack_require__(/*! ./socket */ "./build/socket.js");
 
+var Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
+
 var parser = __webpack_require__(/*! socket.io-parser */ "./node_modules/socket.io-parser/dist/index.js");
 
 var on_1 = __webpack_require__(/*! ./on */ "./build/on.js");
 
-var Backoff = __webpack_require__(/*! backo2 */ "./node_modules/backo2/index.js");
+var bind = __webpack_require__(/*! component-bind */ "./node_modules/component-bind/index.js");
 
-var typed_events_1 = __webpack_require__(/*! ./typed-events */ "./build/typed-events.js");
+var Backoff = __webpack_require__(/*! backo2 */ "./node_modules/backo2/index.js");
 
 var debug = __webpack_require__(/*! debug */ "./node_modules/debug/src/browser.js")("socket.io-client:manager");
 
-var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
-  _inherits(Manager, _typed_events_1$Stric);
+var Manager = /*#__PURE__*/function (_Emitter) {
+  _inherits(Manager, _Emitter);
 
   var _super = _createSuper(Manager);
 
@@ -412,7 +427,7 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
       this._readyState = "opening";
       this.skipReconnect = false; // emit `open`
 
-      var openSubDestroy = on_1.on(socket, "open", function () {
+      var openSub = on_1.on(socket, "open", function () {
         self.onopen();
         fn && fn();
       }); // emit `error`
@@ -422,7 +437,7 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
         self.cleanup();
         self._readyState = "closed";
 
-        _this2.emitReserved("error", err);
+        _get(_getPrototypeOf(Manager.prototype), "emit", _this2).call(_this2, "error", err);
 
         if (fn) {
           fn(err);
@@ -437,34 +452,31 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
         debug("connect attempt will timeout after %d", timeout);
 
         if (timeout === 0) {
-          openSubDestroy(); // prevents a race condition with the 'open' event
+          openSub.destroy(); // prevents a race condition with the 'open' event
         } // set timer
 
 
         var timer = setTimeout(function () {
           debug("connect attempt timed out after %d", timeout);
-          openSubDestroy();
+          openSub.destroy();
           socket.close();
           socket.emit("error", new Error("timeout"));
         }, timeout);
-
-        if (this.opts.autoUnref) {
-          timer.unref();
-        }
-
-        this.subs.push(function subDestroy() {
-          clearTimeout(timer);
+        this.subs.push({
+          destroy: function destroy() {
+            clearTimeout(timer);
+          }
         });
       }
 
-      this.subs.push(openSubDestroy);
+      this.subs.push(openSub);
       this.subs.push(errorSub);
       return this;
     }
     /**
      * Alias for open()
      *
-     * @return self
+     * @return {Manager} self
      * @public
      */
 
@@ -487,10 +499,12 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
       this.cleanup(); // mark as open
 
       this._readyState = "open";
-      this.emitReserved("open"); // add new subs
+
+      _get(_getPrototypeOf(Manager.prototype), "emit", this).call(this, "open"); // add new subs
+
 
       var socket = this.engine;
-      this.subs.push(on_1.on(socket, "ping", this.onping.bind(this)), on_1.on(socket, "data", this.ondata.bind(this)), on_1.on(socket, "error", this.onerror.bind(this)), on_1.on(socket, "close", this.onclose.bind(this)), on_1.on(this.decoder, "decoded", this.ondecoded.bind(this)));
+      this.subs.push(on_1.on(socket, "data", bind(this, "ondata")), on_1.on(socket, "ping", bind(this, "onping")), on_1.on(socket, "error", bind(this, "onerror")), on_1.on(socket, "close", bind(this, "onclose")), on_1.on(this.decoder, "decoded", bind(this, "ondecoded")));
     }
     /**
      * Called upon a ping.
@@ -501,7 +515,7 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
   }, {
     key: "onping",
     value: function onping() {
-      this.emitReserved("ping");
+      _get(_getPrototypeOf(Manager.prototype), "emit", this).call(this, "ping");
     }
     /**
      * Called with data.
@@ -523,7 +537,7 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
   }, {
     key: "ondecoded",
     value: function ondecoded(packet) {
-      this.emitReserved("packet", packet);
+      _get(_getPrototypeOf(Manager.prototype), "emit", this).call(this, "packet", packet);
     }
     /**
      * Called upon socket error.
@@ -535,7 +549,8 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
     key: "onerror",
     value: function onerror(err) {
       debug("error", err);
-      this.emitReserved("error", err);
+
+      _get(_getPrototypeOf(Manager.prototype), "emit", this).call(this, "error", err);
     }
     /**
      * Creates a new socket for the given `nsp`.
@@ -591,6 +606,7 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
     key: "_packet",
     value: function _packet(packet) {
       debug("writing packet %j", packet);
+      if (packet.query && packet.type === 0) packet.nsp += "?" + packet.query;
       var encodedPackets = this.encoder.encode(packet);
 
       for (var i = 0; i < encodedPackets.length; i++) {
@@ -607,10 +623,13 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
     key: "cleanup",
     value: function cleanup() {
       debug("cleanup");
-      this.subs.forEach(function (subDestroy) {
-        return subDestroy();
-      });
-      this.subs.length = 0;
+      var subsLength = this.subs.length;
+
+      for (var i = 0; i < subsLength; i++) {
+        var sub = this.subs.shift();
+        sub.destroy();
+      }
+
       this.decoder.destroy();
     }
     /**
@@ -660,7 +679,8 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
       this.cleanup();
       this.backoff.reset();
       this._readyState = "closed";
-      this.emitReserved("close", reason);
+
+      _get(_getPrototypeOf(Manager.prototype), "emit", this).call(this, "close", reason);
 
       if (this._reconnection && !this.skipReconnect) {
         this.reconnect();
@@ -683,7 +703,9 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
       if (this.backoff.attempts >= this._reconnectionAttempts) {
         debug("reconnect failed");
         this.backoff.reset();
-        this.emitReserved("reconnect_failed");
+
+        _get(_getPrototypeOf(Manager.prototype), "emit", this).call(this, "reconnect_failed");
+
         this._reconnecting = false;
       } else {
         var delay = this.backoff.duration();
@@ -693,7 +715,7 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
           if (self.skipReconnect) return;
           debug("attempting reconnect");
 
-          _this3.emitReserved("reconnect_attempt", self.backoff.attempts); // check again for the case socket closed in above events
+          _get(_getPrototypeOf(Manager.prototype), "emit", _this3).call(_this3, "reconnect_attempt", self.backoff.attempts); // check again for the case socket closed in above events
 
 
           if (self.skipReconnect) return;
@@ -703,20 +725,17 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
               self._reconnecting = false;
               self.reconnect();
 
-              _this3.emitReserved("reconnect_error", err);
+              _get(_getPrototypeOf(Manager.prototype), "emit", _this3).call(_this3, "reconnect_error", err);
             } else {
               debug("reconnect success");
               self.onreconnect();
             }
           });
         }, delay);
-
-        if (this.opts.autoUnref) {
-          timer.unref();
-        }
-
-        this.subs.push(function subDestroy() {
-          clearTimeout(timer);
+        this.subs.push({
+          destroy: function destroy() {
+            clearTimeout(timer);
+          }
         });
       }
     }
@@ -732,12 +751,13 @@ var Manager = /*#__PURE__*/function (_typed_events_1$Stric) {
       var attempt = this.backoff.attempts;
       this._reconnecting = false;
       this.backoff.reset();
-      this.emitReserved("reconnect", attempt);
+
+      _get(_getPrototypeOf(Manager.prototype), "emit", this).call(this, "reconnect", attempt);
     }
   }]);
 
   return Manager;
-}(typed_events_1.StrictEventEmitter);
+}(Emitter);
 
 exports.Manager = Manager;
 
@@ -760,8 +780,10 @@ exports.on = void 0;
 
 function on(obj, ev, fn) {
   obj.on(ev, fn);
-  return function subDestroy() {
-    obj.off(ev, fn);
+  return {
+    destroy: function destroy() {
+      obj.off(ev, fn);
+    }
   };
 }
 
@@ -818,9 +840,11 @@ exports.Socket = void 0;
 
 var socket_io_parser_1 = __webpack_require__(/*! socket.io-parser */ "./node_modules/socket.io-parser/dist/index.js");
 
+var Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
+
 var on_1 = __webpack_require__(/*! ./on */ "./build/on.js");
 
-var typed_events_1 = __webpack_require__(/*! ./typed-events */ "./build/typed-events.js");
+var bind = __webpack_require__(/*! component-bind */ "./node_modules/component-bind/index.js");
 
 var debug = __webpack_require__(/*! debug */ "./node_modules/debug/src/browser.js")("socket.io-client:socket");
 /**
@@ -839,8 +863,8 @@ var RESERVED_EVENTS = Object.freeze({
   removeListener: 1
 });
 
-var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
-  _inherits(Socket, _typed_events_1$Stric);
+var Socket = /*#__PURE__*/function (_Emitter) {
+  _inherits(Socket, _Emitter);
 
   var _super = _createSuper(Socket);
 
@@ -855,10 +879,10 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
     _classCallCheck(this, Socket);
 
     _this = _super.call(this);
-    _this.receiveBuffer = [];
-    _this.sendBuffer = [];
     _this.ids = 0;
     _this.acks = {};
+    _this.receiveBuffer = [];
+    _this.sendBuffer = [];
     _this.flags = {};
     _this.io = io;
     _this.nsp = nsp;
@@ -889,7 +913,7 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
     value: function subEvents() {
       if (this.subs) return;
       var io = this.io;
-      this.subs = [on_1.on(io, "open", this.onopen.bind(this)), on_1.on(io, "packet", this.onpacket.bind(this)), on_1.on(io, "error", this.onerror.bind(this)), on_1.on(io, "close", this.onclose.bind(this))];
+      this.subs = [on_1.on(io, "open", bind(this, "onopen")), on_1.on(io, "packet", bind(this, "onpacket")), on_1.on(io, "close", bind(this, "onclose"))];
     }
     /**
      * Whether the Socket will try to reconnect when its Manager connects or reconnects
@@ -942,6 +966,7 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
      * Override `emit`.
      * If the event is in `events`, it's emitted normally.
      *
+     * @param ev - event name
      * @return self
      * @public
      */
@@ -1027,20 +1052,6 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
       }
     }
     /**
-     * Called upon engine or manager `error`.
-     *
-     * @param err
-     * @private
-     */
-
-  }, {
-    key: "onerror",
-    value: function onerror(err) {
-      if (!this.connected) {
-        this.emitReserved("connect_error", err);
-      }
-    }
-    /**
      * Called upon engine `close`.
      *
      * @param reason
@@ -1054,7 +1065,8 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
       this.connected = false;
       this.disconnected = true;
       delete this.id;
-      this.emitReserved("disconnect", reason);
+
+      _get(_getPrototypeOf(Socket.prototype), "emit", this).call(this, "disconnect", reason);
     }
     /**
      * Called with socket packet.
@@ -1075,7 +1087,7 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
             var id = packet.data.sid;
             this.onconnect(id);
           } else {
-            this.emitReserved("connect_error", new Error("It seems you are trying to reach a Socket.IO server in v2.x with a v3.x client, but they are not compatible (more information here: https://socket.io/docs/v3/migrating-from-2-x-to-3-0/)"));
+            _get(_getPrototypeOf(Socket.prototype), "emit", this).call(this, "connect_error", new Error("It seems you are trying to reach a Socket.IO server in v2.x with a v3.x client, but they are not compatible (more information here: https://socket.io/docs/v3/migrating-from-2-x-to-3-0/)"));
           }
 
           break;
@@ -1104,7 +1116,9 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
           var err = new Error(packet.data.message); // @ts-ignore
 
           err.data = packet.data.data;
-          this.emitReserved("connect_error", err);
+
+          _get(_getPrototypeOf(Socket.prototype), "emit", this).call(this, "connect_error", err);
+
           break;
       }
     }
@@ -1216,7 +1230,9 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
       this.id = id;
       this.connected = true;
       this.disconnected = false;
-      this.emitReserved("connect");
+
+      _get(_getPrototypeOf(Socket.prototype), "emit", this).call(this, "connect");
+
       this.emitBuffered();
     }
     /**
@@ -1265,10 +1281,11 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
     value: function destroy() {
       if (this.subs) {
         // clean subscriptions to avoid reconnections
-        this.subs.forEach(function (subDestroy) {
-          return subDestroy();
-        });
-        this.subs = undefined;
+        for (var i = 0; i < this.subs.length; i++) {
+          this.subs[i].destroy();
+        }
+
+        this.subs = null;
       }
 
       this.io["_destroy"](this);
@@ -1423,169 +1440,9 @@ var Socket = /*#__PURE__*/function (_typed_events_1$Stric) {
   }]);
 
   return Socket;
-}(typed_events_1.StrictEventEmitter);
-
-exports.Socket = Socket;
-
-/***/ }),
-
-/***/ "./build/typed-events.js":
-/*!*******************************!*\
-  !*** ./build/typed-events.js ***!
-  \*******************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.StrictEventEmitter = void 0;
-
-var Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
-/**
- * Strictly typed version of an `EventEmitter`. A `TypedEventEmitter` takes type
- * parameters for mappings of event names to event data types, and strictly
- * types method calls to the `EventEmitter` according to these event maps.
- *
- * @typeParam ListenEvents - `EventsMap` of user-defined events that can be
- * listened to with `on` or `once`
- * @typeParam EmitEvents - `EventsMap` of user-defined events that can be
- * emitted with `emit`
- * @typeParam ReservedEvents - `EventsMap` of reserved events, that can be
- * emitted by socket.io with `emitReserved`, and can be listened to with
- * `listen`.
- */
-
-
-var StrictEventEmitter = /*#__PURE__*/function (_Emitter) {
-  _inherits(StrictEventEmitter, _Emitter);
-
-  var _super = _createSuper(StrictEventEmitter);
-
-  function StrictEventEmitter() {
-    _classCallCheck(this, StrictEventEmitter);
-
-    return _super.apply(this, arguments);
-  }
-
-  _createClass(StrictEventEmitter, [{
-    key: "on",
-
-    /**
-     * Adds the `listener` function as an event listener for `ev`.
-     *
-     * @param ev Name of the event
-     * @param listener Callback function
-     */
-    value: function on(ev, listener) {
-      _get(_getPrototypeOf(StrictEventEmitter.prototype), "on", this).call(this, ev, listener);
-
-      return this;
-    }
-    /**
-     * Adds a one-time `listener` function as an event listener for `ev`.
-     *
-     * @param ev Name of the event
-     * @param listener Callback function
-     */
-
-  }, {
-    key: "once",
-    value: function once(ev, listener) {
-      _get(_getPrototypeOf(StrictEventEmitter.prototype), "once", this).call(this, ev, listener);
-
-      return this;
-    }
-    /**
-     * Emits an event.
-     *
-     * @param ev Name of the event
-     * @param args Values to send to listeners of this event
-     */
-
-  }, {
-    key: "emit",
-    value: function emit(ev) {
-      var _get2;
-
-      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      (_get2 = _get(_getPrototypeOf(StrictEventEmitter.prototype), "emit", this)).call.apply(_get2, [this, ev].concat(args));
-
-      return this;
-    }
-    /**
-     * Emits a reserved event.
-     *
-     * This method is `protected`, so that only a class extending
-     * `StrictEventEmitter` can emit its own reserved events.
-     *
-     * @param ev Reserved event name
-     * @param args Arguments to emit along with the event
-     */
-
-  }, {
-    key: "emitReserved",
-    value: function emitReserved(ev) {
-      var _get3;
-
-      for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
-      }
-
-      (_get3 = _get(_getPrototypeOf(StrictEventEmitter.prototype), "emit", this)).call.apply(_get3, [this, ev].concat(args));
-
-      return this;
-    }
-    /**
-     * Returns the listeners listening to an event.
-     *
-     * @param event Event name
-     * @returns Array of listeners subscribed to `event`
-     */
-
-  }, {
-    key: "listeners",
-    value: function listeners(event) {
-      return _get(_getPrototypeOf(StrictEventEmitter.prototype), "listeners", this).call(this, event);
-    }
-  }]);
-
-  return StrictEventEmitter;
 }(Emitter);
 
-exports.StrictEventEmitter = StrictEventEmitter;
+exports.Socket = Socket;
 
 /***/ }),
 
@@ -1611,16 +1468,13 @@ var debug = __webpack_require__(/*! debug */ "./node_modules/debug/src/browser.j
  * URL parser.
  *
  * @param uri - url
- * @param path - the request path of the connection
  * @param loc - An object meant to mimic window.location.
  *        Defaults to window.location.
  * @public
  */
 
 
-function url(uri) {
-  var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
-  var loc = arguments.length > 2 ? arguments[2] : undefined;
+function url(uri, loc) {
   var obj = uri; // default to window.location
 
   loc = loc || typeof location !== "undefined" && location;
@@ -1663,7 +1517,7 @@ function url(uri) {
   var ipv6 = obj.host.indexOf(":") !== -1;
   var host = ipv6 ? "[" + obj.host + "]" : obj.host; // define unique id
 
-  obj.id = obj.protocol + "://" + host + ":" + obj.port + path; // define href
+  obj.id = obj.protocol + "://" + host + ":" + obj.port; // define href
 
   obj.href = obj.protocol + "://" + host + (loc && loc.port === obj.port ? "" : ":" + obj.port);
   return obj;
@@ -1762,6 +1616,121 @@ Backoff.prototype.setMax = function (max) {
 
 Backoff.prototype.setJitter = function (jitter) {
   this.jitter = jitter;
+};
+
+/***/ }),
+
+/***/ "./node_modules/base64-arraybuffer/lib/base64-arraybuffer.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/base64-arraybuffer/lib/base64-arraybuffer.js ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+ * base64-arraybuffer
+ * https://github.com/niklasvh/base64-arraybuffer
+ *
+ * Copyright (c) 2012 Niklas von Hertzen
+ * Licensed under the MIT license.
+ */
+(function () {
+  "use strict";
+
+  var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"; // Use a lookup table to find the index.
+
+  var lookup = new Uint8Array(256);
+
+  for (var i = 0; i < chars.length; i++) {
+    lookup[chars.charCodeAt(i)] = i;
+  }
+
+  exports.encode = function (arraybuffer) {
+    var bytes = new Uint8Array(arraybuffer),
+        i,
+        len = bytes.length,
+        base64 = "";
+
+    for (i = 0; i < len; i += 3) {
+      base64 += chars[bytes[i] >> 2];
+      base64 += chars[(bytes[i] & 3) << 4 | bytes[i + 1] >> 4];
+      base64 += chars[(bytes[i + 1] & 15) << 2 | bytes[i + 2] >> 6];
+      base64 += chars[bytes[i + 2] & 63];
+    }
+
+    if (len % 3 === 2) {
+      base64 = base64.substring(0, base64.length - 1) + "=";
+    } else if (len % 3 === 1) {
+      base64 = base64.substring(0, base64.length - 2) + "==";
+    }
+
+    return base64;
+  };
+
+  exports.decode = function (base64) {
+    var bufferLength = base64.length * 0.75,
+        len = base64.length,
+        i,
+        p = 0,
+        encoded1,
+        encoded2,
+        encoded3,
+        encoded4;
+
+    if (base64[base64.length - 1] === "=") {
+      bufferLength--;
+
+      if (base64[base64.length - 2] === "=") {
+        bufferLength--;
+      }
+    }
+
+    var arraybuffer = new ArrayBuffer(bufferLength),
+        bytes = new Uint8Array(arraybuffer);
+
+    for (i = 0; i < len; i += 4) {
+      encoded1 = lookup[base64.charCodeAt(i)];
+      encoded2 = lookup[base64.charCodeAt(i + 1)];
+      encoded3 = lookup[base64.charCodeAt(i + 2)];
+      encoded4 = lookup[base64.charCodeAt(i + 3)];
+      bytes[p++] = encoded1 << 2 | encoded2 >> 4;
+      bytes[p++] = (encoded2 & 15) << 4 | encoded3 >> 2;
+      bytes[p++] = (encoded3 & 3) << 6 | encoded4 & 63;
+    }
+
+    return arraybuffer;
+  };
+})();
+
+/***/ }),
+
+/***/ "./node_modules/component-bind/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/component-bind/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * Slice reference.
+ */
+var slice = [].slice;
+/**
+ * Bind `obj` to `fn`.
+ *
+ * @param {Object} obj
+ * @param {Function|String} fn or string
+ * @return {Function}
+ * @api public
+ */
+
+module.exports = function (obj, fn) {
+  if ('string' == typeof fn) fn = obj[fn];
+  if ('function' != typeof fn) throw new Error('bind() requires a function');
+  var args = slice.call(arguments, 2);
+  return function () {
+    return fn.apply(obj, args.concat(slice.call(arguments)));
+  };
 };
 
 /***/ }),
@@ -1953,30 +1922,22 @@ Emitter.prototype.hasListeners = function (event) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+/* WEBPACK VAR INJECTION */(function(process) {function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /* eslint-env browser */
 
 /**
  * This is the web browser implementation of `debug()`.
  */
+exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
 exports.load = load;
 exports.useColors = useColors;
 exports.storage = localstorage();
-
-exports.destroy = function () {
-  var warned = false;
-  return function () {
-    if (!warned) {
-      warned = true;
-      console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
-    }
-  };
-}();
 /**
  * Colors.
  */
-
 
 exports.colors = ['#0000CC', '#0000FF', '#0033CC', '#0033FF', '#0066CC', '#0066FF', '#0099CC', '#0099FF', '#00CC00', '#00CC33', '#00CC66', '#00CC99', '#00CCCC', '#00CCFF', '#3300CC', '#3300FF', '#3333CC', '#3333FF', '#3366CC', '#3366FF', '#3399CC', '#3399FF', '#33CC00', '#33CC33', '#33CC66', '#33CC99', '#33CCCC', '#33CCFF', '#6600CC', '#6600FF', '#6633CC', '#6633FF', '#66CC00', '#66CC33', '#9900CC', '#9900FF', '#9933CC', '#9933FF', '#99CC00', '#99CC33', '#CC0000', '#CC0033', '#CC0066', '#CC0099', '#CC00CC', '#CC00FF', '#CC3300', '#CC3333', '#CC3366', '#CC3399', '#CC33CC', '#CC33FF', '#CC6600', '#CC6633', '#CC9900', '#CC9933', '#CCCC00', '#CCCC33', '#FF0000', '#FF0033', '#FF0066', '#FF0099', '#FF00CC', '#FF00FF', '#FF3300', '#FF3333', '#FF3366', '#FF3399', '#FF33CC', '#FF33FF', '#FF6600', '#FF6633', '#FF9900', '#FF9933', '#FFCC00', '#FFCC33'];
 /**
@@ -2046,16 +2007,20 @@ function formatArgs(args) {
   args.splice(lastC, 0, c);
 }
 /**
- * Invokes `console.debug()` when available.
- * No-op when `console.debug` is not a "function".
- * If `console.debug` is not available, falls back
- * to `console.log`.
+ * Invokes `console.log()` when available.
+ * No-op when `console.log` is not a "function".
  *
  * @api public
  */
 
 
-exports.log = console.debug || console.log || function () {};
+function log() {
+  var _console;
+
+  // This hackery is required for IE8/9, where
+  // the `console.log` function doesn't have 'apply'
+  return (typeof console === "undefined" ? "undefined" : _typeof(console)) === 'object' && console.log && (_console = console).log.apply(_console, arguments);
+}
 /**
  * Save `namespaces`.
  *
@@ -2134,6 +2099,7 @@ formatters.j = function (v) {
     return '[UnexpectedJSONParseError]: ' + error.message;
   }
 };
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -2168,10 +2134,14 @@ function setup(env) {
   createDebug.enable = enable;
   createDebug.enabled = enabled;
   createDebug.humanize = __webpack_require__(/*! ms */ "./node_modules/ms/index.js");
-  createDebug.destroy = destroy;
   Object.keys(env).forEach(function (key) {
     createDebug[key] = env[key];
   });
+  /**
+  * Active `debug` instances.
+  */
+
+  createDebug.instances = [];
   /**
   * The currently active debug mode names, and names to skip.
   */
@@ -2214,7 +2184,6 @@ function setup(env) {
 
   function createDebug(namespace) {
     var prevTime;
-    var enableOverride = null;
 
     function debug() {
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -2246,7 +2215,7 @@ function setup(env) {
       args[0] = args[0].replace(/%([a-zA-Z%])/g, function (match, format) {
         // If we encounter an escaped % then don't increase the array index
         if (match === '%%') {
-          return '%';
+          return match;
         }
 
         index++;
@@ -2269,27 +2238,31 @@ function setup(env) {
     }
 
     debug.namespace = namespace;
+    debug.enabled = createDebug.enabled(namespace);
     debug.useColors = createDebug.useColors();
-    debug.color = createDebug.selectColor(namespace);
-    debug.extend = extend;
-    debug.destroy = createDebug.destroy; // XXX Temporary. Will be removed in the next major release.
-
-    Object.defineProperty(debug, 'enabled', {
-      enumerable: true,
-      configurable: false,
-      get: function get() {
-        return enableOverride === null ? createDebug.enabled(namespace) : enableOverride;
-      },
-      set: function set(v) {
-        enableOverride = v;
-      }
-    }); // Env-specific initialization logic for debug instances
+    debug.color = selectColor(namespace);
+    debug.destroy = destroy;
+    debug.extend = extend; // Debug.formatArgs = formatArgs;
+    // debug.rawLog = rawLog;
+    // env-specific initialization logic for debug instances
 
     if (typeof createDebug.init === 'function') {
       createDebug.init(debug);
     }
 
+    createDebug.instances.push(debug);
     return debug;
+  }
+
+  function destroy() {
+    var index = createDebug.instances.indexOf(this);
+
+    if (index !== -1) {
+      createDebug.instances.splice(index, 1);
+      return true;
+    }
+
+    return false;
   }
 
   function extend(namespace, delimiter) {
@@ -2327,6 +2300,11 @@ function setup(env) {
       } else {
         createDebug.names.push(new RegExp('^' + namespaces + '$'));
       }
+    }
+
+    for (i = 0; i < createDebug.instances.length; i++) {
+      var instance = createDebug.instances[i];
+      instance.enabled = createDebug.enabled(instance.namespace);
     }
   }
   /**
@@ -2402,15 +2380,6 @@ function setup(env) {
     }
 
     return val;
-  }
-  /**
-  * XXX DO NOT USE. This is a temporary stub function.
-  * XXX It WILL be removed in the next major release.
-  */
-
-
-  function destroy() {
-    console.warn('Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.');
   }
 
   createDebug.enable(createDebug.load());
@@ -2586,25 +2555,6 @@ var Socket = /*#__PURE__*/function (_Emitter) {
     _this.pingTimeout = null; // set on heartbeat
 
     _this.pingTimeoutTimer = null;
-
-    if (typeof addEventListener === "function") {
-      addEventListener("beforeunload", function () {
-        if (_this.transport) {
-          // silently close the transport
-          _this.transport.removeAllListeners();
-
-          _this.transport.close();
-        }
-      }, false);
-
-      if (_this.hostname !== "localhost") {
-        _this.offlineEventListener = function () {
-          _this.onClose("transport close");
-        };
-
-        addEventListener("offline", _this.offlineEventListener, false);
-      }
-    }
 
     _this.open();
 
@@ -2927,10 +2877,6 @@ var Socket = /*#__PURE__*/function (_Emitter) {
       this.pingTimeoutTimer = setTimeout(function () {
         _this2.onClose("ping timeout");
       }, this.pingInterval + this.pingTimeout);
-
-      if (this.opts.autoUnref) {
-        this.pingTimeoutTimer.unref();
-      }
     }
     /**
      * Called on `drain` event
@@ -3115,12 +3061,7 @@ var Socket = /*#__PURE__*/function (_Emitter) {
 
         this.transport.close(); // ignore further transport communication
 
-        this.transport.removeAllListeners();
-
-        if (typeof removeEventListener === "function") {
-          removeEventListener("offline", this.offlineEventListener, false);
-        } // set ready state
-
+        this.transport.removeAllListeners(); // set ready state
 
         this.readyState = "closed"; // clear session id
 
@@ -3217,8 +3158,6 @@ var parser = __webpack_require__(/*! engine.io-parser */ "./node_modules/engine.
 
 var Emitter = __webpack_require__(/*! component-emitter */ "./node_modules/component-emitter/index.js");
 
-var debug = __webpack_require__(/*! debug */ "./node_modules/debug/src/browser.js")("engine.io-client:transport");
-
 var Transport = /*#__PURE__*/function (_Emitter) {
   _inherits(Transport, _Emitter);
 
@@ -3305,8 +3244,7 @@ var Transport = /*#__PURE__*/function (_Emitter) {
       if ("open" === this.readyState) {
         this.write(packets);
       } else {
-        // this might happen if the transport was silently closed in the beforeunload event handler
-        debug("transport is not open, discarding packets");
+        throw new Error("Transport not open");
       }
     }
     /**
@@ -3372,7 +3310,7 @@ module.exports = Transport;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var XMLHttpRequest = __webpack_require__(/*! ../../contrib/xmlhttprequest-ssl/XMLHttpRequest */ "./node_modules/engine.io-client/lib/xmlhttprequest.js");
+var XMLHttpRequest = __webpack_require__(/*! xmlhttprequest-ssl */ "./node_modules/engine.io-client/lib/xmlhttprequest.js");
 
 var XHR = __webpack_require__(/*! ./polling-xhr */ "./node_modules/engine.io-client/lib/transports/polling-xhr.js");
 
@@ -3465,6 +3403,11 @@ var rEscapedNewline = /\\n/g;
  */
 
 var callbacks;
+/**
+ * Noop.
+ */
+
+function empty() {}
 
 var JSONPPolling = /*#__PURE__*/function (_Polling) {
   _inherits(JSONPPolling, _Polling);
@@ -3500,7 +3443,14 @@ var JSONPPolling = /*#__PURE__*/function (_Polling) {
       self.onData(msg);
     }); // append to query string
 
-    _this.query.j = _this.index;
+    _this.query.j = _this.index; // prevent spurious errors from being emitted when the window is unloaded
+
+    if (typeof addEventListener === "function") {
+      addEventListener("beforeunload", function () {
+        if (self.script) self.script.onerror = empty;
+      }, false);
+    }
+
     return _this;
   }
   /**
@@ -3518,9 +3468,6 @@ var JSONPPolling = /*#__PURE__*/function (_Polling) {
      */
     value: function doClose() {
       if (this.script) {
-        // prevent spurious errors from being emitted when the window is unloaded
-        this.script.onerror = function () {};
-
         this.script.parentNode.removeChild(this.script);
         this.script = null;
       }
@@ -3705,7 +3652,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 /* global attachEvent */
-var XMLHttpRequest = __webpack_require__(/*! ../../contrib/xmlhttprequest-ssl/XMLHttpRequest */ "./node_modules/engine.io-client/lib/xmlhttprequest.js");
+var XMLHttpRequest = __webpack_require__(/*! xmlhttprequest-ssl */ "./node_modules/engine.io-client/lib/xmlhttprequest.js");
 
 var Polling = __webpack_require__(/*! ./polling */ "./node_modules/engine.io-client/lib/transports/polling.js");
 
@@ -3872,7 +3819,7 @@ var Request = /*#__PURE__*/function (_Emitter) {
   _createClass(Request, [{
     key: "create",
     value: function create() {
-      var opts = pick(this.opts, "agent", "enablesXDR", "pfx", "key", "passphrase", "cert", "ca", "ciphers", "rejectUnauthorized", "autoUnref");
+      var opts = pick(this.opts, "agent", "enablesXDR", "pfx", "key", "passphrase", "cert", "ca", "ciphers", "rejectUnauthorized");
       opts.xdomain = !!this.opts.xd;
       opts.xscheme = !!this.opts.xs;
       var xhr = this.xhr = new XMLHttpRequest(opts);
@@ -4471,7 +4418,7 @@ var WS = /*#__PURE__*/function (_Transport) {
       var uri = this.uri();
       var protocols = this.opts.protocols; // React Native only supports the 'headers' option, and will print a warning if anything else is passed
 
-      var opts = isReactNative ? {} : pick(this.opts, "agent", "perMessageDeflate", "pfx", "key", "passphrase", "cert", "ca", "ciphers", "rejectUnauthorized", "localAddress", "protocolVersion", "origin", "maxPayload", "family", "checkServerIdentity");
+      var opts = isReactNative ? {} : pick(this.opts, "agent", "perMessageDeflate", "pfx", "key", "passphrase", "cert", "ca", "ciphers", "rejectUnauthorized", "localAddress");
 
       if (this.opts.extraHeaders) {
         opts.headers = this.opts.extraHeaders;
@@ -4495,24 +4442,22 @@ var WS = /*#__PURE__*/function (_Transport) {
   }, {
     key: "addEventListeners",
     value: function addEventListeners() {
-      var _this2 = this;
+      var self = this;
 
       this.ws.onopen = function () {
-        if (_this2.opts.autoUnref) {
-          _this2.ws._socket.unref();
-        }
-
-        _this2.onOpen();
+        self.onOpen();
       };
 
-      this.ws.onclose = this.onClose.bind(this);
+      this.ws.onclose = function () {
+        self.onClose();
+      };
 
       this.ws.onmessage = function (ev) {
-        return _this2.onData(ev.data);
+        self.onData(ev.data);
       };
 
       this.ws.onerror = function (e) {
-        return _this2.onError("websocket error", e);
+        self.onError("websocket error", e);
       };
     }
     /**
@@ -4604,7 +4549,6 @@ var WS = /*#__PURE__*/function (_Transport) {
     value: function doClose() {
       if (typeof this.ws !== "undefined") {
         this.ws.close();
-        this.ws = null;
       }
     }
     /**
@@ -4682,10 +4626,7 @@ module.exports.pick = function (obj) {
   }
 
   return attr.reduce(function (acc, k) {
-    if (obj.hasOwnProperty(k)) {
-      acc[k] = obj[k];
-    }
-
+    acc[k] = obj[k];
     return acc;
   }, {});
 };
@@ -4784,7 +4725,7 @@ var withNativeArrayBuffer = typeof ArrayBuffer === "function";
 var base64decoder;
 
 if (withNativeArrayBuffer) {
-  base64decoder = __webpack_require__(/*! base64-arraybuffer */ "./node_modules/engine.io-parser/node_modules/base64-arraybuffer/lib/base64-arraybuffer.js");
+  base64decoder = __webpack_require__(/*! base64-arraybuffer */ "./node_modules/base64-arraybuffer/lib/base64-arraybuffer.js");
 }
 
 var decodePacket = function decodePacket(encodedPacket, binaryType) {
@@ -4953,82 +4894,6 @@ module.exports = {
   decodePacket: decodePacket,
   decodePayload: decodePayload
 };
-
-/***/ }),
-
-/***/ "./node_modules/engine.io-parser/node_modules/base64-arraybuffer/lib/base64-arraybuffer.js":
-/*!*************************************************************************************************!*\
-  !*** ./node_modules/engine.io-parser/node_modules/base64-arraybuffer/lib/base64-arraybuffer.js ***!
-  \*************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/*
- * base64-arraybuffer
- * https://github.com/niklasvh/base64-arraybuffer
- *
- * Copyright (c) 2012 Niklas von Hertzen
- * Licensed under the MIT license.
- */
-(function (chars) {
-  "use strict";
-
-  exports.encode = function (arraybuffer) {
-    var bytes = new Uint8Array(arraybuffer),
-        i,
-        len = bytes.length,
-        base64 = "";
-
-    for (i = 0; i < len; i += 3) {
-      base64 += chars[bytes[i] >> 2];
-      base64 += chars[(bytes[i] & 3) << 4 | bytes[i + 1] >> 4];
-      base64 += chars[(bytes[i + 1] & 15) << 2 | bytes[i + 2] >> 6];
-      base64 += chars[bytes[i + 2] & 63];
-    }
-
-    if (len % 3 === 2) {
-      base64 = base64.substring(0, base64.length - 1) + "=";
-    } else if (len % 3 === 1) {
-      base64 = base64.substring(0, base64.length - 2) + "==";
-    }
-
-    return base64;
-  };
-
-  exports.decode = function (base64) {
-    var bufferLength = base64.length * 0.75,
-        len = base64.length,
-        i,
-        p = 0,
-        encoded1,
-        encoded2,
-        encoded3,
-        encoded4;
-
-    if (base64[base64.length - 1] === "=") {
-      bufferLength--;
-
-      if (base64[base64.length - 2] === "=") {
-        bufferLength--;
-      }
-    }
-
-    var arraybuffer = new ArrayBuffer(bufferLength),
-        bytes = new Uint8Array(arraybuffer);
-
-    for (i = 0; i < len; i += 4) {
-      encoded1 = chars.indexOf(base64[i]);
-      encoded2 = chars.indexOf(base64[i + 1]);
-      encoded3 = chars.indexOf(base64[i + 2]);
-      encoded4 = chars.indexOf(base64[i + 3]);
-      bytes[p++] = encoded1 << 2 | encoded2 >> 4;
-      bytes[p++] = (encoded2 & 15) << 4 | encoded3 >> 2;
-      bytes[p++] = (encoded3 & 3) << 6 | encoded4 & 63;
-    }
-
-    return arraybuffer;
-  };
-})("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
 /***/ }),
 
@@ -5365,6 +5230,224 @@ function queryKey(uri, query) {
   });
   return data;
 }
+
+/***/ }),
+
+/***/ "./node_modules/process/browser.js":
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {}; // cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+  throw new Error('setTimeout has not been defined');
+}
+
+function defaultClearTimeout() {
+  throw new Error('clearTimeout has not been defined');
+}
+
+(function () {
+  try {
+    if (typeof setTimeout === 'function') {
+      cachedSetTimeout = setTimeout;
+    } else {
+      cachedSetTimeout = defaultSetTimout;
+    }
+  } catch (e) {
+    cachedSetTimeout = defaultSetTimout;
+  }
+
+  try {
+    if (typeof clearTimeout === 'function') {
+      cachedClearTimeout = clearTimeout;
+    } else {
+      cachedClearTimeout = defaultClearTimeout;
+    }
+  } catch (e) {
+    cachedClearTimeout = defaultClearTimeout;
+  }
+})();
+
+function runTimeout(fun) {
+  if (cachedSetTimeout === setTimeout) {
+    //normal enviroments in sane situations
+    return setTimeout(fun, 0);
+  } // if setTimeout wasn't available but was latter defined
+
+
+  if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+    cachedSetTimeout = setTimeout;
+    return setTimeout(fun, 0);
+  }
+
+  try {
+    // when when somebody has screwed with setTimeout but no I.E. maddness
+    return cachedSetTimeout(fun, 0);
+  } catch (e) {
+    try {
+      // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+      return cachedSetTimeout.call(null, fun, 0);
+    } catch (e) {
+      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+      return cachedSetTimeout.call(this, fun, 0);
+    }
+  }
+}
+
+function runClearTimeout(marker) {
+  if (cachedClearTimeout === clearTimeout) {
+    //normal enviroments in sane situations
+    return clearTimeout(marker);
+  } // if clearTimeout wasn't available but was latter defined
+
+
+  if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+    cachedClearTimeout = clearTimeout;
+    return clearTimeout(marker);
+  }
+
+  try {
+    // when when somebody has screwed with setTimeout but no I.E. maddness
+    return cachedClearTimeout(marker);
+  } catch (e) {
+    try {
+      // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+      return cachedClearTimeout.call(null, marker);
+    } catch (e) {
+      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+      // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+      return cachedClearTimeout.call(this, marker);
+    }
+  }
+}
+
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+  if (!draining || !currentQueue) {
+    return;
+  }
+
+  draining = false;
+
+  if (currentQueue.length) {
+    queue = currentQueue.concat(queue);
+  } else {
+    queueIndex = -1;
+  }
+
+  if (queue.length) {
+    drainQueue();
+  }
+}
+
+function drainQueue() {
+  if (draining) {
+    return;
+  }
+
+  var timeout = runTimeout(cleanUpNextTick);
+  draining = true;
+  var len = queue.length;
+
+  while (len) {
+    currentQueue = queue;
+    queue = [];
+
+    while (++queueIndex < len) {
+      if (currentQueue) {
+        currentQueue[queueIndex].run();
+      }
+    }
+
+    queueIndex = -1;
+    len = queue.length;
+  }
+
+  currentQueue = null;
+  draining = false;
+  runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+  var args = new Array(arguments.length - 1);
+
+  if (arguments.length > 1) {
+    for (var i = 1; i < arguments.length; i++) {
+      args[i - 1] = arguments[i];
+    }
+  }
+
+  queue.push(new Item(fun, args));
+
+  if (queue.length === 1 && !draining) {
+    runTimeout(drainQueue);
+  }
+}; // v8 likes predictible objects
+
+
+function Item(fun, array) {
+  this.fun = fun;
+  this.array = array;
+}
+
+Item.prototype.run = function () {
+  this.fun.apply(null, this.array);
+};
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) {
+  return [];
+};
+
+process.binding = function (name) {
+  throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () {
+  return '/';
+};
+
+process.chdir = function (dir) {
+  throw new Error('process.chdir is not supported');
+};
+
+process.umask = function () {
+  return 0;
+};
 
 /***/ }),
 
@@ -5806,7 +5889,7 @@ var Decoder = /*#__PURE__*/function (_Emitter) {
 
         case PacketType.EVENT:
         case PacketType.BINARY_EVENT:
-          return Array.isArray(payload) && payload.length > 0;
+          return Array.isArray(payload) && typeof payload[0] === "string";
 
         case PacketType.ACK:
         case PacketType.BINARY_ACK:
