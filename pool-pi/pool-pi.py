@@ -1,22 +1,69 @@
 import serial
 from gpiozero import LED
 from commands import *
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
+from flask import Flask, render_template, session, copy_current_request_context
+from flask_socketio import SocketIO, emit, disconnect
 import threading
 import datetime
 
+async_mode = None
 app = Flask(__name__)
-socketio = SocketIO(app)
+app.config['SECRET_KEY'] = 'secret!'
+socket_ = SocketIO(app, async_mode=async_mode)
+thread = None
+thread_lock = threading.Lock()
 
 
-@app.route("/")
+@app.route('/')
 def index():
-    now = datetime.datetime.now()
-    timeString = now.strftime("%Y-%m-%d %H:%M")
-    templateData = {'title': 'HELLO!', 'time': timeString}
-    return render_template('index.html', **templateData)
+    return render_template('index.html', async_mode=socket_.async_mode)
 
+
+@socket_.on('my_event', namespace='/test')
+def test_message(message):
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response', {
+        'data': message['data'],
+        'count': session['receive_count']
+    })
+
+
+@socket_.on('my_broadcast_event', namespace='/test')
+def test_broadcast_message(message):
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response', {
+        'data': message['data'],
+        'count': session['receive_count']
+    },
+         broadcast=True)
+
+
+@socket_.on('disconnect_request', namespace='/test')
+def disconnect_request():
+    @copy_current_request_context
+    def can_disconnect():
+        disconnect()
+
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response', {
+        'data': 'Disconnected!',
+        'count': session['receive_count']
+    },
+         callback=can_disconnect)
+
+
+# async_mode = None
+# app = Flask(__name__)
+# socket_ = SocketIO(app, async_mode=async_mode)
+
+# @app.route("/")
+# def index():
+#     now = datetime.datetime.now()
+#     timeString = now.strftime("%Y-%m-%d %H:%M")
+#     templateData = {'title': 'Hello!', 'time': timeString}
+#     return render_template('index.html',
+#                            **templateData,
+#                            sync_mode=socket_.async_mode)
 
 buffer = bytearray()
 buffer_full = False
@@ -254,5 +301,5 @@ def main():
 
 if __name__ == '__main__':
     threading.Thread(
-        target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
+        target=lambda: socket_.run(app, debug=False, host='0.0.0.0')).start()
     threading.Thread(target=main).start()
