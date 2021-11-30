@@ -218,19 +218,19 @@ def parseDisplay(data):
         if salt_level != previous_salt_level:
             flag_data_changed = True
         print('salt level update:', end='')
-        model.salinity = salt_level
+        poolModel.salinity = salt_level
         print(salt_level, 'PPM')
     else:
         print('unclassified display update', end='')
 
     # Print data
     try:
-        model.display = data.decode('utf-8')
-        print(model.display)
+        poolModel.display = data.decode('utf-8')
+        print(poolModel.display)
     except UnicodeDecodeError as e:
         try:
-            model.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
-            print(model.display)  #: is encoded as xBA
+            poolModel.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
+            print(poolModel.display)  #: is encoded as xBA
         except UnicodeDecodeError as e:
             print(e)
             print(data)
@@ -294,7 +294,7 @@ def getCommand():
 
 def updateModel():
     global flag_data_changed
-    global model
+    global poolModel
     # socketio.emit('display', {'data': model.display})
 
     if not flag_data_changed:
@@ -306,8 +306,8 @@ def updateModel():
 
 
 def sendModel():
-    global model
-    socketio.emit('model', model.toJSON)
+    global poolModel
+    socketio.emit('model', poolModel.toJSON)
     return
 
 
