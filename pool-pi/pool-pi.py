@@ -311,15 +311,15 @@ def updateModel():
 
 
 def sendModel():
-    global flag_data_changed
-    global poolModel
-    if flag_data_changed == False:
-        return
+    # global flag_data_changed
+    # global poolModel
+    # if flag_data_changed == False:
+    #     return
     print(poolModel)
     modelJSON = poolModel.toJSON()
     print(modelJSON)
     socketio.emit('model', modelJSON)
-    flag_data_changed = False
+    # flag_data_changed = False
     return
 
 
