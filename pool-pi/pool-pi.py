@@ -317,9 +317,9 @@ def sendModel():
     global poolModel
     if flag_data_changed == False:
         return
-    print(poolModel)
-    print(json.dump(poolModel))
-    socketio.emit('model', json.dump(poolModel))
+    # print(poolModel)
+    # print(json.dump(poolModel))
+    socketio.emit('model', poolModel)
     flag_data_changed = False
     return
 
