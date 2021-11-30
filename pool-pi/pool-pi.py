@@ -7,6 +7,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
 from threading import Lock
 from threading import Thread
+from model import model
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -94,6 +95,8 @@ previous_message = NON_KEEP_ALIVE
 
 salt_level = 0  #test salt level variable for web proof of concept
 flag_data_changed = False  #True if there is new data for site, false if no new data
+
+poolModel = model()
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
@@ -192,6 +195,7 @@ def parseBuffer():
 def parseDisplay(data):
     global salt_level
     global flag_data_changed
+    # Classify display update and print classification
     if DISPLAY_AIRTEMP in data:
         print('air temp update:', end='')
         data = data.replace(b'\x5f', b'\xc2\xb0')
@@ -218,12 +222,15 @@ def parseDisplay(data):
         print(salt_level, 'PPM')
     else:
         print('unclassified display update', end='')
+
+    # Print data
     try:
-        print(data.decode('utf-8'))
+        model.display = data.decode('utf-8')
+        print(model.display)
     except UnicodeDecodeError as e:
         try:
-            print(data.replace(b'\xba',
-                               b'\x3a').decode('utf-8'))  #: is encoded as xBA
+            model.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
+            print(model.display)  #: is encoded as xBA
         except UnicodeDecodeError as e:
             print(e)
             print(data)
@@ -287,6 +294,10 @@ def getCommand():
 
 def updateModel():
     global flag_data_changed
+
+    global model
+    socketio.emit('display', {'data': model.display})
+
     if not flag_data_changed:
         return
     socketio.emit('salinity', {'data': salt_level})

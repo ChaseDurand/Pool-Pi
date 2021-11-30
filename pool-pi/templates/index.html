@@ -53,9 +53,19 @@
             });
 
 
-            // Experimental handler for the current salt level.
+            // Handler for the current salt level.
             socket.on('salinity', function(msg) {
                $('#salinity').text(msg.data)
+            });
+
+            // Handler for air temp
+            socket.on('air_temp', function(msg) {
+               $('#air-temp').text(msg.data)
+            });
+
+            // Handler for display
+            socket.on('display', function(msg){
+               $('#display').text(msg.data)
             });
 
             // Handlers for the different forms in the page.
@@ -77,8 +87,12 @@
     <p>
       Async mode is: <b>{{ async_mode }}</b><br>
       Current transport is: <b><span id="transport"></span></b><br>
+    </p>
+    <p>
       Average ping/pong latency: <b><span id="ping-pong"></span>ms</b><br>
-      Current salinity is: <b><span id="salinity"></span>PPM</b>
+      Current salinity is: <b><span id="salinity"></span>PPM</b><br>
+      Current air temp is: <b><span id="air-temp"></span>°F</b><br>
+      Display: <b><span id="display"></span>°F</b><br>
     </p>
     <h2>Send:</h2>
     <form id="emit" method="POST" action='#'>
