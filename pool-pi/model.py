@@ -5,13 +5,14 @@ import json
 class model:
     display = ""
     salinity = 0
-    air_temp = 0
-    pool_temp = 0
-    degrees_F = True
-    gas_heater_status = False
-    chlorinator_status = False
-    day = "Nullday"
-    time = ""
+
+    # air_temp = 0
+    # pool_temp = 0
+    # degrees_F = True
+    # gas_heater_status = False
+    # chlorinator_status = False
+    # day = "Nullday"
+    # time = ""
 
     def toJSON(self):
         return json.dumps(self,
