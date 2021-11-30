@@ -5,7 +5,7 @@ from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 from threading import Lock
 from threading import Thread
-from model import poolModel
+# from model import poolModel
 import uuid
 import json
 
@@ -96,7 +96,7 @@ previous_message = NON_KEEP_ALIVE
 salt_level = 0  #test salt level variable for web proof of concept
 flag_data_changed = False  #True if there is new data for site, false if no new data
 
-# poolModel = model()
+poolModel = {"display": "foo", "salinity": "bar"}
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
@@ -317,6 +317,8 @@ def sendModel():
     global poolModel
     if flag_data_changed == False:
         return
+    print(poolModel)
+    print(json.dumps(poolModel))
     socketio.emit('model', json.dumps(poolModel))
     flag_data_changed = False
     return
