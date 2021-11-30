@@ -318,8 +318,8 @@ def sendModel():
     # modelJSON = poolModel.toJSON()
     # print(modelJSON)
     socketio.emit('model', {
-        'display': model.display,
-        'salinity': model.salinity
+        'display': poolModel.display,
+        'salinity': poolModel.salinity
     })
     # flag_data_changed = False
     return
