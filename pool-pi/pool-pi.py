@@ -318,8 +318,8 @@ def sendModel():
     if flag_data_changed == False:
         return
     print(poolModel)
-    print(json.dumps(poolModel))
-    socketio.emit('model', json.dumps(poolModel))
+    print(json.dump(poolModel))
+    socketio.emit('model', json.dump(poolModel))
     flag_data_changed = False
     return
 
