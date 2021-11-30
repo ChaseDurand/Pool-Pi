@@ -307,7 +307,7 @@ def updateModel():
 
 def sendModel():
     global poolModel
-    modelJSON = poolModel.toJSON
+    modelJSON = poolModel.toJSON()
     print(modelJSON)
     socketio.emit('model', modelJSON)
     return
