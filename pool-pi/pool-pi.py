@@ -5,8 +5,9 @@ from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 from threading import Lock
 from threading import Thread
-from model import model
+from model import poolModel
 import uuid
+import json
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -95,7 +96,7 @@ previous_message = NON_KEEP_ALIVE
 salt_level = 0  #test salt level variable for web proof of concept
 flag_data_changed = False  #True if there is new data for site, false if no new data
 
-poolModel = model()
+# poolModel = model()
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
@@ -219,7 +220,7 @@ def parseDisplay(data):
         if salt_level != previous_salt_level:
             flag_data_changed = True
         print('salt level update:', end='')
-        poolModel.salinity = salt_level
+        poolModel["salinity"] = salt_level
         flag_data_changed == True
         print(salt_level, 'PPM')
     else:
@@ -227,14 +228,15 @@ def parseDisplay(data):
 
     # Print data
     try:
-        poolModel.display = data.decode('utf-8')
+        poolModel["display"] = data.decode('utf-8')
         flag_data_changed = True
-        print(poolModel.display)
+        print(poolModel["display"])
     except UnicodeDecodeError as e:
         try:
-            poolModel.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
+            poolModel["display"] = data.replace(b'\xba',
+                                                b'\x3a').decode('utf-8')
             flag_data_changed = True
-            print(poolModel.display)  #: is encoded as xBA
+            print(poolModel["display"])  #: is encoded as xBA
         except UnicodeDecodeError as e:
             print(e)
             print(data)
@@ -315,10 +317,7 @@ def sendModel():
     global poolModel
     if flag_data_changed == False:
         return
-    socketio.emit('model', {
-        'display': poolModel.display,
-        'salinity': poolModel.salinity
-    })
+    socketio.emit('model', json.dumps(poolModel))
     flag_data_changed = False
     return
 
