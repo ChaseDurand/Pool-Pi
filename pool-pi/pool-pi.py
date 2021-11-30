@@ -194,6 +194,7 @@ def parseBuffer():
 def parseDisplay(data):
     global salt_level
     global flag_data_changed
+    global poolModel
     # Classify display update and print classification
     if DISPLAY_AIRTEMP in data:
         print('air temp update:', end='')
