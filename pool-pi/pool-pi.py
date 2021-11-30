@@ -2,10 +2,12 @@ import serial
 from gpiozero import LED
 from commands import *
 from flask import Flask, render_template
+from flask_socketio import SocketIO, emit
 import threading
 import datetime
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 
 @app.route("/")
@@ -252,5 +254,5 @@ def main():
 
 if __name__ == '__main__':
     threading.Thread(
-        target=lambda: app.run(debug=False, host='0.0.0.0')).start()
+        target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
     threading.Thread(target=main).start()
