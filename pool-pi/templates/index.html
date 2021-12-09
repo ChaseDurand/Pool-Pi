@@ -73,6 +73,10 @@
                 socket.emit('my_broadcast_event', {data: $('#broadcast_data').val()});
                 return false;
             });
+            $('form#testform').submit(function(event) {
+                socket.emit('my_toggle_event', {data: $('#testid').val()});
+                return false;
+            });
         });
     </script>
 </head>
@@ -88,14 +92,16 @@
     </p>
     <h2>Send:</h2>
     <form id="waterfall" method="POST" action='#'>
-        <!-- <input type="text" name="emit_data" id="emit_data" placeholder="Message"> -->
+        <input type="text" name="emit_data" id="emit_data" placeholder="Message">
         <input type="submit" value="Echo">
     </form>
-    <label class="switch switch-on-off">
-    	<input class="switch-input" type="checkbox" />
-    	<span class="switch-label" data-on="On" data-off="Off"></span> 
-    	<span class="switch-handle"></span> 
-    </label>
+    <form id="testform" method="POST" action='#'>
+        <label class="switch switch-on-off">
+            <input class="switch-input" type="checkbox" id="testid" name="foo"/>
+            <span class="switch-label" data-on="foo" data-off="bar"></span> 
+            <span class="switch-handle"></span> 
+        </label>
+    </form>
     <form id="broadcast" method="POST" action='#'>
         <input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message">
         <input type="submit" value="Broadcast">
