@@ -207,8 +207,8 @@ def parseDisplay(data):
         data = data.replace(b'\x5f', b'\xc2\xb0')
         parseAirTemp(data)
     elif DISPLAY_POOLTEMP in data:
-        print('pooltemp update:', end='')
         data = data.replace(b'\x5f', b'\xc2\xb0')
+        parsePoolTemp(data)
     elif DISPLAY_GASHEATER in data:
         print('gas heater update:', end='')
     elif DISPLAY_CHLORINATOR_PERCENT in data:
@@ -245,12 +245,23 @@ def parseAirTemp(data):
     global poolModel
     global flag_data_changed
     previousAirTemp = poolModel['airtemp']
-    print(data.decode('utf-8').split()[2])
     newAirTemp = data.decode('utf-8').split()[2]
     if newAirTemp != previousAirTemp:
         flag_data_changed = True
         poolModel['airtemp'] = newAirTemp
     print('air temp update:', end='')
+    return
+
+
+def parsePoolTemp(data):
+    global poolModel
+    global flag_data_changed
+    previousPoolTemp = poolModel['pooltemp']
+    newPoolTemp = data.decode('utf-8').split()[2]
+    if newPoolTemp != previousPoolTemp:
+        flag_data_changed = True
+        poolModel['pooltemp'] = newPoolTemp
+    print('pooltemp update:', end='')
     return
 
 
