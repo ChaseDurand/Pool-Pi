@@ -74,7 +74,7 @@
                 return false;
             });
             $('form#testform').submit(function(event) {
-                socket.emit('my_toggle_event', {data: $('#testid').val()});
+                socket.emit('my_toggle_event', {data: $('#testid:checked').length > 0});
                 return false;
             });
         });
