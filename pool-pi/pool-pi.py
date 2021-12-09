@@ -7,9 +7,9 @@ from threading import Lock
 from threading import Thread
 import uuid
 import json
-from engineio.payload import Payload
+# from engineio.payload import Payload
 
-Payload.max_decode_packets = 100
+# Payload.max_decode_packets = 100
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -249,6 +249,7 @@ def parseDateTime(data):
     previousDateTIme = poolModel['datetime']
     newDateTime = data.replace(b'\xba',
                                b'\x3a').decode('utf-8')  #: is encoded as xBA
+    print(newDateTime)
     if newDateTime != previousDateTIme:
         flag_data_changed = True
         poolModel['datetime'] = newDateTime
