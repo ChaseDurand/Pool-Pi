@@ -16,6 +16,7 @@ DISPLAY_CHLORINATOR_STATUS = 'Chlorinator'.encode('utf-8')
 DISPLAY_SALT_LEVEL = 'Salt Level'.encode('utf-8')
 DISPLAY_DATE = 'day'.encode('utf-8')
 DISPLAY_CHECK = 'Check System'.encode('utf-8')
+DISPLAY_VERY_LOW_SALT = 'Very Low Salt'.encode('utf-8')
 
 LED_1 = [(1 << 0, 'Heater 1'), (1 << 1, 'Valve 3'), (1 << 2, 'Check System'),
          (1 << 3, 'Pool'), (1 << 4, 'Spa'), (1 << 5, 'Filter'),

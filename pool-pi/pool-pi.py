@@ -7,9 +7,6 @@ from threading import Lock
 from threading import Thread
 import uuid
 import json
-# from engineio.payload import Payload
-
-# Payload.max_decode_packets = 100
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -249,7 +246,6 @@ def parseDateTime(data):
     previousDateTIme = poolModel['datetime']
     newDateTime = data.replace(b'\xba',
                                b'\x3a').decode('utf-8')  #: is encoded as xBA
-    print(newDateTime)
     if newDateTime != previousDateTIme:
         flag_data_changed = True
         poolModel['datetime'] = newDateTime
@@ -282,13 +278,16 @@ def parsePoolTemp(data):
 
 
 def parseSalinity(data):
-    #parse salt level and store
-    global salt_level
+    global poolModel
     global flag_data_changed
-    previous_salt_level = salt_level
-    salt_level = data.decode('utf-8').split()[-3]
-    if salt_level != previous_salt_level:
+    previousSaltLevel = poolModel['salinity']
+    if DISPLAY_VERY_LOW_SALT in data:
+        newSaltLevel = "Very Low Salt"
+    else:
+        newSaltLevel = data.decode('utf-8').split()[-3]
+    if newSaltLevel != previousSaltLevel:
         flag_data_changed = True
+        poolModel['salinity'] = newSaltLevel
     print('salt level update:', end='')
     return
 
