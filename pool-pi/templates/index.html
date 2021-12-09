@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Pool-Pi</title>
+    <link rel="stylesheet" href="/../static/styles.css">
     <script src='/../static/jquery.min.js'></script>
     <script src='/../static/socket.io.js'></script>
     <script type="text/javascript" charset="utf-8">
@@ -86,10 +87,15 @@
       Current salinity is: <b><span id="salinity"></span></b><br>
     </p>
     <h2>Send:</h2>
-    <form id="emit" method="POST" action='#'>
-        <input type="text" name="emit_data" id="emit_data" placeholder="Message">
+    <form id="waterfall" method="POST" action='#'>
+        <!-- <input type="text" name="emit_data" id="emit_data" placeholder="Message"> -->
         <input type="submit" value="Echo">
     </form>
+    <label class="switch switch-on-off">
+    	<input class="switch-input" type="checkbox" />
+    	<span class="switch-label" data-on="On" data-off="Off"></span> 
+    	<span class="switch-handle"></span> 
+    </label>
     <form id="broadcast" method="POST" action='#'>
         <input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message">
         <input type="submit" value="Broadcast">
