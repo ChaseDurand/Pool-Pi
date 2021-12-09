@@ -244,7 +244,8 @@ def parseDateTime(data):
     global poolModel
     global flag_data_changed
     previousDateTIme = poolModel['datetime']
-    newDateTime = data.decode('utf-8')
+    newDateTime = data.replace(b'\xba',
+                               b'\x3a').decode('utf-8')  #: is encoded as xBA
     if newDateTime != previousDateTIme:
         flag_data_changed = True
         poolModel['datetime'] = newDateTime
