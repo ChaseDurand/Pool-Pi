@@ -244,7 +244,7 @@ def parseDateTime(data):
     global poolModel
     global flag_data_changed
     previousDateTIme = poolModel['datetime']
-    newDateTime = data.decode('utf-8').trim()
+    newDateTime = data.decode('utf-8')
     if newDateTime != previousDateTIme:
         flag_data_changed = True
         poolModel['datetime'] = newDateTime
