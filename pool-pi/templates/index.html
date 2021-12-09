@@ -55,8 +55,11 @@
             // Handler for the model update
             socket.on('model', function(msg){
                $('#display').text(msg.display);
+               $('#air-temp').text(msg.data.airtemp)
+               $('#pooltemp').text(msg.pooltemp);
+               $('#day').text(msg.day);
+               $('#time').text(msg.data.time)
                $('#salinity').text(msg.salinity);
-               // $('#air-temp').text(msg.data.air_temp)
             });
 
             // Handlers for the different forms in the page.
@@ -77,9 +80,12 @@
     <h1>Pool-Pi</h1>
     <p>
       Average ping/pong latency: <b><span id="ping-pong"></span>ms</b><br>
-      Current salinity is: <b><span id="salinity"></span>PPM</b><br>
-      Current air temp is: <b><span id="air-temp"></span>°F</b><br>
       Display: <b><span id="display"></span></b><br>
+      Current air temp is: <b><span id="air-temp"></span>°F</b><br>
+      Current pool temp is: <b><span id="pool-temp"></span>PPM</b><br>
+      Current day is: <b><span id="day"></span>PPM</b><br>
+      Current time is: <b><span id="time"></span>PPM</b><br>
+      Current salinity is: <b><span id="salinity"></span>PPM</b><br>
     </p>
     <h2>Send:</h2>
     <form id="emit" method="POST" action='#'>

@@ -1,11 +1,9 @@
-import json
+# import json
 
 # Represents the state of the system
 # class model:
 #     display = "foo"
 #     salinity = "bar"
-
-poolModel = {"display": "foo", "salinity": "bar"}
 
 # air_temp = 0
 # pool_temp = 0

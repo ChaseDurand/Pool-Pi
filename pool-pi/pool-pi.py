@@ -5,7 +5,6 @@ from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 from threading import Lock
 from threading import Thread
-# from model import poolModel
 import uuid
 import json
 
@@ -96,7 +95,14 @@ previous_message = NON_KEEP_ALIVE
 salt_level = 0  #test salt level variable for web proof of concept
 flag_data_changed = False  #True if there is new data for site, false if no new data
 
-poolModel = {"display": "foo", "salinity": "bar"}
+poolModel = {
+    "display": "WAITING FOR DISPLAY",
+    "airtemp": "WAITING FOR AIRTEMP",
+    "pooltemp": "WAITING FOR POOLTEMP",
+    "day": "WAITING FOR DAY",
+    "time": "WAITING FOR TIME",
+    "salinity": "WAITING FOR SALINITY"
+}
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
@@ -325,6 +331,7 @@ def sendModel():
 
 
 def main():
+    # TODO get states from memory on startup
     while (True):
         # Read Serial Bus
         # If new serial data is available, read from the buffer
