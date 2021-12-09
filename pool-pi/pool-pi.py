@@ -217,7 +217,10 @@ def parseDisplay(data):
     elif DISPLAY_DATE in data:
         parseDateTime(data)
     elif DISPLAY_CHECK in data:
-        print('check system update', end='')
+        if DISPLAY_VERY_LOW_SALT in data:
+            parseSalinity(data)
+        else:
+            print('check system update', end='')
     elif DISPLAY_SALT_LEVEL in data:
         parseSalinity(data)
     else:
