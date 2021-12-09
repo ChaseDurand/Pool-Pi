@@ -245,8 +245,8 @@ def parseAirTemp(data):
     global poolModel
     global flag_data_changed
     previousAirTemp = poolModel['airtemp']
-    print(data.decode('utf-8').split())
-    newAirTemp = data.decode('utf-8').split()[-2]
+    print(data.decode('utf-8').split()[2])
+    newAirTemp = data.decode('utf-8').split()[2]
     if newAirTemp != previousAirTemp:
         flag_data_changed = True
         poolModel['airtemp'] = newAirTemp
