@@ -55,10 +55,10 @@
             // Handler for the model update
             socket.on('model', function(msg){
                $('#display').text(msg.display);
-               $('#air-temp').text(msg.data.airtemp)
+               $('#air-temp').text(msg.airtemp)
                $('#pooltemp').text(msg.pooltemp);
                $('#day').text(msg.day);
-               $('#time').text(msg.data.time)
+               $('#time').text(msg.time)
                $('#salinity').text(msg.salinity);
             });
 
