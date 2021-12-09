@@ -99,8 +99,7 @@ poolModel = {
     "display": "WAITING FOR DISPLAY",
     "airtemp": "WAITING FOR AIRTEMP",
     "pooltemp": "WAITING FOR POOLTEMP",
-    "day": "WAITING FOR DAY",
-    "time": "WAITING FOR TIME",
+    "datetime": "WAITING FOR DATETIME",
     "salinity": "WAITING FOR SALINITY"
 }
 
@@ -216,7 +215,7 @@ def parseDisplay(data):
     elif DISPLAY_CHLORINATOR_STATUS in data:
         print('chlorinator status update:', end='')
     elif DISPLAY_DATE in data:
-        print('date update:', end='')
+        parseDateTime(data)
     elif DISPLAY_CHECK in data:
         print('check system update', end='')
     elif DISPLAY_SALT_LEVEL in data:
@@ -238,6 +237,18 @@ def parseDisplay(data):
         except UnicodeDecodeError as e:
             print(e)
             print(data)
+    return
+
+
+def parseDateTime(data):
+    global poolModel
+    global flag_data_changed
+    previousDateTIme = poolModel['datetime']
+    newDateTime = data.decode('utf-8').trim()
+    if newDateTime != previousDateTIme:
+        flag_data_changed = True
+        poolModel['datetime'] = newDateTime
+    print('date time update:', end='')
     return
 
 
@@ -274,9 +285,6 @@ def parseSalinity(data):
     if salt_level != previous_salt_level:
         flag_data_changed = True
     print('salt level update:', end='')
-    poolModel["salinity"] = salt_level
-    flag_data_changed == True
-    print(salt_level, 'PPM')
     return
 
 
