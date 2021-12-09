@@ -204,8 +204,8 @@ def parseDisplay(data):
     global poolModel
     # Classify display update and print classification
     if DISPLAY_AIRTEMP in data:
-        print('air temp update:', end='')
         data = data.replace(b'\x5f', b'\xc2\xb0')
+        parseAirTemp(data)
     elif DISPLAY_POOLTEMP in data:
         print('pooltemp update:', end='')
         data = data.replace(b'\x5f', b'\xc2\xb0')
@@ -220,15 +220,7 @@ def parseDisplay(data):
     elif DISPLAY_CHECK in data:
         print('check system update', end='')
     elif DISPLAY_SALT_LEVEL in data:
-        #parse salt level and store
-        previous_salt_level = salt_level
-        salt_level = data.decode('utf-8').split()[-3]
-        if salt_level != previous_salt_level:
-            flag_data_changed = True
-        print('salt level update:', end='')
-        poolModel["salinity"] = salt_level
-        flag_data_changed == True
-        print(salt_level, 'PPM')
+        parseSalinity(data)
     else:
         print('unclassified display update', end='')
 
@@ -246,6 +238,33 @@ def parseDisplay(data):
         except UnicodeDecodeError as e:
             print(e)
             print(data)
+    return
+
+
+def parseAirTemp(data):
+    global poolModel
+    global flag_data_changed
+    previousAirTemp = poolModel['airtemp']
+    newAirTemp = data.decode('utf-8').split()[-1]
+    if newAirTemp != previousAirTemp:
+        flag_data_changed = True
+        poolModel['airtemp'] = newAirTemp
+    print('air temp update:', end='')
+    return
+
+
+def parseSalinity(data):
+    #parse salt level and store
+    global salt_level
+    global flag_data_changed
+    previous_salt_level = salt_level
+    salt_level = data.decode('utf-8').split()[-3]
+    if salt_level != previous_salt_level:
+        flag_data_changed = True
+    print('salt level update:', end='')
+    poolModel["salinity"] = salt_level
+    flag_data_changed == True
+    print(salt_level, 'PPM')
     return
 
 
