@@ -1,5 +1,6 @@
 import serial
 from gpiozero import LED
+from werkzeug.datastructures import T
 from commands import *
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
@@ -307,6 +308,8 @@ def parseSalinity(data):
 
 def parseLEDs(data):
     global poolModel
+    global flag_data_changed
+    flag_data_changed = True
     print('led update', data)
     #TODO clean this up to reuse code
     #TODO expand to next 4 bytes to determine blinking status
