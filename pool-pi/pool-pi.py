@@ -1,13 +1,11 @@
 import serial
 from gpiozero import LED
-from werkzeug.datastructures import T
 from commands import *
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 from threading import Lock
 from threading import Thread
 import uuid
-import json
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
