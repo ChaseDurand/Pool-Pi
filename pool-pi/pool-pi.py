@@ -109,7 +109,8 @@ poolModel = {
     "airtemp": "WAITING FOR AIRTEMP",
     "pooltemp": "WAITING FOR POOLTEMP",
     "datetime": "WAITING FOR DATETIME",
-    "salinity": "WAITING FOR SALINITY"
+    "salinity": "WAITING FOR SALINITY",
+    "waterfall": "INIT"
 }
 
 ser = serial.Serial(port='/dev/ttyAMA0',
@@ -305,6 +306,7 @@ def parseSalinity(data):
 
 
 def parseLEDs(data):
+    global poolModel
     print('led update', data)
     #TODO clean this up to reuse code
     #TODO expand to next 4 bytes to determine blinking status
@@ -313,6 +315,10 @@ def parseLEDs(data):
         if item[0] & data[0]:
             print('     ', item[1])
     for item in LED_2:
+        if item[1] == 'AUX 4':
+            poolModel['waterfall'] = 'ON'
+        else:
+            poolModel['waterfall'] = 'OFF'
         if item[0] & data[1]:
             print('     ', item[1])
     for item in LED_3:

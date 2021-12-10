@@ -60,6 +60,14 @@
                $('#pool-temp').text(msg.pooltemp);
                $('#date-time').text(msg.datetime);
                $('#salinity').text(msg.salinity);
+               if (msg.waterfall != "INIT"){
+                if (msg.waterfall == "ON"){
+                    $('#testid').checked == true;
+                }
+                else{
+                    $('#testid').checked == false;
+                }
+               }
             });
 
             // Handlers for the different forms in the page.
@@ -73,13 +81,6 @@
                 socket.emit('my_broadcast_event', {data: $('#broadcast_data').val()});
                 return false;
             });
-            // $("#testform").on("change", "input:checkbox", function(){
-            //     $("#testform").submit();
-            // });
-            // $('form#testform').submit(function(event) {
-            //     socket.emit('my_toggle_event', {data: $('#testid:checked').length});
-            //     return false;
-            // });
             $("#testform").on("change", "input:checkbox", function(event){
                 socket.emit('my_toggle_event', {data: $('#testid:checked').length});
                 return false;
