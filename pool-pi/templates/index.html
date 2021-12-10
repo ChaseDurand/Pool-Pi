@@ -73,8 +73,11 @@
                 socket.emit('my_broadcast_event', {data: $('#broadcast_data').val()});
                 return false;
             });
+            $("#testform").on("change", "input:checkbox", function(){
+                $("#testform").submit();
+            });
             $('form#testform').submit(function(event) {
-                socket.emit('my_toggle_event', {data: $('#testid:checked').length > 0});
+                socket.emit('my_toggle_event', {data: $('#testid:checked').length});
                 return false;
             });
         });
