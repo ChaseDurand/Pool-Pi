@@ -316,9 +316,10 @@ def parseLEDs(data):
             print('     ', item[1])
     for item in LED_2:
         if item[1] == 'AUX 4':
-            poolModel['waterfall'] = 'ON'
-        else:
-            poolModel['waterfall'] = 'OFF'
+            if item[0] & data[1]:
+                poolModel['waterfall'] = 'ON'
+            else:
+                poolModel['waterfall'] = 'OFF'
         if item[0] & data[1]:
             print('     ', item[1])
     for item in LED_3:
