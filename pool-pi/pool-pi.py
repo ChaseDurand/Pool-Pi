@@ -369,12 +369,12 @@ def sendCommand():
             return
         if poolModel['waterfall'] == "OFF" and command[1] == 0:
             return
-        if command_queue.pop[0] == "AUX4":
+        if command[0] == "AUX4":
             send_enable.on()
             ser.write(AUX4)
             ser.flush()
             send_enable.off()
-            ready_to_send = False
+        ready_to_send = False
 
 
 def updateModel():
