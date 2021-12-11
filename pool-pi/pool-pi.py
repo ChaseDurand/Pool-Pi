@@ -360,6 +360,7 @@ def sendCommand():
         # need to initialize counters for command confirmation
 
         #Temporary hard code for testing waterfall. Need to move command matching logic to getCommand
+        command = (1, )
         command = command_queue.pop
         #Ensure we're not in init phase
         if poolModel['waterfall'] == "INIT":
