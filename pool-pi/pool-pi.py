@@ -57,6 +57,7 @@ def my_broadcast_event(message):
 
 @socketio.event
 def my_toggle_event(message):
+    command_queue.append(("AUX4", message['data']))
     emit('my_response', {
         'data': message['data'],
         'count': 'received!!!'
@@ -344,23 +345,36 @@ def confirmChecksum(message):
         return False
 
 
+def getCommand():
+    #TODO
+    return
+
+
 def sendCommand():
     global command_queue
     global ready_to_send
+    global poolModel
     if (len(command_queue) != 0 and ready_to_send == True):
         # get command from queue and send
         # need flag for indicating command needs to be confirmed
         # need to initialize counters for command confirmation
-        send_enable.on()
-        ser.write()
-        ser.flush()
-        send_enable.off()
-        ready_to_send = False
 
-
-def getCommand():
-    #TODO
-    return
+        #Temporary hard code for testing waterfall. Need to move command matching logic to getCommand
+        command = command_queue.pop
+        #Ensure we're not in init phase
+        if poolModel['waterfall'] == "INIT":
+            return
+        #If we're trying to turn it on and it's already on, do nothing. Same if off.
+        if poolModel['waterfall'] == "ON" and command[1] == 1:
+            return
+        if poolModel['waterfall'] == "OFF" and command[1] == 0:
+            return
+        if command_queue.pop[0] == "AUX4":
+            send_enable.on()
+            ser.write(AUX4)
+            ser.flush()
+            send_enable.off()
+            ready_to_send = False
 
 
 def updateModel():
