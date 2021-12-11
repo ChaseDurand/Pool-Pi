@@ -55,13 +55,13 @@
 
             // Handler for the model update
             socket.on('model', function(msg){
-                console.log(msg);
                $('#display').text(msg.display);
                $('#air-temp').text(msg.airtemp)
                $('#pool-temp').text(msg.pooltemp);
                $('#date-time').text(msg.datetime);
                $('#salinity').text(msg.salinity);
                if (msg.waterfall != "INIT"){
+                console.log(msg);
                 if (msg.waterfall == "ON"){
                     $('#testid').checked = true;
                 }
