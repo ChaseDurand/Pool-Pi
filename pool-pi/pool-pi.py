@@ -374,6 +374,10 @@ def sendCommand():
             ser.write(AUX4)
             ser.flush()
             send_enable.off()
+            if poolModel['waterfall'] == "ON":
+                poolModel['waterfall'] == "OFF"
+            else:
+                poolModel['waterfall'] == "ON"
         ready_to_send = False
 
 
