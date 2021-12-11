@@ -25,10 +25,6 @@ def background_thread():
     while True:
         socketio.sleep(10)
         count += 1
-        # socketio.emit('my_response', {
-        #     'data': 'Server generated event',
-        #     'count': salt_level
-        # })
         socketio.emit('my_response', {
             'data': 'Server generated event',
             'count': count
