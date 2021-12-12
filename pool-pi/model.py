@@ -1,4 +1,5 @@
 # Represents the state of the system
+import json
 
 
 class model:
@@ -10,15 +11,5 @@ class model:
         self.salinity = "WAITING FOR SALINITY"
         self.waterfall = "INIT"
 
-
-# class model:
-# {
-#     "display": "WAITING FOR DISPLAY",
-#     "airtemp": "WAITING FOR AIRTEMP",
-#     "pooltemp": "WAITING FOR POOLTEMP",
-#     "datetime": "WAITING FOR DATETIME",
-#     "salinity": "WAITING FOR SALINITY",
-#     "waterfall": [
-#         {"data": "INIT", "version": 0}
-#     ]
-# }
+    def toJSON(self):
+        return json.dumps(vars(self))

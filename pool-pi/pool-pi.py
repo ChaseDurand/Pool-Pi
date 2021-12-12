@@ -1,90 +1,10 @@
 import serial
 from gpiozero import LED
 from commands import *
-from flask import Flask, render_template, session, request
-from flask_socketio import SocketIO, emit
-from threading import Lock
 from threading import Thread
-import uuid
-from model import model
 import json
-
-# Set this variable to "threading", "eventlet" or "gevent" to test the
-# different async modes, or leave it set to None for the application to choose
-# the best option based on installed packages.
-async_mode = None
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = uuid.uuid4().hex
-socketio = SocketIO(app, async_mode=async_mode)
-thread = None
-thread_lock = Lock()
-
-
-def background_thread():
-    """Example of how to send server generated events to clients."""
-    count = 0
-    while True:
-        socketio.sleep(10)
-        count += 1
-        socketio.emit('my_response', {
-            'data': 'Server generated event',
-            'count': count
-        })
-
-
-@app.route('/')
-def index():
-    return render_template('index.html', async_mode=socketio.async_mode)
-
-
-@socketio.event
-def my_event(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response', {
-        'data': message['data'],
-        'count': session['receive_count']
-    })
-
-
-@socketio.event
-def my_broadcast_event(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response', {
-        'data': message['data'],
-        'count': session['receive_count']
-    },
-         broadcast=True)
-
-
-@socketio.event
-def my_toggle_event(message):
-    command_queue.append(("AUX4", message['data']))
-    emit('my_response', {
-        'data': message['data'],
-        'count': 'received!!!'
-    },
-         broadcast=True)
-
-
-@socketio.event
-def my_ping():
-    emit('my_pong')
-
-
-@socketio.event
-def connect():
-    global thread
-    with thread_lock:
-        if thread is None:
-            thread = socketio.start_background_task(background_thread)
-    emit('my_response', {'data': 'Connected', 'count': 0})
-
-
-@socketio.on('disconnect')
-def test_disconnect():
-    print('Client disconnected', request.sid)
-
+from model import model
+from web import *
 
 buffer = bytearray()
 buffer_full = False
@@ -394,13 +314,14 @@ def sendModel():
     global poolModel
     if flag_data_changed == False:
         return
-    socketio.emit('model', json.dumps(vars(poolModel)))
+    socketio.emit('model', poolModel.toJSON())
     flag_data_changed = False
     return
 
 
 def main():
     # TODO get states from memory on startup
+
     while (True):
         # Read Serial Bus
         # If new serial data is available, read from the buffer
