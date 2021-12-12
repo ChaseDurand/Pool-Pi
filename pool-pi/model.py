@@ -1,15 +1,25 @@
-# import json
-
 # Represents the state of the system
-# class model:
-#     display = "foo"
-#     salinity = "bar"
 
-# air_temp = 0
-# pool_temp = 0
-# degrees_F = True
-# gas_heater_status = False
-# chlorinator_status = False
-# day = "Nullday"
-# time = ""
-# LEDs
+
+class model:
+    {
+        "display": "WAITING FOR DISPLAY",
+        "airtemp": "WAITING FOR AIRTEMP",
+        "pooltemp": "WAITING FOR POOLTEMP",
+        "datetime": "WAITING FOR DATETIME",
+        "salinity": "WAITING FOR SALINITY",
+        "waterfall": "INIT"
+    }
+
+
+# class model:
+# {
+#     "display": "WAITING FOR DISPLAY",
+#     "airtemp": "WAITING FOR AIRTEMP",
+#     "pooltemp": "WAITING FOR POOLTEMP",
+#     "datetime": "WAITING FOR DATETIME",
+#     "salinity": "WAITING FOR SALINITY",
+#     "waterfall": [
+#         {"data": "INIT", "version": 0}
+#     ]
+# }

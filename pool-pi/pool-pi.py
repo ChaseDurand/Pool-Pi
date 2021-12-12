@@ -6,6 +6,8 @@ from flask_socketio import SocketIO, emit
 from threading import Lock
 from threading import Thread
 import uuid
+from model import model
+import json
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -100,14 +102,7 @@ previous_message = NON_KEEP_ALIVE
 salt_level = 0  #test salt level variable for web proof of concept
 flag_data_changed = False  #True if there is new data for site, false if no new data
 
-poolModel = {
-    "display": "WAITING FOR DISPLAY",
-    "airtemp": "WAITING FOR AIRTEMP",
-    "pooltemp": "WAITING FOR POOLTEMP",
-    "datetime": "WAITING FOR DATETIME",
-    "salinity": "WAITING FOR SALINITY",
-    "waterfall": "INIT"
-}
+poolModel = model()
 
 ser = serial.Serial(port='/dev/ttyAMA0',
                     baudrate=19200,
@@ -374,10 +369,10 @@ def sendCommand():
             ser.write(AUX4)
             ser.flush()
             send_enable.off()
-            if poolModel['waterfall'] == "ON":
-                poolModel['waterfall'] == "OFF"
-            else:
-                poolModel['waterfall'] == "ON"
+            # if poolModel['waterfall'] == "ON":
+            #     poolModel['waterfall'] == "OFF"
+            # else:
+            #     poolModel['waterfall'] == "ON"
         ready_to_send = False
 
 
@@ -400,9 +395,7 @@ def sendModel():
     global poolModel
     if flag_data_changed == False:
         return
-    # print(poolModel)
-    # print(json.dump(poolModel))
-    socketio.emit('model', poolModel)
+    socketio.emit('model', json.dumps(poolModel))
     flag_data_changed = False
     return
 
