@@ -55,13 +55,14 @@
 
             // Handler for the model update
             socket.on('model', function(msg){
-               $('#display').text(msg.display);
-               $('#air-temp').text(msg.airtemp)
-               $('#pool-temp').text(msg.pooltemp);
-               $('#date-time').text(msg.datetime);
-               $('#salinity').text(msg.salinity);
-               if (msg.waterfall != "INIT"){
-                if (msg.waterfall == "ON"){
+                msgJSON = JSON.parse(msg);
+               $('#display').text(msgJSON.display);
+               $('#air-temp').text(msgJSON.airtemp)
+               $('#pool-temp').text(msgJSON.pooltemp);
+               $('#date-time').text(msgJSON.datetime);
+               $('#salinity').text(msgJSON.salinity);
+               if (msgJSON.waterfall != "INIT"){
+                if (msgJSON.waterfall == "ON"){
                     $('#testid').prop('checked',true);
                 }
                 else{
