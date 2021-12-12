@@ -229,15 +229,14 @@ def parseDisplay(data):
 
     # Print data
     try:
-        poolModel["display"] = data.decode('utf-8')
+        poolModel.display = data.decode('utf-8')
         flag_data_changed = True
-        print(poolModel["display"])
+        print(poolModel.display)
     except UnicodeDecodeError as e:
         try:
-            poolModel["display"] = data.replace(b'\xba',
-                                                b'\x3a').decode('utf-8')
+            poolModel.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
             flag_data_changed = True
-            print(poolModel["display"])  #: is encoded as xBA
+            print(poolModel.display)  #: is encoded as xBA
         except UnicodeDecodeError as e:
             print(e)
             print(data)
@@ -247,12 +246,12 @@ def parseDisplay(data):
 def parseDateTime(data):
     global poolModel
     global flag_data_changed
-    previousDateTIme = poolModel['datetime']
+    previousDateTIme = poolModel.datetime
     newDateTime = data.replace(b'\xba',
                                b'\x3a').decode('utf-8')  #: is encoded as xBA
     if newDateTime != previousDateTIme:
         flag_data_changed = True
-        poolModel['datetime'] = newDateTime
+        poolModel.datetime = newDateTime
     print('date time update:', end='')
     return
 
@@ -260,11 +259,11 @@ def parseDateTime(data):
 def parseAirTemp(data):
     global poolModel
     global flag_data_changed
-    previousAirTemp = poolModel['airtemp']
+    previousAirTemp = poolModel.airtemp
     newAirTemp = data.decode('utf-8').split()[2]
     if newAirTemp != previousAirTemp:
         flag_data_changed = True
-        poolModel['airtemp'] = newAirTemp
+        poolModel.airtemp = newAirTemp
     print('air temp update:', end='')
     return
 
@@ -272,11 +271,11 @@ def parseAirTemp(data):
 def parsePoolTemp(data):
     global poolModel
     global flag_data_changed
-    previousPoolTemp = poolModel['pooltemp']
+    previousPoolTemp = poolModel.pooltemp
     newPoolTemp = data.decode('utf-8').split()[2]
     if newPoolTemp != previousPoolTemp:
         flag_data_changed = True
-        poolModel['pooltemp'] = newPoolTemp
+        poolModel.pooltemp = newPoolTemp
     print('pooltemp update:', end='')
     return
 
@@ -284,14 +283,14 @@ def parsePoolTemp(data):
 def parseSalinity(data):
     global poolModel
     global flag_data_changed
-    previousSaltLevel = poolModel['salinity']
+    previousSaltLevel = poolModel.salinity
     if DISPLAY_VERY_LOW_SALT in data:
         newSaltLevel = "Very Low Salt"
     else:
         newSaltLevel = data.decode('utf-8').split()[-3]
     if newSaltLevel != previousSaltLevel:
         flag_data_changed = True
-        poolModel['salinity'] = newSaltLevel
+        poolModel.salinity = newSaltLevel
     print('salt level update:', end='')
     return
 
@@ -310,9 +309,9 @@ def parseLEDs(data):
     for item in LED_2:
         if item[1] == 'AUX 4':
             if item[0] & data[1]:
-                poolModel['waterfall'] = 'ON'
+                poolModel.waterfall = 'ON'
             else:
-                poolModel['waterfall'] = 'OFF'
+                poolModel.waterfall = 'OFF'
         if item[0] & data[1]:
             print('     ', item[1])
     for item in LED_3:
@@ -357,12 +356,12 @@ def sendCommand():
         #Temporary hard code for testing waterfall. Need to move command matching logic to getCommand
         command = command_queue.pop()
         #Ensure we're not in init phase
-        if poolModel['waterfall'] == "INIT":
+        if poolModel.waterfall == "INIT":
             return
         #If we're trying to turn it on and it's already on, do nothing. Same if off.
-        if poolModel['waterfall'] == "ON" and command[1] == 1:
+        if poolModel.waterfall == "ON" and command[1] == 1:
             return
-        if poolModel['waterfall'] == "OFF" and command[1] == 0:
+        if poolModel.waterfall == "OFF" and command[1] == 0:
             return
         if command[0] == "AUX4":
             send_enable.on()
