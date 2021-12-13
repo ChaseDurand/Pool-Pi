@@ -20,13 +20,13 @@ DISPLAY_VERY_LOW_SALT = 'Very Low Salt'.encode('utf-8')
 
 AUX4 = b'\x10\x02\x00\x02\x00\x10\x00\x00\x00\x00\x10\x00\x00\x00\x00\x34\x10\x03'
 
-LED_1 = [(1 << 0, 'Heater 1'), (1 << 1, 'Valve 3'), (1 << 2, 'Check System'),
-         (1 << 3, 'Pool'), (1 << 4, 'Spa'), (1 << 5, 'Filter'),
-         (1 << 6, 'Lights'), (1 << 7, 'AUX 1')]
-LED_2 = [(1 << 0, 'AUX 2'), (1 << 1, 'Service'), (1 << 2, 'AUX 3'),
-         (1 << 3, 'AUX 4'), (1 << 4, 'AUX 5'), (1 << 5, 'AUX 6'),
-         (1 << 6, 'Valve 4 / Heater 2'), (1 << 7, 'Spillover')]
-LED_3 = [(1 << 0, 'System Off'), (1 << 1, 'Aux 7'), (1 << 2, 'AUX 8'),
-         (1 << 3, 'AUX 9'), (1 << 4, 'AUX 10'), (1 << 5, 'AUX 11'),
-         (1 << 6, 'AUX 12'), (1 << 7, 'AUX 13')]
-LED_4 = [(1 << 0, 'AUX 14'), (1 << 1, 'Super Chlorinate')]
+LED = [[(1 << 0, 'heater1'), (1 << 1, 'valve3'), (1 << 2, 'checkSystem'),
+        (1 << 3, 'pool'), (1 << 4, 'spa'), (1 << 5, 'filter'),
+        (1 << 6, 'lights'), (1 << 7, 'aux1')],
+       [(1 << 0, 'aux2'), (1 << 1, 'service'), (1 << 2, 'aux3'),
+        (1 << 3, 'aux4'), (1 << 4, 'aux5'), (1 << 5, 'aux6'),
+        (1 << 6, 'valve4'), (1 << 7, 'spillover')],
+       [(1 << 0, 'systemOff'), (1 << 1, 'aux7'), (1 << 2, 'aux8'),
+        (1 << 3, 'AUX 9'), (1 << 4, 'aux10'), (1 << 5, 'aux11'),
+        (1 << 6, 'aux12'), (1 << 7, 'aux13')],
+       [(1 << 0, 'aux14'), (1 << 1, 'superChlorinate')]]

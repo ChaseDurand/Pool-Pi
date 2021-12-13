@@ -1,58 +1,39 @@
-import serial
-from gpiozero import LED
 from commands import *
 from threading import Thread
-import json
-from model import model
+from model import *
 from web import *
 
-buffer = bytearray()
-buffer_full = False
 command_queue = []
 ready_to_send = False
-send_enable = LED(17)
-send_enable.off()
 sending_attempts = 0
 confirm_attempts = 0
-looking_for_start = True
 MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
 MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
-previous_message = NON_KEEP_ALIVE
 
 salt_level = 0  #test salt level variable for web proof of concept
 flag_data_changed = False  #True if there is new data for site, false if no new data
 
-poolModel = model()
 
-ser = serial.Serial(port='/dev/ttyAMA0',
-                    baudrate=19200,
-                    parity=serial.PARITY_NONE,
-                    stopbits=serial.STOPBITS_TWO)
-
-
-def readSerialBus():
+def readSerialBus(serialHandler):
     # Read data from the serial bus to build full buffer
     # Serial commands begin with DLE STX and terminate with DLE ETX
     # With the exception of searching for the two start bytes, this function only reads one byte to prevent blocking other processes
     # When looking for start of message, looking_for_start is True
     # When buffer is filled with a full command and ready to be parseed, set buffer_full to True
-    global looking_for_start
-    global buffer
-    global buffer_full
-    if (ser.in_waiting == 0):
+    if (serialHandler.in_waiting() == 0):
         return
-    if (buffer_full == True):
+    if (serialHandler.buffer_full == True):
         return
-    serChar = ser.read()
-    if looking_for_start:
+    serChar = serialHandler.read()
+    if serialHandler.looking_for_start:
         if serChar == DLE:
-            serChar = ser.read()
+            serChar = serialHandler.read()
             if serChar == STX:
                 # We have found start (DLE STX)
-                buffer.clear()
-                buffer += DLE
-                buffer += STX
-                looking_for_start = False
+                serialHandler.buffer.clear()
+                serialHandler.buffer += DLE
+                serialHandler.buffer += STX
+                serialHandler.looking_for_start = False
                 return
             else:
                 # We have found DLE but not DLE STX
@@ -62,73 +43,65 @@ def readSerialBus():
             return
     else:
         # We are adding to buffer while looking for DLE ETX
-        buffer += serChar
+        serialHandler.buffer += serChar
         # Check if we have found DLE ETX
-        if ((serChar == ETX) and (buffer[-2] == int.from_bytes(DLE, "big"))):
+        if ((serChar == ETX)
+                and (serialHandler.buffer[-2] == int.from_bytes(DLE, "big"))):
             # We have found DLE ETX
             buffer_full = True
-            looking_for_start = True
+            serialHandler.looking_for_start = True
             return
 
 
-def parseBuffer():
+def parseBuffer(serialHandler, poolModel):
     '''
     The DLE, STX and Command/Data fields are added together to provide the 2-byte Checksum. If 
     any of the bytes of the Command/Data Field or Checksum are equal to the DLE character (10H), a 
     NULL character (00H) is inserted into the transmitted data stream immediately after that byte. That 
     NULL character must then be removed by the receiver.
     '''
-    global buffer_full
-    global looking_for_start
     global ready_to_send
-    global buffer
-    global previous_message
-    if (buffer_full):
+    if (serialHandler.buffer_full):
         # Confirm checksum
-        if (confirmChecksum(buffer) == False):
-            print("Checksum mismatch! ", buffer)
+        if (confirmChecksum(serialHandler.buffer) == False):
+            print("Checksum mismatch! ", serialHandler.buffer)
         # Get message
-        if (buffer == KEEP_ALIVE[0]):
-            if previous_message != KEEP_ALIVE:
-                print(KEEP_ALIVE[1])
-                previous_message = KEEP_ALIVE
-        else:
+        if (serialHandler.buffer != KEEP_ALIVE[0]):
             #TODO identify and account for possible x00 after x10 (DLE)
             while (True):
                 try:
-                    index_to_remove = buffer.index(DLE, 2, -2) + 1
-                    removed = buffer.pop(index_to_remove)
+                    index_to_remove = serialHandler.buffer.index(DLE, 2,
+                                                                 -2) + 1
+                    removed = serialHandler.buffer.pop(index_to_remove)
                     #TODO fix unknown bug here
                     if removed != b'\x00':
                         print('Error, expected 00 but removed', removed)
                 except ValueError:
                     break
-            command = buffer[2:4]
-            data = buffer[4:-4]
-            previous_message = NON_KEEP_ALIVE
+            command = serialHandler.buffer[2:4]
+            data = serialHandler.buffer[4:-4]
             if command == FRAME_UPDATE_DISPLAY[0]:
                 parseDisplay(data)
             elif command == FRAME_UPDATE_LEDS[0]:
-                parseLEDs(data)
+                parseLEDs(data, poolModel)
             else:
                 print(command, data)
-        buffer.clear()
-        looking_for_start = True
-        buffer_full = False
+        serialHandler.buffer.clear()
+        serialHandler.looking_for_start = True
+        serialHandler.buffer_full = False
         ready_to_send = True
 
 
-def parseDisplay(data):
+def parseDisplay(data, poolModel):
     global salt_level
     global flag_data_changed
-    global poolModel
     # Classify display update and print classification
     if DISPLAY_AIRTEMP in data:
         data = data.replace(b'\x5f', b'\xc2\xb0')
-        parseAirTemp(data)
+        parseAirTemp(data, poolModel)
     elif DISPLAY_POOLTEMP in data:
         data = data.replace(b'\x5f', b'\xc2\xb0')
-        parsePoolTemp(data)
+        parsePoolTemp(data, poolModel)
     elif DISPLAY_GASHEATER in data:
         print('gas heater update:', end='')
     elif DISPLAY_CHLORINATOR_PERCENT in data:
@@ -136,10 +109,10 @@ def parseDisplay(data):
     elif DISPLAY_CHLORINATOR_STATUS in data:
         print('chlorinator status update:', end='')
     elif DISPLAY_DATE in data:
-        parseDateTime(data)
+        parseDateTime(data, poolModel)
     elif DISPLAY_CHECK in data:
         if DISPLAY_VERY_LOW_SALT in data:
-            parseSalinity(data)
+            parseSalinity(data, poolModel)
         else:
             print('check system update', end='')
     elif DISPLAY_SALT_LEVEL in data:
@@ -163,8 +136,7 @@ def parseDisplay(data):
     return
 
 
-def parseDateTime(data):
-    global poolModel
+def parseDateTime(data, poolModel):
     global flag_data_changed
     previousDateTIme = poolModel.datetime
     newDateTime = data.replace(b'\xba',
@@ -176,8 +148,7 @@ def parseDateTime(data):
     return
 
 
-def parseAirTemp(data):
-    global poolModel
+def parseAirTemp(data, poolModel):
     global flag_data_changed
     previousAirTemp = poolModel.airtemp
     newAirTemp = data.decode('utf-8').split()[2]
@@ -188,8 +159,7 @@ def parseAirTemp(data):
     return
 
 
-def parsePoolTemp(data):
-    global poolModel
+def parsePoolTemp(data, poolModel):
     global flag_data_changed
     previousPoolTemp = poolModel.pooltemp
     newPoolTemp = data.decode('utf-8').split()[2]
@@ -200,8 +170,7 @@ def parsePoolTemp(data):
     return
 
 
-def parseSalinity(data):
-    global poolModel
+def parseSalinity(data, poolModel):
     global flag_data_changed
     previousSaltLevel = poolModel.salinity
     if DISPLAY_VERY_LOW_SALT in data:
@@ -215,31 +184,21 @@ def parseSalinity(data):
     return
 
 
-def parseLEDs(data):
-    global poolModel
+def parseLEDs(data, poolModel):
     global flag_data_changed
     flag_data_changed = True
     print('led update', data)
     #TODO clean this up to reuse code
     #TODO expand to next 4 bytes to determine blinking status
     #Look at corrosponding LED bit flags to determine which LEDs are on
-    for item in LED_1:
-        if item[0] & data[0]:
-            print('     ', item[1])
-    for item in LED_2:
-        if item[1] == 'AUX 4':
-            if item[0] & data[1]:
-                poolModel.waterfall = 'ON'
-            else:
-                poolModel.waterfall = 'OFF'
-        if item[0] & data[1]:
-            print('     ', item[1])
-    for item in LED_3:
-        if item[0] & data[2]:
-            print('     ', item[1])
-    for item in LED_4:
-        if item[0] & data[3]:
-            print('     ', item[1])
+    for i in range(0, 4):
+        for item in LED[i]:
+            if item[0] & data[0]:
+                print('     ', item[1])
+                if item[0] & data[1]:
+                    poolModel.updateParameter(item[0], attributeStates.ON)
+                else:
+                    poolModel.updateParameter(item[0], attributeStates.OFF)
     return
 
 
@@ -248,7 +207,7 @@ def confirmChecksum(message):
     # Return True if checksums match, False if not
     # Checksum is 4th and 3rd to last bytes of command (last bytes prior to DLE ETX)
     # Checksum includes DLE STX and command/data
-    target_checksum = buffer[-4] * (16**2) + buffer[
+    target_checksum = message[-4] * (16**2) + message[
         -3]  # Convert two byte checksum to single value #TODO change to int.from_bytes
     checksum = 0
     for i in message[:-4]:
@@ -265,6 +224,7 @@ def getCommand():
 
 
 def sendCommand():
+    return
     global command_queue
     global ready_to_send
     global poolModel
@@ -284,14 +244,7 @@ def sendCommand():
         if poolModel.waterfall == "OFF" and command[1] == 0:
             return
         if command[0] == "AUX4":
-            send_enable.on()
-            ser.write(AUX4)
-            ser.flush()
-            send_enable.off()
-            # if poolModel['waterfall'] == "ON":
-            #     poolModel['waterfall'] == "OFF"
-            # else:
-            #     poolModel['waterfall'] == "ON"
+            serialHandler.write(AUX4)
         ready_to_send = False
 
 
@@ -309,9 +262,8 @@ def updateModel():
     return
 
 
-def sendModel():
+def sendModel(poolModel):
     global flag_data_changed
-    global poolModel
     if flag_data_changed == False:
         return
     socketio.emit('model', poolModel.toJSON())
@@ -322,21 +274,23 @@ def sendModel():
 def main():
     # TODO get states from memory on startup
 
+    poolModel = PoolModel()
+    serialHandler = SerialHandler()
     while (True):
         # Read Serial Bus
         # If new serial data is available, read from the buffer
-        readSerialBus()
+        readSerialBus(serialHandler)
 
         # Parse Buffer
         # If a full serial message has been found, decode it
-        parseBuffer()
+        parseBuffer(serialHandler, poolModel)
 
         # Update pool model
         # If we have new data, update the local model
         updateModel()
 
         # Update webview
-        sendModel()
+        sendModel(poolModel)
 
         # Check for new commands
         getCommand()
