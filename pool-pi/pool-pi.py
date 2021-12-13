@@ -196,9 +196,9 @@ def parseLEDs(data, poolModel):
             if item[0] & data[0]:
                 print('     ', item[1])
                 if item[0] & data[1]:
-                    poolModel.updateParameter(item[0], attributeStates.ON)
+                    poolModel.updateParameter(item[0], "ON")
                 else:
-                    poolModel.updateParameter(item[0], attributeStates.OFF)
+                    poolModel.updateParameter(item[0], "OFF")
     return
 
 
