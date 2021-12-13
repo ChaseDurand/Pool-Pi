@@ -71,15 +71,17 @@ class SerialHandler:
                                  baudrate=19200,
                                  parity=serial.PARITY_NONE,
                                  stopbits=serial.STOPBITS_TWO)
+        self.send_enable = LED(17)
+        self.send_enable.off()
 
     def send(self, msg):
-        LED(17).on()
+        self.send_enable.on()
         self.ser.write(msg)
         self.ser.flush()
-        LED(17).off
+        self.send_enable.off()
 
     def read(self):
         return self.ser.read()
 
     def in_waiting(self):
-        return self.ser.in_waiting()
+        return self.ser.in_waiting
