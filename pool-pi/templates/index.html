@@ -55,20 +55,23 @@
 
             // Handler for the model update
             socket.on('model', function(msg){
-                msgJSON = JSON.parse(msg);
-               $('#display').text(msgJSON.display);
-               $('#air-temp').text(msgJSON.airtemp)
-               $('#pool-temp').text(msgJSON.pooltemp);
-               $('#date-time').text(msgJSON.datetime);
-               $('#salinity').text(msgJSON.salinity);
-               if (msgJSON.waterfall != "INIT"){
-                if (msgJSON.waterfall == "ON"){
-                    $('#testid').prop('checked',true);
+                msgObj = JSON.parse(msg);
+            // For every item in json message, need to update
+                for(var i = 0, len = keys(msgObj).length; i < len; ++i){
+                    attributeName = keys(msgObj)[i]
+                    if(typeof(msgObj[attributeName]) == "object"){
+                        // Attribute has state and version value
+                        state = msgObj[attributeName].state;
+                        version = msgObj[attributeName].version;
+                    }
+                    else{
+                        // Attribute only has state value
+                        state = msgObj[attributeName];
+                        version = "NA";
+                    }
+                    // Update corrosponding html
+                    document.getElementById(attributeName).textContent="State: "+state+", Version: "+version;
                 }
-                else{
-                    $('#testid').prop('checked',false);
-                }
-               }
             });
 
             // Handlers for the different forms in the page.
@@ -93,25 +96,47 @@
 <body>
     <h1>Pool-Pi</h1>
     <p>
-      Average ping/pong latency: <b><span id="ping-pong"></span>ms</b><br>
-      Display: <b><span id="display"></span></b><br>
-      Current air temp is: <b><span id="air-temp"></span></b><br>
-      Current pool temp is: <b><span id="pool-temp"></span></b><br>
-      Current day is: <b><span id="date-time"></span></b><br>
-      Current salinity is: <b><span id="salinity"></span></b><br>
+        Average ping/pong latency: <b><span id="ping-pong"></span>ms</b><br>
+        Current air temp is: <b><span id="airtemp"></span></b><br>
+        Display: <b><span id="display"></span></b><br>
+        Current pool temp is: <b><span id="pooltemp"></span></b><br>
+        Current day is: <b><span id="datetime"></span></b><br>
+        Current salinity is: <b><span id="salinity"></span></b><br>
+        Current heater1 is: <b><span id="heater1"></span></b><br>
+        Current valve3 is: <b><span id="valve3"></span></b><br>
+        Current checkSystem is: <b><span id="checkSystem"></span></b><br>
+        Current pool is: <b><span id="pool"></span></b><br>
+        Current spa is: <b><span id="spa"></span></b><br>
+        Current filter is: <b><span id="filter"></span></b><br>
+        Current lights is: <b><span id="lights"></span></b><br>
+        Current aux1 is: <b><span id="aux1"></span></b><br>
+        Current aux2 is: <b><span id="aux2"></span></b><br>
+        Current service is: <b><span id="service"></span></b><br>
+        Current aux3 is: <b><span id="aux3"></span></b><br>
+        Current aux4 is: <b><span id="aux4"></span></b><br>
+        Current aux5 is: <b><span id="aux5"></span></b><br>
+        Current aux6 is: <b><span id="aux6"></span></b><br>
+        Current valve4 is: <b><span id="valve4"></span></b><br>
+        Current spillover is: <b><span id="spillover"></span></b><br>
+        Current systemOff is: <b><span id="systemOff"></span></b><br>
+        Current aux7 is: <b><span id="aux7"></span></b><br>
+        Current aux8 is: <b><span id="aux8"></span></b><br>
+        Current aux9 is: <b><span id="aux9"></span></b><br>
+        Current aux10 is: <b><span id="aux10"></span></b><br>
+        Current aux11 is: <b><span id="aux11"></span></b><br>
+        Current aux12 is: <b><span id="aux12"></span></b><br>
+        Current aux13 is: <b><span id="aux13"></span></b><br>
+        Current aux14 is: <b><span id="aux14"></span></b><br>
+        Current superChlorinate is: <b><span id="superChlorinate"></span></b><br>
     </p>
     <h2>Send:</h2>
-    <form id="waterfall" method="POST" action='#'>
-        <input type="text" name="emit_data" id="emit_data" placeholder="Message">
-        <input type="submit" value="Echo">
-    </form>
-    <form id="testform" method="POST" action='#'>
+    <!-- <form id="testform" method="POST" action='#'>
         <label class="switch switch-on-off">
             <input class="switch-input" type="checkbox" id="testid" name="testid" checked=checked/>
             <span class="switch-label" data-on="ON" data-off="OFF"></span> 
             <span class="switch-handle"></span> 
         </label>
-    </form>
+    </form> -->
     <form id="broadcast" method="POST" action='#'>
         <input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message">
         <input type="submit" value="Broadcast">
