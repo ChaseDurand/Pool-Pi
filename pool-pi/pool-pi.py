@@ -2,6 +2,7 @@ from commands import *
 from threading import Thread
 from model import *
 from web import *
+from parsing import *
 
 command_queue = []
 ready_to_send = False
@@ -9,8 +10,6 @@ sending_attempts = 0
 confirm_attempts = 0
 MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
 MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
-
-salt_level = 0  #test salt level variable for web proof of concept
 flag_data_changed = False  #True if there is new data for site, false if no new data
 
 
@@ -90,134 +89,6 @@ def parseBuffer(serialHandler, poolModel):
         serialHandler.looking_for_start = True
         serialHandler.buffer_full = False
         ready_to_send = True
-
-
-def parseDisplay(data, poolModel):
-    global salt_level
-    global flag_data_changed
-    # Classify display update and print classification
-    if DISPLAY_AIRTEMP in data:
-        data = data.replace(b'\x5f', b'\xc2\xb0')
-        parseAirTemp(data, poolModel)
-    elif DISPLAY_POOLTEMP in data:
-        data = data.replace(b'\x5f', b'\xc2\xb0')
-        parsePoolTemp(data, poolModel)
-    elif DISPLAY_GASHEATER in data:
-        print('gas heater update:', end='')
-    elif DISPLAY_CHLORINATOR_PERCENT in data:
-        print('chlorinator percent update:', end='')
-    elif DISPLAY_CHLORINATOR_STATUS in data:
-        print('chlorinator status update:', end='')
-    elif DISPLAY_DATE in data:
-        parseDateTime(data, poolModel)
-    elif DISPLAY_CHECK in data:
-        if DISPLAY_VERY_LOW_SALT in data:
-            parseSalinity(data, poolModel)
-        else:
-            print('check system update', end='')
-    elif DISPLAY_SALT_LEVEL in data:
-        parseSalinity(data, poolModel)
-    else:
-        print('unclassified display update', end='')
-
-    # Print data
-    try:
-        poolModel.display = data.decode('utf-8')
-        flag_data_changed = True
-        print(poolModel.display)
-    except UnicodeDecodeError as e:
-        try:
-            poolModel.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
-            flag_data_changed = True
-            print(poolModel.display)  #: is encoded as xBA
-        except UnicodeDecodeError as e:
-            print(e)
-            print(data)
-    return
-
-
-def parseDateTime(data, poolModel):
-    global flag_data_changed
-    previousDateTIme = poolModel.datetime
-    newDateTime = data.replace(b'\xba',
-                               b'\x3a').decode('utf-8')  #: is encoded as xBA
-    if newDateTime != previousDateTIme:
-        flag_data_changed = True
-        poolModel.datetime = newDateTime
-    print('date time update:', end='')
-    return
-
-
-def parseAirTemp(data, poolModel):
-    global flag_data_changed
-    previousAirTemp = poolModel.airtemp
-    newAirTemp = data.decode('utf-8').split()[2]
-    if newAirTemp != previousAirTemp:
-        flag_data_changed = True
-        poolModel.airtemp = newAirTemp
-    print('air temp update:', end='')
-    return
-
-
-def parsePoolTemp(data, poolModel):
-    global flag_data_changed
-    previousPoolTemp = poolModel.pooltemp
-    newPoolTemp = data.decode('utf-8').split()[2]
-    if newPoolTemp != previousPoolTemp:
-        flag_data_changed = True
-        poolModel.pooltemp = newPoolTemp
-    print('pooltemp update:', end='')
-    return
-
-
-def parseSalinity(data, poolModel):
-    global flag_data_changed
-    previousSaltLevel = poolModel.salinity
-    if DISPLAY_VERY_LOW_SALT in data:
-        newSaltLevel = "Very Low Salt"
-    else:
-        newSaltLevel = data.decode('utf-8').split()[-3]
-    if newSaltLevel != previousSaltLevel:
-        flag_data_changed = True
-        poolModel.salinity = newSaltLevel
-    print('salt level update:', end='')
-    return
-
-
-def parseLEDs(data, poolModel):
-    global flag_data_changed
-    flag_data_changed = True
-    print('led update:')
-    #Look at corrosponding LED bit flags to determine which LEDs are on
-    for i in range(0, 4):
-        for item in LED_MASK[i]:
-            if item[0] & data[i]:
-                if item[0] & data[i + 4]:
-                    poolModel.updateParameter(item[1], "BLINK")
-                    print('     ', item[1], 'blink')
-                else:
-                    poolModel.updateParameter(item[1], "ON")
-                    print('     ', item[1], 'on')
-            else:
-                poolModel.updateParameter(item[1], "OFF")
-    return
-
-
-def confirmChecksum(message):
-    # Check if the calculated checksum for messages equals the expected sent checksum
-    # Return True if checksums match, False if not
-    # Checksum is 4th and 3rd to last bytes of command (last bytes prior to DLE ETX)
-    # Checksum includes DLE STX and command/data
-    target_checksum = int.from_bytes(
-        message[-4:-2],
-        byteorder='big')  # Convert two byte checksum to single value
-    checksum = 0
-    for i in message[:-4]:
-        checksum += i
-    if checksum == target_checksum:
-        return True
-    else:
-        return False
 
 
 def getCommand():
