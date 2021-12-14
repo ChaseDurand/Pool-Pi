@@ -116,7 +116,7 @@ def parseDisplay(data, poolModel):
         else:
             print('check system update', end='')
     elif DISPLAY_SALT_LEVEL in data:
-        parseSalinity(data)
+        parseSalinity(data, poolModel)
     else:
         print('unclassified display update', end='')
 
@@ -192,7 +192,7 @@ def parseLEDs(data, poolModel):
     #TODO expand to next 4 bytes to determine blinking status
     #Look at corrosponding LED bit flags to determine which LEDs are on
     for i in range(0, 4):
-        for item in LED[i]:
+        for item in LED_MASK[i]:
             if item[0] & data[0]:
                 print('     ', item[1])
                 if item[0] & data[1]:
