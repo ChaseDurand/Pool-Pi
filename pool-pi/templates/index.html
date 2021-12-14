@@ -63,20 +63,21 @@
                     if(attributeName=="flag_data_changed"){
                         break;
                         // TODO filter this on backend so it's not sent as JSON
+                    }
                     if(typeof(msgObj[attributeName]) == "object"){
                         // Attribute has state and version value
                         state = msgObj[attributeName].state;
                         version = msgObj[attributeName].version;
-                        if(state="ON"){
+                        if(state=="ON"){
                             color = 'color:green'
                         }
-                        else if(state="INIT"){
+                        else if(state=="INIT"){
                             color = 'color:lightgrey'
                         }
-                        else if(state="OFF"){
+                        else if(state=="OFF"){
                             color = 'color:red'
                         }
-                        else if(state="BLINK"){
+                        else if(state=="BLINK"){
                             color = 'color:yellow'
                         }
                         document.getElementById(attributeName).style=color;
@@ -85,8 +86,6 @@
                         // Attribute only has state value
                         state = msgObj[attributeName];
                         version = "NA";
-                    }
-
                     }
                     // Update corrosponding html
                     document.getElementById(attributeName).textContent="State: "+state+", Version: "+version;
