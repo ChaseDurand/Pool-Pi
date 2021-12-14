@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Pool-Pi</title>
+    <!-- TODO add favicon -->
     <link rel="stylesheet" href="/../static/styles.css">
     <script src='/../static/jquery.min.js'></script>
     <script src='/../static/socket.io.js'></script>
@@ -59,22 +60,37 @@
             // For every item in json message, need to update
                 for(var i = 0, len = Object.keys(msgObj).length; i < len; ++i){
                     attributeName = Object.keys(msgObj)[i]
+                    if(attributeName=="flag_data_changed"){
+                        break;
+                        // TODO filter this on backend so it's not sent as JSON
                     if(typeof(msgObj[attributeName]) == "object"){
                         // Attribute has state and version value
                         state = msgObj[attributeName].state;
                         version = msgObj[attributeName].version;
+                        if(state="ON"){
+                            color = 'color:green'
+                        }
+                        else if(state="INIT"){
+                            color = 'color:lightgrey'
+                        }
+                        else if(state="OFF"){
+                            color = 'color:red'
+                        }
+                        else if(state="BLINK"){
+                            color = 'color:yellow'
+                        }
+                        document.getElementById(attributeName).style=color;
                     }
                     else{
                         // Attribute only has state value
                         state = msgObj[attributeName];
                         version = "NA";
                     }
-                    if(attributeName=="flag_data_changed"){
-                        break;
-                        // TODO filter this on backend so it's not sent as JSON
+
                     }
                     // Update corrosponding html
                     document.getElementById(attributeName).textContent="State: "+state+", Version: "+version;
+                    
                 }
             });
 

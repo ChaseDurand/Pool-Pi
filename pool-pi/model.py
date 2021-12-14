@@ -61,6 +61,7 @@ class PoolModel:
 
     def toJSON(self):
         return json.dumps(vars(self))
+        #TODO strip flag_data_changed before sending to front end
 
 
 class SerialHandler:
