@@ -209,7 +209,7 @@ def confirmChecksum(message):
     # Checksum is 4th and 3rd to last bytes of command (last bytes prior to DLE ETX)
     # Checksum includes DLE STX and command/data
     target_checksum = int.from_bytes(
-        message[-4:-3],
+        message[-4:-2],
         byteorder='big')  # Convert two byte checksum to single value
     checksum = 0
     for i in message[:-4]:
