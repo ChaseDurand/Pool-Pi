@@ -187,8 +187,7 @@ def parseSalinity(data, poolModel):
 def parseLEDs(data, poolModel):
     global flag_data_changed
     flag_data_changed = True
-    print('led update', data)
-    #TODO expand to next 4 bytes to determine blinking status
+    print('led update:')
     #Look at corrosponding LED bit flags to determine which LEDs are on
     for i in range(0, 4):
         for item in LED_MASK[i]:
@@ -201,7 +200,6 @@ def parseLEDs(data, poolModel):
                     print('     ', item[1], 'on')
             else:
                 poolModel.updateParameter(item[1], "OFF")
-                print('     ', item[1], 'off')
     return
 
 
@@ -210,8 +208,9 @@ def confirmChecksum(message):
     # Return True if checksums match, False if not
     # Checksum is 4th and 3rd to last bytes of command (last bytes prior to DLE ETX)
     # Checksum includes DLE STX and command/data
-    target_checksum = message[-4] * (16**2) + message[
-        -3]  # Convert two byte checksum to single value #TODO change to int.from_bytes
+    target_checksum = int.from_bytes(
+        message[-4:-3],
+        byteorder='big')  # Convert two byte checksum to single value
     checksum = 0
     for i in message[:-4]:
         checksum += i
