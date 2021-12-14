@@ -43,8 +43,9 @@ def readSerialBus(serialHandler):
         # We are adding to buffer while looking for DLE ETX
         serialHandler.buffer += serChar
         # Check if we have found DLE ETX
-        if ((serChar == ETX)
-                and (serialHandler.buffer[-2] == int.from_bytes(DLE, "big"))):
+        if ((serChar == ETX) and (serialHandler.buffer[-2] == int.from_bytes(
+                DLE,
+                "big"))):  #TODO refresh this- looks like im converting twice?
             # We have found DLE ETX
             serialHandler.buffer_full = True
             serialHandler.looking_for_start = True
@@ -121,10 +122,9 @@ def sendCommand():
 
 
 def sendModel(poolModel):
-    if poolModel.flag_data_changed == False:
-        return
-    socketio.emit('model', poolModel.toJSON())
-    poolModel.flag_data_changed = False
+    if poolModel.flag_data_changed == True:
+        socketio.emit('model', poolModel.toJSON())
+        poolModel.flag_data_changed = False
     return
 
 

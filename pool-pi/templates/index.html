@@ -69,6 +69,10 @@
                         state = msgObj[attributeName];
                         version = "NA";
                     }
+                    if(attributeName=="flag_data_changed"){
+                        break;
+                        // TODO filter this on backend so it's not sent as JSON
+                    }
                     // Update corrosponding html
                     document.getElementById(attributeName).textContent="State: "+state+", Version: "+version;
                 }
