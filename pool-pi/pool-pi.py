@@ -10,7 +10,6 @@ sending_attempts = 0
 confirm_attempts = 0
 MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
 MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
-flag_data_changed = False  #True if there is new data for site, false if no new data
 
 
 def readSerialBus(serialHandler):
@@ -122,11 +121,10 @@ def sendCommand():
 
 
 def sendModel(poolModel):
-    global flag_data_changed
-    if flag_data_changed == False:
+    if poolModel.flag_data_changed == False:
         return
     socketio.emit('model', poolModel.toJSON())
-    flag_data_changed = False
+    poolModel.flag_data_changed = False
     return
 
 

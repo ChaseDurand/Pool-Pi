@@ -45,6 +45,7 @@ class PoolModel:
         self.aux13 = {"state": "INIT", "version": 0}
         self.aux14 = {"state": "INIT", "version": 0}
         self.superChlorinate = {"state": "INIT", "version": 0}
+        self.flag_data_changed = False  #True if there is new data for site, false if no new data
 
     def updateParameter(self, parameter, data):
         attribute = getattr(self, parameter)

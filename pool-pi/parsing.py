@@ -29,7 +29,6 @@ KEEP_ALIVE = (b'\x10\x02\x01\x01\x00\x14\x10\x03', "Keep Alive")
 
 
 def parseDisplay(data, poolModel):
-    global flag_data_changed
     # Classify display update and print classification
     if DISPLAY_AIRTEMP in data:
         data = data.replace(b'\x5f', b'\xc2\xb0')
@@ -58,12 +57,12 @@ def parseDisplay(data, poolModel):
     # Print data
     try:
         poolModel.display = data.decode('utf-8')
-        flag_data_changed = True
+        poolModel.flag_data_changed = True
         print(poolModel.display)
     except UnicodeDecodeError as e:
         try:
             poolModel.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
-            flag_data_changed = True
+            poolModel.flag_data_changed = True
             print(poolModel.display)  #: is encoded as xBA
         except UnicodeDecodeError as e:
             print(e)
@@ -72,56 +71,51 @@ def parseDisplay(data, poolModel):
 
 
 def parseDateTime(data, poolModel):
-    global flag_data_changed
     previousDateTIme = poolModel.datetime
     newDateTime = data.replace(b'\xba',
                                b'\x3a').decode('utf-8')  #: is encoded as xBA
     if newDateTime != previousDateTIme:
-        flag_data_changed = True
+        poolModel.flag_data_changed = True
         poolModel.datetime = newDateTime
     print('date time update:', end='')
     return
 
 
 def parseAirTemp(data, poolModel):
-    global flag_data_changed
     previousAirTemp = poolModel.airtemp
     newAirTemp = data.decode('utf-8').split()[2]
     if newAirTemp != previousAirTemp:
-        flag_data_changed = True
+        poolModel.flag_data_changed = True
         poolModel.airtemp = newAirTemp
     print('air temp update:', end='')
     return
 
 
 def parsePoolTemp(data, poolModel):
-    global flag_data_changed
     previousPoolTemp = poolModel.pooltemp
     newPoolTemp = data.decode('utf-8').split()[2]
     if newPoolTemp != previousPoolTemp:
-        flag_data_changed = True
+        poolModel.flag_data_changed = True
         poolModel.pooltemp = newPoolTemp
     print('pooltemp update:', end='')
     return
 
 
 def parseSalinity(data, poolModel):
-    global flag_data_changed
     previousSaltLevel = poolModel.salinity
     if DISPLAY_VERY_LOW_SALT in data:
         newSaltLevel = "Very Low Salt"
     else:
         newSaltLevel = data.decode('utf-8').split()[-3]
     if newSaltLevel != previousSaltLevel:
-        flag_data_changed = True
+        poolModel.flag_data_changed = True
         poolModel.salinity = newSaltLevel
     print('salt level update:', end='')
     return
 
 
 def parseLEDs(data, poolModel):
-    global flag_data_changed
-    flag_data_changed = True  # Force model update to send regarless of states
+    poolModel.flag_data_changed = True  # Force model update to send regarless of states
     print('led update:')
     #Look at corrosponding LED bit flags to determine which LEDs are on
     for i in range(0, 4):
