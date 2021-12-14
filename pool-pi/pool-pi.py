@@ -48,7 +48,7 @@ def readSerialBus(serialHandler):
         if ((serChar == ETX)
                 and (serialHandler.buffer[-2] == int.from_bytes(DLE, "big"))):
             # We have found DLE ETX
-            buffer_full = True
+            serialHandler.buffer_full = True
             serialHandler.looking_for_start = True
             return
 
@@ -81,7 +81,7 @@ def parseBuffer(serialHandler, poolModel):
             command = serialHandler.buffer[2:4]
             data = serialHandler.buffer[4:-4]
             if command == FRAME_UPDATE_DISPLAY[0]:
-                parseDisplay(data)
+                parseDisplay(data, poolModel)
             elif command == FRAME_UPDATE_LEDS[0]:
                 parseLEDs(data, poolModel)
             else:
@@ -196,9 +196,9 @@ def parseLEDs(data, poolModel):
             if item[0] & data[0]:
                 print('     ', item[1])
                 if item[0] & data[1]:
-                    poolModel.updateParameter(item[0], "ON")
+                    poolModel.updateParameter(item[1], "ON")
                 else:
-                    poolModel.updateParameter(item[0], "OFF")
+                    poolModel.updateParameter(item[1], "OFF")
     return
 
 
