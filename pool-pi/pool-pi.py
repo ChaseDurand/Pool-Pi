@@ -188,17 +188,20 @@ def parseLEDs(data, poolModel):
     global flag_data_changed
     flag_data_changed = True
     print('led update', data)
-    #TODO clean this up to reuse code
     #TODO expand to next 4 bytes to determine blinking status
     #Look at corrosponding LED bit flags to determine which LEDs are on
     for i in range(0, 4):
         for item in LED_MASK[i]:
-            if item[0] & data[0]:
-                print('     ', item[1])
-                if item[0] & data[1]:
-                    poolModel.updateParameter(item[1], "ON")
+            if item[0] & data[i]:
+                if item[0] & data[i + 4]:
+                    poolModel.updateParameter(item[1], "BLINK")
+                    print('     ', item[1], 'blink')
                 else:
-                    poolModel.updateParameter(item[1], "OFF")
+                    poolModel.updateParameter(item[1], "ON")
+                    print('     ', item[1], 'on')
+            else:
+                poolModel.updateParameter(item[1], "OFF")
+                print('     ', item[1], 'off')
     return
 
 
@@ -248,20 +251,6 @@ def sendCommand():
         ready_to_send = False
 
 
-def updateModel():
-    return
-    global flag_data_changed
-    global poolModel
-    # socketio.emit('display', {'data': model.display})
-
-    if not flag_data_changed:
-        return
-    # socketio.emit('salinity', {'data': salt_level})
-    flag_data_changed = False
-    #TODO
-    return
-
-
 def sendModel(poolModel):
     global flag_data_changed
     if flag_data_changed == False:
@@ -282,12 +271,8 @@ def main():
         readSerialBus(serialHandler)
 
         # Parse Buffer
-        # If a full serial message has been found, decode it
+        # If a full serial message has been found, decode it and update model
         parseBuffer(serialHandler, poolModel)
-
-        # Update pool model
-        # If we have new data, update the local model
-        updateModel()
 
         # Update webview
         sendModel(poolModel)
