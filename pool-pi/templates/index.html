@@ -109,8 +109,8 @@
                 return false;
             });
             $('switch.toggler').click(function(){
-                console.log($(this).className);
-                console.log($(this).id);
+                console.log($(this).attr('id'));
+                console.log($(this).attr('class'));
                 $(this).toggleClass('off');
             });
 
