@@ -5,7 +5,6 @@ from web import *
 from parsing import *
 
 command_queue = []
-ready_to_send = False
 sending_attempts = 0
 confirm_attempts = 0
 MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
@@ -59,7 +58,6 @@ def parseBuffer(serialHandler, poolModel):
     NULL character (00H) is inserted into the transmitted data stream immediately after that byte. That 
     NULL character must then be removed by the receiver.
     '''
-    global ready_to_send
     if (serialHandler.buffer_full):
         # Confirm checksum
         if (confirmChecksum(serialHandler.buffer) == False):
@@ -88,11 +86,15 @@ def parseBuffer(serialHandler, poolModel):
         serialHandler.buffer.clear()
         serialHandler.looking_for_start = True
         serialHandler.buffer_full = False
-        ready_to_send = True
+        serialHandler.ready_to_send = True
 
 
-def getCommand():
+def getCommand(poolModel, serialHandler):
     #TODO
+    #Get command from queue
+    #Check if command is valid
+    #If valid, add to send queue
+    #If not, provide feedback to user
     return
 
 
@@ -146,7 +148,7 @@ def main():
         sendModel(poolModel)
 
         # Check for new commands
-        getCommand()
+        getCommand(poolModel, serialHandler)
 
         # Send to Serial Bus
         # If we have pending commands from the web, send

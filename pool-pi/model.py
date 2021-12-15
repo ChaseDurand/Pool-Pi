@@ -75,6 +75,7 @@ class SerialHandler:
                                  stopbits=serial.STOPBITS_TWO)
         self.send_enable = LED(17)
         self.send_enable.off()
+        self.ready_to_send = False
 
     def send(self, msg):
         self.send_enable.on()

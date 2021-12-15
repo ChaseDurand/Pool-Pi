@@ -44,7 +44,7 @@ def my_event(message):
 def my_broadcast_event(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response', {
-        'data': message['data'],
+        'data': request.sid,
         'count': session['receive_count']
     },
          broadcast=True)
