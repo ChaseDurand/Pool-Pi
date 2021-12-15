@@ -105,7 +105,7 @@
                 return false;
             });
             $("#testform").on("change", "input:checkbox", function(event){
-                socket.emit('my_toggle_event', {data: $('#testid:checked').length});
+                socket.emit('my_toggle_event', {id:'testid',data: $('#testid:checked').length});
                 return false;
             });
 
@@ -117,45 +117,45 @@
     <p>
         Average ping/pong latency: <b><span id="ping-pong"></span>ms</b><br>
         Display: <b><span id="display"></span></b><br>
-        air temp:<b><span id="airtemp"></span></b><br>
-        pool temp:<b><span id="pooltemp"></span></b><br>
-        day:<b><span id="datetime"></span></b><br>
-        salinity:<b><span id="salinity"></span></b><br>
-        heater1:<b><span id="heater1"></span></b><br>
-        valve3:<b><span id="valve3"></span></b><br>
-        checkSystem:<b><span id="checkSystem"></span></b><br>
-        pool:<b><span id="pool"></span></b><br>
-        spa:<b><span id="spa"></span></b><br>
-        filter:<b><span id="filter"></span></b><br>
-        lights:<b><span id="lights"></span></b><br>
-        aux1:<b><span id="aux1"></span></b><br>
-        aux2:<b><span id="aux2"></span></b><br>
-        service:<b><span id="service"></span></b><br>
-        aux3:<b><span id="aux3"></span></b><br>
-        aux4:<b><span id="aux4"></span></b><br>
-        aux5:<b><span id="aux5"></span></b><br>
-        aux6:<b><span id="aux6"></span></b><br>
-        valve4:<b><span id="valve4"></span></b><br>
-        spillover:<b><span id="spillover"></span></b><br>
-        systemOff:<b><span id="systemOff"></span></b><br>
-        aux7:<b><span id="aux7"></span></b><br>
-        aux8:<b><span id="aux8"></span></b><br>
-        aux9:<b><span id="aux9"></span></b><br>
-        aux10:<b><span id="aux10"></span></b><br>
-        aux11:<b><span id="aux11"></span></b><br>
-        aux12:<b><span id="aux12"></span></b><br>
-        aux13:<b><span id="aux13"></span></b><br>
-        aux14:<b><span id="aux14"></span></b><br>
-        superChlorinate:<b><span id="superChlorinate"></span></b><br>
+        air temp: <b><span id="airtemp"></span></b><br>
+        pool temp: <b><span id="pooltemp"></span></b><br>
+        day: <b><span id="datetime"></span></b><br>
+        salinity: <b><span id="salinity"></span></b><br>
+        heater1: <b><span id="heater1"></span></b><br>
+        valve3: <b><span id="valve3"></span></b><br>
+        checkSystem: <b><span id="checkSystem"></span></b><br>
+        pool: <b><span id="pool"></span></b><br>
+        spa: <b><span id="spa"></span></b><br>
+        filter: <b><span id="filter"></span></b><br>
+        lights: <b><span id="lights"></span></b><br>
+        aux1: <b><span id="aux1"></span></b><br>
+        aux2: <b><span id="aux2"></span></b><br>
+        service: <b><span id="service"></span></b><br>
+        aux3: <b><span id="aux3"></span></b><br>
+        aux4: <b><span id="aux4"></span></b><br>
+        aux5: <b><span id="aux5"></span></b><br>
+        aux6: <b><span id="aux6"></span></b><br>
+        valve4: <b><span id="valve4"></span></b><br>
+        spillover: <b><span id="spillover"></span></b><br>
+        systemOff: <b><span id="systemOff"></span></b><br>
+        aux7: <b><span id="aux7"></span></b><br>
+        aux8: <b><span id="aux8"></span></b><br>
+        aux9: <b><span id="aux9"></span></b><br>
+        aux10: <b><span id="aux10"></span></b><br>
+        aux11: <b><span id="aux11"></span></b><br>
+        aux12: <b><span id="aux12"></span></b><br>
+        aux13: <b><span id="aux13"></span></b><br>
+        aux14: <b><span id="aux14"></span></b><br>
+        superChlorinate: <b><span id="superChlorinate"></span></b><br>
     </p>
     <h2>Send:</h2>
-    <!-- <form id="testform" method="POST" action='#'>
+    <form id="testform" method="POST" action='#'>
         <label class="switch switch-on-off">
-            <input class="switch-input" type="checkbox" id="testid" name="testid" checked=checked/>
+            <input class="switch-input" type="checkbox" id="testid" checked=''/>
             <span class="switch-label" data-on="ON" data-off="OFF"></span> 
             <span class="switch-handle"></span> 
         </label>
-    </form> -->
+    </form>
     <form id="broadcast" method="POST" action='#'>
         <input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message">
         <input type="submit" value="Broadcast">

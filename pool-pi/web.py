@@ -56,7 +56,7 @@ def my_toggle_event(message):
     # command_queue.append(("AUX4", message['data']))
     emit('my_response', {
         'data': message['data'],
-        'count': 'received!!!'
+        'count': message['id']
     },
          broadcast=True)
 
