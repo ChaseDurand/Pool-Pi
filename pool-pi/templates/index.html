@@ -108,6 +108,10 @@
                 socket.emit('my_toggle_event', {id:'testid',data: $('#testid:checked').length});
                 return false;
             });
+            $('switch.toggler').click(function(){
+                console.log($(this).css("background-color"));
+                $(this).toggleClass('off');
+            });
 
         });
     </script>
@@ -149,12 +153,13 @@
         superChlorinate: <b><span id="superChlorinate"></span></b><br>
     </p>
     <h2>Send:</h2>
-    <form id="testform" method="POST" action='#'>
+    <switch href="#" class="toggler off">&nbsp;</switch>
+    <!-- <form id="testform" method="POST" action='#'>
         <label class="switch switch-on-off">
             <input class="switch-input" type="checkbox" id="testid" checked=''/>
             <span class="switch-label" data-on="ON" data-off="OFF"></span> 
             <span class="switch-handle"></span> 
-        </label>
+        </label> -->
     </form>
     <form id="broadcast" method="POST" action='#'>
         <input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message">
