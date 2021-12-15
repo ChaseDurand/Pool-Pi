@@ -109,9 +109,9 @@
                 return false;
             });
             $('switch.toggler').click(function(){
+                $(this).toggleClass('off');
                 console.log($(this).attr('id'));
                 console.log($(this).attr('class'));
-                $(this).toggleClass('off');
             });
 
         });
