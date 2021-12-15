@@ -110,8 +110,15 @@
             });
             $('switch.toggler').click(function(){
                 $(this).toggleClass('off');
-                console.log($(this).attr('id'));
-                console.log($(this).attr('class'));
+                switchID = $(this).attr('id');
+                if($(this).attr('class') == 'toggler'){
+                    switchState = true;
+                }
+                else{
+                    switchState = false;
+                }
+                console.log(switchID, switchState);
+                socket.emit('my_toggle_event', {id: switchID, data: switchState});
             });
 
         });
