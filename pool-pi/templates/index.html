@@ -70,8 +70,8 @@
                         version = msgObj[attributeName].version;
                         if(state=="ON"){
                             color = 'color:green'
-                            if($(#attributeName).attr('class')=="toggler off"){
-                                $(#attributeName).toggleClass('off');
+                            if($("#"+attributeName).attr('class')=="toggler off"){
+                                $("#"+attributeName).toggleClass('off');
                             }
                         }
                         else if(state=="INIT"){
@@ -79,8 +79,8 @@
                         }
                         else if(state=="OFF"){
                             color = 'color:red'
-                            if($(#attributeName).attr('class')=="toggler"){
-                                $(#attributeName).toggleClass('off');
+                            if($("#"+attributeName).attr('class')=="toggler"){
+                                $("#"+attributeName).toggleClass('off');
                             }
                         }
                         else if(state=="BLINK"){
@@ -140,33 +140,32 @@
         salinity: <b><span id="salinity"></span></b><br>
         checkSystem: <b><span id="checkSystem"></span></b><br>
     </p>
-    <h2>Send:</h2>
     <p>
-        heater1: <switch id="heater1" href="#" class="toggler off">&nbsp;</switch>
-        valve3: <switch id="valve3" href="#" class="toggler off">&nbsp;</switch>
-        pool: <switch id="pool" href="#" class="toggler off">&nbsp;</switch>
-        spa: <switch id="spa" href="#" class="toggler off">&nbsp;</switch>
-        filter: <switch id="filter" href="#" class="toggler off">&nbsp;</switch>
-        lights: <switch id="lights" href="#" class="toggler off">&nbsp;</switch>
-        aux1: <switch id="aux1" href="#" class="toggler off">&nbsp;</switch>
-        aux2: <switch id="aux2" href="#" class="toggler off">&nbsp;</switch>
-        service: <switch id="service" href="#" class="toggler off">&nbsp;</switch>
-        aux3: <switch id="aux3" href="#" class="toggler off">&nbsp;</switch>
-        aux4: <switch  id="aux4" href="#" class="toggler off">&nbsp;</switch>
-        aux5: <switch id="aux5" href="#" class="toggler off">&nbsp;</switch>
-        aux6: <switch id="aux6" href="#" class="toggler off">&nbsp;</switch>
-        valve4: <switch id="valve4" href="#" class="toggler off">&nbsp;</switch>
-        spillover: <switch id="spillover" href="#" class="toggler off">&nbsp;</switch>
-        systemOff: <switch id="systemOff" href="#" class="toggler off">&nbsp;</switch>
-        aux7: <switch id="aux7" href="#" class="toggler off">&nbsp;</switch>
-        aux8: <switch id="aux8" href="#" class="toggler off">&nbsp;</switch>
-        aux9: <switch id="aux9" href="#" class="toggler off">&nbsp;</switch>
-        aux10: <switch id="aux10" href="#" class="toggler off">&nbsp;</switch>
-        aux11: <switch  id="aux11" href="#" class="toggler off">&nbsp;</switch>
-        aux12: <switch id="aux12" href="#" class="toggler off">&nbsp;</switch>
-        aux13: <switch id="aux13" href="#" class="toggler off">&nbsp;</switch>
-        aux14: <switch id="aux14" href="#" class="toggler off">&nbsp;</switch>
-        superChlorinate: <switch id="superChlorinate" href="#" class="toggler off">&nbsp;</switch>
+        heater1: <switch id="heater1" href="#" class="toggler off">&nbsp;</switch><br>
+        valve3: <switch id="valve3" href="#" class="toggler off">&nbsp;</switch><br>
+        pool: <switch id="pool" href="#" class="toggler off">&nbsp;</switch><br>
+        spa: <switch id="spa" href="#" class="toggler off">&nbsp;</switch><br>
+        filter: <switch id="filter" href="#" class="toggler off">&nbsp;</switch><br>
+        lights: <switch id="lights" href="#" class="toggler off">&nbsp;</switch><br>
+        aux1: <switch id="aux1" href="#" class="toggler off">&nbsp;</switch><br>
+        aux2: <switch id="aux2" href="#" class="toggler off">&nbsp;</switch><br>
+        service: <switch id="service" href="#" class="toggler off">&nbsp;</switch><br>
+        aux3: <switch id="aux3" href="#" class="toggler off">&nbsp;</switch><br>
+        aux4: <switch  id="aux4" href="#" class="toggler off">&nbsp;</switch><br>
+        aux5: <switch id="aux5" href="#" class="toggler off">&nbsp;</switch><br>
+        aux6: <switch id="aux6" href="#" class="toggler off">&nbsp;</switch><br>
+        valve4: <switch id="valve4" href="#" class="toggler off">&nbsp;</switch><br>
+        spillover: <switch id="spillover" href="#" class="toggler off">&nbsp;</switch><br>
+        systemOff: <switch id="systemOff" href="#" class="toggler off">&nbsp;</switch><br>
+        aux7: <switch id="aux7" href="#" class="toggler off">&nbsp;</switch><br>
+        aux8: <switch id="aux8" href="#" class="toggler off">&nbsp;</switch><br>
+        aux9: <switch id="aux9" href="#" class="toggler off">&nbsp;</switch><br>
+        aux10: <switch id="aux10" href="#" class="toggler off">&nbsp;</switch><br>
+        aux11: <switch  id="aux11" href="#" class="toggler off">&nbsp;</switch><br>
+        aux12: <switch id="aux12" href="#" class="toggler off">&nbsp;</switch><br>
+        aux13: <switch id="aux13" href="#" class="toggler off">&nbsp;</switch><br>
+        aux14: <switch id="aux14" href="#" class="toggler off">&nbsp;</switch><br>
+        superChlorinate: <switch id="superChlorinate" href="#" class="toggler off">&nbsp;</switch><br>
     </p>
 
 
