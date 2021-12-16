@@ -56,15 +56,9 @@ def my_broadcast_event(message):
 def my_toggle_event(message):
     # global command_queue
     # command_queue.append((message['id'], message['data'], message['version']))
-    f = open(
-        "command_queue.txt", "a"
-    )  #Workaround for command_queue until I figure out variables with threads
-    command = ''.join(str('(', message['id'], ','))
-    command.join(str(message['data'], ',', message['version']))
-    command.join(str(')', '\n'))
-
-    f.write(command)
-    f.close()
+    #Workaround for command_queue until I figure out variables with threads
+    command = (message['id'], message['data'], message['version'])
+    pickle.dump(command, open('command_queue.dump', 'wb'))
     emit('my_response', {
         'data': message['data'],
         'count': message['id']
