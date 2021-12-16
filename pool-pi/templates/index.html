@@ -110,10 +110,10 @@
                 socket.emit('my_broadcast_event', {data: $('#broadcast_data').val()});
                 return false;
             });
-            $("#testform").on("change", "input:checkbox", function(event){
-                socket.emit('my_toggle_event', {id:'testid',data: $('#testid:checked').length});
-                return false;
-            });
+            // $("#testform").on("change", "input:checkbox", function(event){
+            //     socket.emit('my_toggle_event', {id:'testid',data: $('#testid:checked').length});
+            //     return false;
+            // });
             $('switch.toggler').click(function(){
                 $(this).toggleClass('off');
                 switchID = $(this).attr('id');
@@ -125,7 +125,7 @@
                     switchState = false;
                 }
                 console.log(switchID, switchState, switchVersion);
-                socket.emit('my_toggle_event', {id: switchID, data: switchState, version: switchVersion});
+                socket.emit('my_toggle_event', {'id': switchID, 'data': switchState, 'version': switchVersion});
             });
 
         });
