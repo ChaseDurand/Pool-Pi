@@ -90,9 +90,18 @@ def parseBuffer(serialHandler, poolModel):
 
 
 def getCommand(poolModel, serialHandler):
+
     global command_queue
     #TODO
     #Get command from queue
+
+    # Threading workaround
+    f = open("demofile2.txt", "r")
+    lines = f.readlines
+    for line in lines:
+        command_queue.append(line)
+    print(command_queue)
+    return
     if len(command_queue) > 0:
         command = command_queue.pop()
         commandID = command[0]
@@ -100,7 +109,7 @@ def getCommand(poolModel, serialHandler):
         commandVersion = command[2]
         if commandVersion == poolModel.getParameterVersion(commandID):
             #Front end and back end are synced; command is valid
-            print('valid command')
+            print('valid command', commandID, commandState, commandVersion)
     #Check if command is valid
     #If valid, add to send queue
     #If not, provide feedback to user

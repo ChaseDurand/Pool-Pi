@@ -52,8 +52,13 @@ def my_broadcast_event(message):
 
 @socketio.event
 def my_toggle_event(message):
-    global command_queue
-    command_queue.append((message['id'], message['data'], message['version']))
+    # global command_queue
+    # command_queue.append((message['id'], message['data'], message['version']))
+    f = open(
+        "command_queue.txt", "a"
+    )  #Workaround for command_queue until I figure out variables with threads
+    f.write('(',message['id'],',', message['data'],',', message['version'],')', '\n')
+    f.close()
     emit('my_response', {
         'data': message['data'],
         'count': message['id']
