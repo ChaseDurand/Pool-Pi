@@ -54,6 +54,7 @@ def my_broadcast_event(message):
 
 @socketio.event
 def my_toggle_event(message):
+    return
     # global command_queue
     # command_queue.append((message['id'], message['data'], message['version']))
     #Workaround for command_queue until I figure out variables with threads

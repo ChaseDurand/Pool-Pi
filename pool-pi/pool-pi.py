@@ -91,7 +91,7 @@ def parseBuffer(serialHandler, poolModel):
 
 
 def getCommand(poolModel, serialHandler):
-
+    return
     # global command_queue
     #TODO
     #Get command from queue
