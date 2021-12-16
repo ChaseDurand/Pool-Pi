@@ -102,8 +102,6 @@ def getCommand(poolModel, serialHandler):
     lines = f.readlines()
     for line in lines:
         command_queue.append(line)
-    print(command_queue)
-    return
     if len(command_queue) > 0:
         command = command_queue.pop()
         commandID = command[0]
@@ -176,10 +174,13 @@ def main():
 
 
 if __name__ == '__main__':
-    thread_web = Thread(
-        target=lambda: socketio.run(app, debug=False, host='0.0.0.0'))
-    thread_local = Thread(target=main)
-    thread_web.start()
-    thread_local.start()
-    thread_web.join()
-    thread_local.join()
+    # thread_web = Thread(
+    #     target=lambda: socketio.run(app, debug=False, host='0.0.0.0'))
+    # thread_local = Thread(target=main)
+    # thread_web.start()
+    # thread_local.start()
+    # thread_web.join()
+    # thread_local.join()
+    Thread(
+        target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
+    Thread(target=main).start()
