@@ -125,7 +125,7 @@
                     switchState = false;
                 }
                 console.log(switchID, switchState, switchVersion);
-                // socket.emit('my_toggle_event', {'id': switchID, 'data': switchState, 'version': switchVersion});
+                socket.emit('my_toggle_event', {'id': switchID, 'data': switchState, 'version': switchVersion});
             });
 
         });
