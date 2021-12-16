@@ -5,7 +5,7 @@ from web import *
 from parsing import *
 from os.path import exists
 
-command_queue = []
+# command_queue = []
 sending_attempts = 0
 confirm_attempts = 0
 MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
@@ -92,16 +92,15 @@ def parseBuffer(serialHandler, poolModel):
 
 def getCommand(poolModel, serialHandler):
 
-    global command_queue
+    # global command_queue
     #TODO
     #Get command from queue
-    if exists("command_queue.txt") == False:
-        return
     # Threading workaround
+    if exists("command_queue.dump") == False:
+        return
+
     f = open("command_queue.txt", "r")
-    lines = f.readlines()
-    for line in lines:
-        command_queue.append(line)
+    command_queue = pickle.load(open('command_queue.dump', 'rb'))
     if len(command_queue) > 0:
         command = command_queue.pop()
         commandID = command[0]
