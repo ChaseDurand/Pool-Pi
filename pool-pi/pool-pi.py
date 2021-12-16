@@ -142,6 +142,7 @@ def sendCommand(serialHandler):
 
 def sendModel(poolModel):
     if poolModel.flag_data_changed == True:
+        print("Sent model!")
         socketio.emit('model', poolModel.toJSON())
         poolModel.flag_data_changed = False
     return
