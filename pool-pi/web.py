@@ -57,7 +57,8 @@ def my_toggle_event(message):
     f = open(
         "command_queue.txt", "a"
     )  #Workaround for command_queue until I figure out variables with threads
-    f.write('(',message['id'],',', message['data'],',', message['version'],')', '\n')
+    f.write(''.join('(', message['id'], ',', message['data'], ',',
+                    message['version'], ')', '\n'))
     f.close()
     emit('my_response', {
         'data': message['data'],
