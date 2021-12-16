@@ -96,7 +96,7 @@ def getCommand(poolModel, serialHandler):
     #Get command from queue
 
     # Threading workaround
-    f = open("demofile2.txt", "r")
+    f = open("command_queue.txt", "r")
     lines = f.readlines
     for line in lines:
         command_queue.append(line)
