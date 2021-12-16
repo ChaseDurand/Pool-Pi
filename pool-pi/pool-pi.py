@@ -3,6 +3,7 @@ from threading import Thread
 from model import *
 from web import *
 from parsing import *
+from os.path import exists
 
 command_queue = []
 sending_attempts = 0
@@ -94,7 +95,8 @@ def getCommand(poolModel, serialHandler):
     global command_queue
     #TODO
     #Get command from queue
-
+    if exists("command_queue.txt") == False:
+        return
     # Threading workaround
     f = open("command_queue.txt", "r")
     lines = f.readlines
