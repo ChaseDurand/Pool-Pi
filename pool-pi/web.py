@@ -52,8 +52,8 @@ def my_broadcast_event(message):
 
 @socketio.event
 def my_toggle_event(message):
-    # global command_queue
-    # command_queue.append(("AUX4", message['data']))
+    global command_queue
+    command_queue.append((message['id'], message['data'], message['version']))
     emit('my_response', {
         'data': message['data'],
         'count': message['id']

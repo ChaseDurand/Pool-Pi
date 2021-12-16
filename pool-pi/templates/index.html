@@ -68,6 +68,7 @@
                         // Attribute has state and version value (is a button)
                         state = msgObj[attributeName].state;
                         version = msgObj[attributeName].version;
+                        // TODO handle init and blinking states
                         if(state=="ON"){
                             color = 'color:green'
                             if($("#"+attributeName).attr('class')=="toggler off"){
@@ -86,8 +87,8 @@
                         else if(state=="BLINK"){
                             color = 'color:yellow'
                         }
-                        // document.getElementById(attributeName).style=color;
-                        // Update button
+                        // Update version
+                        $("#"+attributeName).attr('version',version);
                         
                     }
                     else{
@@ -116,14 +117,15 @@
             $('switch.toggler').click(function(){
                 $(this).toggleClass('off');
                 switchID = $(this).attr('id');
+                switchVersion = $(this).attr('version');
                 if($(this).attr('class') == 'toggler'){
                     switchState = true;
                 }
                 else{
                     switchState = false;
                 }
-                console.log(switchID, switchState);
-                socket.emit('my_toggle_event', {id: switchID, data: switchState});
+                console.log(switchID, switchState, switchVersion);
+                socket.emit('my_toggle_event', {id: switchID, data: switchState, version: switchVersion});
             });
 
         });

@@ -90,19 +90,28 @@ def parseBuffer(serialHandler, poolModel):
 
 
 def getCommand(poolModel, serialHandler):
+    global command_queue
     #TODO
     #Get command from queue
+    if len(command_queue) > 0:
+        command = command_queue.pop()
+        commandID = command[0]
+        commandState = command[1]
+        commandVersion = command[2]
+        if commandVersion == poolModel.getParameterVersion(commandID):
+            #Front end and back end are synced; command is valid
+            print('valid command')
     #Check if command is valid
     #If valid, add to send queue
     #If not, provide feedback to user
     return
 
 
-def sendCommand():
+def sendCommand(serialHandler):
+    #TODO
+    #If we have a command in send queue, send it
     return
     global command_queue
-    global ready_to_send
-    global poolModel
     if (len(command_queue) != 0 and ready_to_send == True):
         # get command from queue and send
         # need flag for indicating command needs to be confirmed
@@ -152,7 +161,7 @@ def main():
 
         # Send to Serial Bus
         # If we have pending commands from the web, send
-        sendCommand()
+        sendCommand(serialHandler)
 
 
 if __name__ == '__main__':
