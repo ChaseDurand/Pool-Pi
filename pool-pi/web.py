@@ -1,3 +1,4 @@
+from posixpath import join
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 from threading import Lock
@@ -57,9 +58,10 @@ def my_toggle_event(message):
     f = open(
         "command_queue.txt", "a"
     )  #Workaround for command_queue until I figure out variables with threads
-    command = ''.join(
-        str('(', message['id'], ',', message['data'], ',', message['version'],
-            ')', '\n'))
+    command = ''.join(str('(', message['id'], ','))
+    command.join(str(message['data'], ',', message['version']))
+    command.join(str(')', '\n'))
+
     f.write(command)
     f.close()
     emit('my_response', {
