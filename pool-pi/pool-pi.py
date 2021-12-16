@@ -165,6 +165,10 @@ def main():
 
 
 if __name__ == '__main__':
-    Thread(
-        target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
-    Thread(target=main).start()
+    thread_web = Thread(
+        target=lambda: socketio.run(app, debug=False, host='0.0.0.0'))
+    thread_local = Thread(target=main)
+    thread_web.start()
+    thread_local.start()
+    thread_web.join()
+    thread_local.join()
