@@ -59,7 +59,7 @@ def my_toggle_event(message):
     #Workaround for command_queue until I figure out variables with threads
     print(message)
     # command = (message['id'], message['data'], message['version'])
-    # pickle.dump(command, open('command_queue.dump', 'wb'))
+    pickle.dump(message, open('command_queue.dump', 'wb'))
     emit('my_response', {
         'data': message['data'],
         'count': message['id']

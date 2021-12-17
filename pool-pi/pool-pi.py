@@ -91,7 +91,6 @@ def parseBuffer(serialHandler, poolModel):
 
 
 def getCommand(poolModel, serialHandler):
-    return
     # global command_queue
     #TODO
     #Get command from queue
@@ -103,9 +102,9 @@ def getCommand(poolModel, serialHandler):
     command_queue = pickle.load(open('command_queue.dump', 'rb'))
     if len(command_queue) > 0:
         command = command_queue.pop()
-        commandID = command[0]
-        commandState = command[1]
-        commandVersion = command[2]
+        commandID = command['id']
+        commandState = command['data']
+        commandVersion = command['version']
         if commandVersion == poolModel.getParameterVersion(commandID):
             #Front end and back end are synced; command is valid
             print('valid command', commandID, commandState, commandVersion)
