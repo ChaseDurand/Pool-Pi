@@ -57,10 +57,12 @@ def my_toggle_event(message):
     # global command_queue
     # command_queue.append((message['id'], message['data'], message['version']))
     #Workaround for command_queue until I figure out variables with threads
-    print(message)
     # command = (message['id'], message['data'], message['version'])
-    f = open('command_queue.txt', 'wb')
-    f.write(message)
+    f = open('command_queue.txt', 'a')
+    command = str(message['id'] + ',' + message['data'] + ',' +
+                  message['version'])
+    print(command)
+    f.write(command)
     f.close()
     # pickle.dump(message, open('command_queue.dump', 'wb'))
     emit('my_response', {
