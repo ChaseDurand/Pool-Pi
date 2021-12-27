@@ -4,6 +4,7 @@ from model import *
 from web import *
 from parsing import *
 from os.path import exists
+from os import stat
 
 # command_queue = []
 sending_attempts = 0
@@ -105,10 +106,13 @@ def getCommand(poolModel, serialHandler):
     if exists("command_queue.txt") == False:
         return
     # command_queue = pickle.load(open('command_queue.dump', 'rb'))
-    f = open('command_queue.txt', 'r+')
-    print(f.readlines())
-    f.truncate(0)
-    f.close()
+    if stat('command_queue.txt').st_size != 0:
+        f = open('command_queue.txt', 'r+')
+        for line in f.readlines():
+            if line is not '':
+                print(line)
+        f.truncate(0)
+        f.close()
     return
     if len(command_queue) > 0:
         command = command_queue.pop()
