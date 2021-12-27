@@ -113,10 +113,6 @@ def getCommand(poolModel, serialHandler):
             if line is not '':
                 commandID = line.split(',')[0]
                 commandState = line.split(',')[1]
-                if commandState == 'True':
-                    commandState = 'ON'
-                elif commandState == 'False':
-                    commandState = 'OFF'
                 commandVersion = int(line.split(',')[2])
                 #Check if command is valid
                 #If valid, add to send queue

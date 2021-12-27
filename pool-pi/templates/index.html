@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
     <title>Pool-Pi</title>
     <!-- TODO add favicon -->
@@ -7,7 +8,7 @@
     <script src='/../static/jquery.min.js'></script>
     <script src='/../static/socket.io.js'></script>
     <script type="text/javascript" charset="utf-8">
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Connect to the Socket.IO server.
             // The connection URL has the following format, relative to the current page:
             //     http[s]://<domain>:<port>[/<namespace>]
@@ -16,15 +17,15 @@
             // Event handler for new connections.
             // The callback function is invoked when a connection with the
             // server is established.
-            socket.on('connect', function() {
-                socket.emit('my_event', {data: 'I\'m connected!'});
+            socket.on('connect', function () {
+                socket.emit('my_event', { data: 'I\'m connected!' });
             });
 
             // Event handler for server sent data.
             // The callback function is invoked whenever the server emits data
             // to the client. The data is then displayed in the "Received"
             // section of the page.
-            socket.on('my_response', function(msg, cb) {
+            socket.on('my_response', function (msg, cb) {
                 $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
                 if (cb)
                     cb();
@@ -35,7 +36,7 @@
             // round trip time is measured.
             var ping_pong_times = [];
             var start_time;
-            window.setInterval(function() {
+            window.setInterval(function () {
                 start_time = (new Date).getTime();
                 $('#transport').text(socket.io.engine.transport.name);
                 socket.emit('my_ping');
@@ -44,7 +45,7 @@
             // Handler for the "pong" message. When the pong is received, the
             // time from the ping is stored, and the average of the last 30
             // samples is average and displayed.
-            socket.on('my_pong', function() {
+            socket.on('my_pong', function () {
                 var latency = (new Date).getTime() - start_time;
                 ping_pong_times.push(latency);
                 ping_pong_times = ping_pong_times.slice(-30); // keep last 30 samples
@@ -55,46 +56,46 @@
             });
 
             // Handler for the model update
-            socket.on('model', function(msg){
+            socket.on('model', function (msg) {
                 msgObj = JSON.parse(msg);
-            // For every item in json message, need to update
-                for(var i = 0, len = Object.keys(msgObj).length; i < len; ++i){
+                // For every item in json message, need to update
+                for (var i = 0, len = Object.keys(msgObj).length; i < len; ++i) {
                     attributeName = Object.keys(msgObj)[i]
-                    if(attributeName=="flag_data_changed"){
+                    if (attributeName == "flag_data_changed") {
                         break;
                         // TODO filter this on backend so it's not sent as JSON
                     }
-                    if(typeof(msgObj[attributeName]) == "object"){
+                    if (typeof (msgObj[attributeName]) == "object") {
                         // Attribute has state and version value (is a button)
                         state = msgObj[attributeName].state;
                         version = msgObj[attributeName].version;
                         // TODO handle init and blinking states
-                        if(state=="ON"){
+                        if (state == "ON") {
                             color = 'color:green'
-                            if($("#"+attributeName).attr('class')=="toggler off"){
-                                $("#"+attributeName).toggleClass('off');
+                            if ($("#" + attributeName).attr('class') == "toggler off") {
+                                $("#" + attributeName).toggleClass('off');
                             }
                         }
-                        else if(state=="INIT"){
+                        else if (state == "INIT") {
                             color = 'color:lightgrey'
                         }
-                        else if(state=="OFF"){
+                        else if (state == "OFF") {
                             color = 'color:red'
-                            if($("#"+attributeName).attr('class')=="toggler"){
-                                $("#"+attributeName).toggleClass('off');
+                            if ($("#" + attributeName).attr('class') == "toggler") {
+                                $("#" + attributeName).toggleClass('off');
                             }
                         }
-                        else if(state=="BLINK"){
+                        else if (state == "BLINK") {
                             color = 'color:yellow'
                         }
                         // Update version
-                        $("#"+attributeName).attr('version',version);
-                        
+                        $("#" + attributeName).attr('version', version);
+
                     }
-                    else{
+                    else {
                         // Attribute only has state value (is not a button)
                         // Update corrosponding html
-                        document.getElementById(attributeName).textContent=msgObj[attributeName];
+                        document.getElementById(attributeName).textContent = msgObj[attributeName];
                     }
                 }
             });
@@ -102,35 +103,36 @@
             // Handlers for the different forms in the page.
             // These accept data from the user and send it to the server in a
             // variety of ways
-            $('form#emit').submit(function(event) {
-                socket.emit('my_event', {data: $('#emit_data').val()});
+            $('form#emit').submit(function (event) {
+                socket.emit('my_event', { data: $('#emit_data').val() });
                 return false;
             });
-            $('form#broadcast').submit(function(event) {
-                socket.emit('my_broadcast_event', {data: $('#broadcast_data').val()});
+            $('form#broadcast').submit(function (event) {
+                socket.emit('my_broadcast_event', { data: $('#broadcast_data').val() });
                 return false;
             });
             // $("#testform").on("change", "input:checkbox", function(event){
             //     socket.emit('my_toggle_event', {id:'testid',data: $('#testid:checked').length});
             //     return false;
             // });
-            $('switch.toggler').click(function(){
+            $('switch.toggler').click(function () {
                 $(this).toggleClass('off');
                 switchID = $(this).attr('id');
                 switchVersion = $(this).attr('version');
-                if($(this).attr('class') == 'toggler'){
-                    switchState = true;
+                if ($(this).attr('class') == 'toggler') {
+                    switchState = 'ON';
                 }
-                else{
-                    switchState = false;
+                else {
+                    switchState = 'OFF';
                 }
                 console.log(switchID, switchState, switchVersion);
-                socket.emit('my_toggle_event', {'id': switchID, 'data': switchState, 'version': switchVersion});
+                socket.emit('my_toggle_event', { 'id': switchID, 'data': switchState, 'version': switchVersion });
             });
 
         });
     </script>
 </head>
+
 <body>
     <h1>Pool-Pi</h1>
     <p>
@@ -153,7 +155,7 @@
         aux2: <switch id="aux2" href="#" class="toggler off">&nbsp;</switch><br>
         service: <switch id="service" href="#" class="toggler off">&nbsp;</switch><br>
         aux3: <switch id="aux3" href="#" class="toggler off">&nbsp;</switch><br>
-        aux4: <switch  id="aux4" href="#" class="toggler off">&nbsp;</switch><br>
+        aux4: <switch id="aux4" href="#" class="toggler off">&nbsp;</switch><br>
         aux5: <switch id="aux5" href="#" class="toggler off">&nbsp;</switch><br>
         aux6: <switch id="aux6" href="#" class="toggler off">&nbsp;</switch><br>
         valve4: <switch id="valve4" href="#" class="toggler off">&nbsp;</switch><br>
@@ -163,7 +165,7 @@
         aux8: <switch id="aux8" href="#" class="toggler off">&nbsp;</switch><br>
         aux9: <switch id="aux9" href="#" class="toggler off">&nbsp;</switch><br>
         aux10: <switch id="aux10" href="#" class="toggler off">&nbsp;</switch><br>
-        aux11: <switch  id="aux11" href="#" class="toggler off">&nbsp;</switch><br>
+        aux11: <switch id="aux11" href="#" class="toggler off">&nbsp;</switch><br>
         aux12: <switch id="aux12" href="#" class="toggler off">&nbsp;</switch><br>
         aux13: <switch id="aux13" href="#" class="toggler off">&nbsp;</switch><br>
         aux14: <switch id="aux14" href="#" class="toggler off">&nbsp;</switch><br>
@@ -185,4 +187,5 @@
     <h2>Receive:</h2>
     <div id="log"></div>
 </body>
+
 </html>
