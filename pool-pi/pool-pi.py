@@ -111,7 +111,6 @@ def getCommand(poolModel, serialHandler):
         f = open('command_queue.txt', 'r+')
         for line in f.readlines():
             if line is not '':
-                print(line)
                 commandID = line.split(',')[0]
                 commandState = line.split(',')[1]
                 commandVersion = int(line.split(',')[2])
@@ -121,14 +120,18 @@ def getCommand(poolModel, serialHandler):
                 if commandVersion == poolModel.getParameterVersion(commandID):
                     #Front end and back end versions are synced
                     #Extra check to ensure we are not already in our desired state
-                    if commandState != commandState:
-                        print('invalid command! state mismatch')
+                    if commandState == poolModel.getParameterState(commandID):
+                        print('invalid command! state mismatch',
+                              poolModel.getParameterState(commandID),
+                              commandState)
                     else:
                         # Command is valid
                         print('valid command', commandID, commandState,
                               commandVersion)
                 else:
-                    print('invalid command! version mismatch')
+                    print('invalid command! version mismatch',
+                          poolModel.getParameterVersion(commandID),
+                          commandVersion)
         f.truncate(0)
         f.close()
     return
