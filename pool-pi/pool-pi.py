@@ -119,9 +119,14 @@ def getCommand(poolModel, serialHandler):
                 #If valid, add to send queue
                 #If not, provide feedback to user
                 if commandVersion == poolModel.getParameterVersion(commandID):
-                    #Front end and back end are synced; command is valid
-                    print('valid command', commandID, commandState,
-                          commandVersion)
+                    #Front end and back end versions are synced
+                    #Extra check to ensure we are not already in our desired state
+                    if commandState != commandState:
+                        print('invalid command! state mismatch')
+                    else:
+                        # Command is valid
+                        print('valid command', commandID, commandState,
+                              commandVersion)
                 else:
                     print('invalid command! version mismatch')
         f.truncate(0)
