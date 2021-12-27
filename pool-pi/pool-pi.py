@@ -114,7 +114,7 @@ def getCommand(poolModel, serialHandler):
                 print(line)
                 commandID = line.split(',')[0]
                 commandState = line.split(',')[1]
-                commandVersion = line.split(',')[2]
+                commandVersion = int(line.split(',')[2])
                 #Check if command is valid
                 #If valid, add to send queue
                 #If not, provide feedback to user
@@ -123,7 +123,7 @@ def getCommand(poolModel, serialHandler):
                     print('valid command', commandID, commandState,
                           commandVersion)
                 else:
-                    print('invalid command!')
+                    print('invalid command! version mismatch')
         f.truncate(0)
         f.close()
     return
