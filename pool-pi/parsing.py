@@ -20,6 +20,7 @@ DISPLAY_SALT_LEVEL = 'Salt Level'.encode('utf-8')
 DISPLAY_DATE = 'day'.encode('utf-8')
 DISPLAY_CHECK = 'Check System'.encode('utf-8')
 DISPLAY_VERY_LOW_SALT = 'Very Low Salt'.encode('utf-8')
+DISPLAY_SPA_TEMP = 'Spa Temp'.encode('utf-8')
 
 DLE = b'\x10'
 STX = b'\x02'
@@ -51,9 +52,10 @@ def parseDisplay(data, poolModel):
             print('check system update', end='')
     elif DISPLAY_SALT_LEVEL in data:
         parseSalinity(data, poolModel)
+    elif DISPLAY_SPA_TEMP in data:
+        print('spa temp update', end='')
     else:
         print('unclassified display update', end='')
-
     # Print data
     try:
         poolModel.display = data.decode('utf-8')
