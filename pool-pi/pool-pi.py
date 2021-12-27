@@ -102,9 +102,14 @@ def getCommand(poolModel, serialHandler):
     #TODO
     #Get command from queue
     # Threading workaround
-    if exists("command_queue.dump") == False:
+    if exists("command_queue.txt") == False:
         return
-    command_queue = pickle.load(open('command_queue.dump', 'rb'))
+    # command_queue = pickle.load(open('command_queue.dump', 'rb'))
+    f = open('command_queue.txt', 'wr')
+    print(f.readlines)
+    f.truncate(0)
+    f.close()
+    return
     if len(command_queue) > 0:
         command = command_queue.pop()
         commandID = command['id']

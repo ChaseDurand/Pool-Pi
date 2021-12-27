@@ -21,7 +21,7 @@ class PoolModel:
         self.salinity = "WAITING FOR SALINITY"
         self.heater1 = {"state": "INIT", "version": 0}
         self.valve3 = {"state": "INIT", "version": 0}
-        self.checkSystem = "WAITING FOR CHECKSYSTEM"
+        self.checkSystem = "WAITING FOR CHECKSYSTEM"  #TODO check why checksystem stays on init state when LED is off
         self.pool = {"state": "INIT", "version": 0}
         self.spa = {"state": "INIT", "version": 0}
         self.filter = {"state": "INIT", "version": 0}

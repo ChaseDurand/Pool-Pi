@@ -132,6 +132,7 @@ def parseLEDs(data, poolModel):
     for i in range(0, 4):
         for item in LED_MASK[i]:
             if item[0] & data[i]:
+                #LED is either on or blinking
                 if item[0] & data[i + 4]:
                     poolModel.updateParameter(item[1], "BLINK")
                     print('     ', item[1], 'blink')
