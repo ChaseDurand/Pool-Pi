@@ -67,6 +67,9 @@ def parseDisplay(data, poolModel):
         except UnicodeDecodeError as e:
             print(e)
             print(data)
+    except Exception as e:
+        print(e)
+        print(data)
     return
 
 
@@ -83,7 +86,13 @@ def parseDateTime(data, poolModel):
 
 def parseAirTemp(data, poolModel):
     previousAirTemp = poolModel.airtemp
-    newAirTemp = data.decode('utf-8').split()[2]
+    try:
+        newAirTemp = data.decode('utf-8').split(
+        )[2]  #TODO fix unknown error UnicodeDecodeError: 'utf-8' codec can't decode byte 0xdf in position 13: invalid continuation byte
+    except UnicodeDecodeError as e:
+        print(e)
+        print(data)
+        newAirTemp = "Error"
     if newAirTemp != previousAirTemp:
         poolModel.flag_data_changed = True
         poolModel.airtemp = newAirTemp
