@@ -115,7 +115,7 @@ def getCommand(poolModel, serialHandler):
                 commandState = line.split(',')[1]
                 if commandState == 'True':
                     commandState = 'ON'
-                elif commandState == 'Flase':
+                elif commandState == 'False':
                     commandState = 'OFF'
                 commandVersion = int(line.split(',')[2])
                 #Check if command is valid
