@@ -1,3 +1,4 @@
+from posixpath import split
 from commands import *
 from threading import Thread
 from model import *
@@ -111,20 +112,20 @@ def getCommand(poolModel, serialHandler):
         for line in f.readlines():
             if line is not '':
                 print(line)
+                commandID = line.split(',')[0]
+                commandState = line.split(',')[1]
+                commandVersion = line.split(',')[2]
+                #Check if command is valid
+                #If valid, add to send queue
+                #If not, provide feedback to user
+                if commandVersion == poolModel.getParameterVersion(commandID):
+                    #Front end and back end are synced; command is valid
+                    print('valid command', commandID, commandState,
+                          commandVersion)
+                else:
+                    print('invalid command!')
         f.truncate(0)
         f.close()
-    return
-    if len(command_queue) > 0:
-        command = command_queue.pop()
-        commandID = command['id']
-        commandState = command['data']
-        commandVersion = command['version']
-        if commandVersion == poolModel.getParameterVersion(commandID):
-            #Front end and back end are synced; command is valid
-            print('valid command', commandID, commandState, commandVersion)
-    #Check if command is valid
-    #If valid, add to send queue
-    #If not, provide feedback to user
     return
 
 
