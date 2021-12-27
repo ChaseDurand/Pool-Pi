@@ -105,7 +105,7 @@ def getCommand(poolModel, serialHandler):
     if exists("command_queue.txt") == False:
         return
     # command_queue = pickle.load(open('command_queue.dump', 'rb'))
-    f = open('command_queue.txt', 'wr')
+    f = open('command_queue.txt', 'r+')
     print(f.readlines)
     f.truncate(0)
     f.close()
