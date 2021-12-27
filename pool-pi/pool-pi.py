@@ -63,6 +63,11 @@ def parseBuffer(serialHandler, poolModel):
         # Confirm checksum
         if (confirmChecksum(serialHandler.buffer) == False):
             print("Checksum mismatch! ", serialHandler.buffer)
+            #If checksum doesn't match, clear buffer and wait for new message
+            serialHandler.buffer.clear()
+            serialHandler.looking_for_start = True
+            serialHandler.buffer_full = False
+
         # Get message
         if (serialHandler.buffer != KEEP_ALIVE[0]):
             #TODO identify and account for possible x00 after x10 (DLE)
