@@ -182,15 +182,15 @@ def main():
         # If a full serial message has been found, decode it and update model
         parseBuffer(serialHandler, poolModel)
 
+        # Send to Serial Bus
+        # If we have pending commands from the web, send
+        sendCommand(serialHandler)
+
         # Update webview
         sendModel(poolModel)
 
         # Check for new commands
         getCommand(poolModel, serialHandler)
-
-        # Send to Serial Bus
-        # If we have pending commands from the web, send
-        sendCommand(serialHandler)
 
 
 if __name__ == '__main__':
