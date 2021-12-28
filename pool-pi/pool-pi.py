@@ -7,7 +7,8 @@ from parsing import *
 from os.path import exists
 from os import stat
 
-# command_queue = []
+# TODO move these elsewhere (serialHandler?)
+command_queue = []
 sending_attempts = 0
 confirm_attempts = 0
 MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
@@ -100,10 +101,8 @@ def parseBuffer(serialHandler, poolModel):
 
 
 def getCommand(poolModel, serialHandler):
-    # global command_queue
-    #TODO
-    #Get command from queue
-    # Threading workaround
+    global command_queue
+    #TODO figure out threading issue
     if exists("command_queue.txt") == False:
         return
     # command_queue = pickle.load(open('command_queue.dump', 'rb'))
@@ -114,24 +113,33 @@ def getCommand(poolModel, serialHandler):
                 commandID = line.split(',')[0]
                 commandState = line.split(',')[1]
                 commandVersion = int(line.split(',')[2])
+
                 #Check if command is valid
                 #If valid, add to send queue
                 #If not, provide feedback to user
-                if commandVersion == poolModel.getParameterVersion(commandID):
-                    #Front end and back end versions are synced
-                    #Extra check to ensure we are not already in our desired state
-                    if commandState == poolModel.getParameterState(commandID):
-                        print('invalid command! state mismatch',
-                              poolModel.getParameterState(commandID),
-                              commandState)
-                    else:
-                        # Command is valid
-                        print('valid command', commandID, commandState,
-                              commandVersion)
+                if poolModel.getParameterState(commandID) == "INIT":
+                    print('invalid command! target command is in init state')
                 else:
-                    print('invalid command! version mismatch',
-                          poolModel.getParameterVersion(commandID),
-                          commandVersion)
+                    if commandVersion == poolModel.getParameterVersion(
+                            commandID):
+                        #Front end and back end versions are synced
+                        #Extra check to ensure we are not already in our desired state
+                        if commandState == poolModel.getParameterState(
+                                commandID):
+                            print('invalid command! state mismatch',
+                                  poolModel.getParameterState(commandID),
+                                  commandState)
+                        else:
+                            # Command is valid
+                            print('valid command', commandID, commandState,
+                                  commandVersion)
+                            if commandID == 'aux4':
+                                command_queue.append(AUX4)
+                            #TODO add corresponding command to command_queue
+                    else:
+                        print('invalid command! version mismatch',
+                              poolModel.getParameterVersion(commandID),
+                              commandVersion)
         f.truncate(0)
         f.close()
     return
@@ -140,26 +148,16 @@ def getCommand(poolModel, serialHandler):
 def sendCommand(serialHandler):
     #TODO
     #If we have a command in send queue, send it
-    return
     global command_queue
-    if (len(command_queue) != 0 and ready_to_send == True):
+
+    if (len(command_queue) != 0 and serialHandler.ready_to_send == True):
         # get command from queue and send
         # need flag for indicating command needs to be confirmed
         # need to initialize counters for command confirmation
-
-        #Temporary hard code for testing waterfall. Need to move command matching logic to getCommand
         command = command_queue.pop()
-        #Ensure we're not in init phase
-        if poolModel.waterfall == "INIT":
-            return
-        #If we're trying to turn it on and it's already on, do nothing. Same if off.
-        if poolModel.waterfall == "ON" and command[1] == 1:
-            return
-        if poolModel.waterfall == "OFF" and command[1] == 0:
-            return
-        if command[0] == "AUX4":
-            serialHandler.write(AUX4)
-        ready_to_send = False
+        serialHandler.write(command)
+        serialHandler.ready_to_send = False
+    return
 
 
 def sendModel(poolModel):
