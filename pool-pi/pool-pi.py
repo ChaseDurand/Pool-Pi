@@ -155,7 +155,7 @@ def sendCommand(serialHandler):
         # need flag for indicating command needs to be confirmed
         # need to initialize counters for command confirmation
         command = command_queue.pop()
-        serialHandler.write(command)
+        serialHandler.send(command)
         serialHandler.ready_to_send = False
     return
 
