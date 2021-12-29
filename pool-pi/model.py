@@ -84,10 +84,10 @@ class SerialHandler:
         self.ready_to_send = False
 
     def send(self, msg):
-        print(msg)
         self.send_enable.on()
         self.ser.write(msg)
         self.ser.flush()
+        print(msg)
         self.send_enable.off()
 
     def read(self):

@@ -94,10 +94,12 @@ def parseBuffer(serialHandler, poolModel):
                 parseLEDs(data, poolModel)
             else:
                 print(command, data)
+        else:
+            # Message is keep alive
+            serialHandler.ready_to_send = True
         serialHandler.buffer.clear()
         serialHandler.looking_for_start = True
         serialHandler.buffer_full = False
-        serialHandler.ready_to_send = True
 
 
 def getCommand(poolModel, serialHandler):
@@ -105,7 +107,6 @@ def getCommand(poolModel, serialHandler):
     #TODO figure out threading issue
     if exists("command_queue.txt") == False:
         return
-    # command_queue = pickle.load(open('command_queue.dump', 'rb'))
     if stat('command_queue.txt').st_size != 0:
         f = open('command_queue.txt', 'r+')
         for line in f.readlines():
@@ -154,8 +155,7 @@ def sendCommand(serialHandler):
         # get command from queue and send
         # need flag for indicating command needs to be confirmed
         # need to initialize counters for command confirmation
-        command = command_queue.pop()
-        serialHandler.send(command)
+        serialHandler.send(command_queue.pop())
         serialHandler.ready_to_send = False
     return
 
