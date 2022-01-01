@@ -11,8 +11,6 @@ from os import stat
 command_queue = []
 sending_attempts = 0
 confirm_attempts = 0
-MAX_SEND_ATTEMPTS = 5  # Max number of times command will be sent if not confirmed
-MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
 
 
 def readSerialBus(serialHandler):
@@ -55,7 +53,7 @@ def readSerialBus(serialHandler):
             return
 
 
-def parseBuffer(serialHandler, poolModel):
+def parseBuffer(poolModel, serialHandler):
     '''
     The DLE, STX and Command/Data fields are added together to provide the 2-byte Checksum. If 
     any of the bytes of the Command/Data Field or Checksum are equal to the DLE character (10H), a 
@@ -102,7 +100,30 @@ def parseBuffer(serialHandler, poolModel):
         serialHandler.buffer_full = False
 
 
-def getCommand(poolModel, serialHandler):
+def sendCommand(poolModel, serialHandler, commandHandler):
+    #TODO
+    # Are we currently trying to send a command?
+    if commandHandler.sendingMessage == False:
+        #We aren't trying to send a command
+        return
+    if serialHandler.ready_to_send == False:
+        #Last message wasn't keep alive, not ready to send
+        return
+    #Check model parameter and compare to desired parameter
+    if poolModel.getParameterState(
+            commandHandler.parameter) == commandHandler.targetState:
+        #Model matches
+        commandHandler.sendingMessage = False
+    else:
+        #If they don't match, need to check timeout and send limits
+        #Check timeout
+        if commandHandler.checkSend() == True:
+            serialHandler.send(
+                commands['aux4'])  # TODO fix hardcoded waterfall
+
+
+def getCommand(poolModel, commandHandler):
+    #Get command from command_queue and load into commandHandler
     global command_queue
     #TODO figure out threading issue
     if exists("command_queue.txt") == False:
@@ -134,29 +155,15 @@ def getCommand(poolModel, serialHandler):
                             # Command is valid
                             print('valid command', commandID, commandState,
                                   commandVersion)
-                            if commandID == 'aux4':
-                                command_queue.append(AUX4)
-                            #TODO add corresponding command to command_queue
+                            #Push to command handler
+                            commandHandler.initiateSend(
+                                commandID, commandState, commandVersion)
                     else:
                         print('invalid command! version mismatch',
                               poolModel.getParameterVersion(commandID),
                               commandVersion)
         f.truncate(0)
         f.close()
-    return
-
-
-def sendCommand(serialHandler):
-    #TODO
-    #If we have a command in send queue, send it
-    global command_queue
-
-    if (len(command_queue) != 0 and serialHandler.ready_to_send == True):
-        # get command from queue and send
-        # need flag for indicating command needs to be confirmed
-        # need to initialize counters for command confirmation
-        serialHandler.send(command_queue.pop())
-        serialHandler.ready_to_send = False
     return
 
 
@@ -173,6 +180,7 @@ def main():
 
     poolModel = PoolModel()
     serialHandler = SerialHandler()
+    commandHandler = CommandHandler()
     while (True):
         # Read Serial Bus
         # If new serial data is available, read from the buffer
@@ -180,17 +188,17 @@ def main():
 
         # Parse Buffer
         # If a full serial message has been found, decode it and update model
-        parseBuffer(serialHandler, poolModel)
+        parseBuffer(poolModel, serialHandler)
 
         # Send to Serial Bus
-        # If we have pending commands from the web, send
-        sendCommand(serialHandler)
+        # If we have pending commands, check status and send
+        sendCommand(poolModel, serialHandler, commandHandler)
 
         # Update webview
         sendModel(poolModel)
 
         # Check for new commands
-        getCommand(poolModel, serialHandler)
+        getCommand(poolModel, commandHandler)
 
 
 if __name__ == '__main__':

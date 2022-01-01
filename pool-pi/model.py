@@ -3,12 +3,22 @@ import json
 import serial
 from gpiozero import LED
 from enum import Enum
+import time
 
 # class attributeStates(Enum):
 #     INIT: 0
 #     OFF: 1
 #     BLINK: 2
 #     ON: 3
+
+MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
+# MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
+SEND_TIME_DELAY = 2
+
+commands = {
+    'aux4':
+    b'\x10\x02\x00\x02\x00\x10\x00\x00\x00\x00\x10\x00\x00\x00\x00\x34\x10\x03'
+}
 
 
 # Records states of the pool
@@ -95,3 +105,38 @@ class SerialHandler:
 
     def in_waiting(self):
         return self.ser.in_waiting
+
+
+class CommandHandler:
+    sending_queue = []
+    parameter = ''
+    targetState = ''
+    parameterVersion = ''
+    send_attempts = 0
+    confirm_attempts = 0
+    nextSendTime = 0
+    sendingMessage = False
+
+    def initiateSend(self, commandID, commandState, commandVersion):
+        self.ready_to_send = False
+        self.sendingMessage = True
+        self.parameter = commandID
+        self.targetState = commandState
+        self.parameterVersion = commandVersion
+        self.send_attempts = 0
+        # self.checkSend()
+
+    def checkSend(self):
+        #Return true if ready to send
+        if self.send_attempts >= MAX_SEND_ATTEMPTS:
+            #message failed
+            print('message failed')
+            self.sendingMessage = False
+            return False
+        elif time.time() < self.nextSendTime:
+            #not ready to attempt additional send
+            return False
+        self.nextSendTime = time.time() + SEND_TIME_DELAY
+        self.send_attempts += 1
+        print('Send attempt: ', self.send_attempts)
+        return True
