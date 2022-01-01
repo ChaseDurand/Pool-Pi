@@ -116,10 +116,12 @@ def sendCommand(poolModel, serialHandler, commandHandler):
         commandHandler.sendingMessage = False
     else:
         #If they don't match, need to check timeout and send limits
-        #Check timeout
-        if commandHandler.checkSend() == True:
-            serialHandler.send(
-                commands['aux4'])  # TODO fix hardcoded waterfall
+        # Ensure we've seen a new model
+        if poolModel.last_update_time >= commandHandler.lastModelTime:
+            #Check timeout
+            if commandHandler.checkSend() == True:
+                serialHandler.send(
+                    commands['aux4'])  # TODO fix hardcoded waterfall
 
 
 def getCommand(poolModel, commandHandler):

@@ -13,7 +13,7 @@ import time
 
 MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
 # MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
-SEND_TIME_DELAY = 1
+SEND_TIME_DELAY = 0.8
 
 commands = {
     'aux4':
@@ -55,7 +55,8 @@ class PoolModel:
         self.aux13 = {"state": "INIT", "version": 0}
         self.aux14 = {"state": "INIT", "version": 0}
         self.superChlorinate = {"state": "INIT", "version": 0}
-        self.flag_data_changed = False  #True if there is new data for site, false if no new data
+        self.flag_data_changed = False  #True if there is new data for web, false if no new data
+        self.last_update_time = 0  #Time that model was last updated (when last LED message was parsed)
 
     def updateParameter(self, parameter, data):
         attribute = getattr(self, parameter)
@@ -74,6 +75,10 @@ class PoolModel:
 
     def getParameterState(self, parameter):
         return getattr(self, parameter)["state"]
+
+    def updateTime(self):
+        self.last_update_time = time.time()
+        return
 
     def toJSON(self):
         return json.dumps(vars(self))
@@ -116,6 +121,7 @@ class CommandHandler:
     confirm_attempts = 0
     nextSendTime = 0
     sendingMessage = False
+    lastModelTime = 0
 
     def initiateSend(self, commandID, commandState, commandVersion):
         self.ready_to_send = False

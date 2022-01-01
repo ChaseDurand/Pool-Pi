@@ -65,6 +65,10 @@
                         break;
                         // TODO filter this on backend so it's not sent as JSON
                     }
+                    if (attributeName == "last_update_time") {
+                        break;
+                        // TODO filter this on backend so it's not sent as JSON
+                    }
                     if (typeof (msgObj[attributeName]) == "object") {
                         // Attribute has state and version value (is a button)
                         state = msgObj[attributeName].state;

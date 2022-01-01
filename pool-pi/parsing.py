@@ -127,6 +127,7 @@ def parseSalinity(data, poolModel):
 
 def parseLEDs(data, poolModel):
     poolModel.flag_data_changed = True  # Force model update to send regarless of states
+    poolModel.updateTime()  # Record when we recieved this LED update
     print('led update:')
     #Look at corrosponding LED bit flags to determine which LEDs are on
     for i in range(0, 4):
