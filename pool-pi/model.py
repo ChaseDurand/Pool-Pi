@@ -13,7 +13,7 @@ import time
 
 MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
 # MAX_CONFIRM_ATTEMPTS = 20  # Max number of inbound message parsed to look for confirmation before resending command
-SEND_TIME_DELAY = 2
+SEND_TIME_DELAY = 1
 
 commands = {
     'aux4':
