@@ -32,7 +32,10 @@ class PoolModel:
         self.heater1 = {"state": "INIT", "version": 0}
         self.valve3 = {"state": "INIT", "version": 0}
         self.checkSystem = "WAITING FOR CHECKSYSTEM"  #TODO check why checksystem stays on init state when LED is off
-        self.pool = {"state": "INIT", "version": 0}
+        self.pool = {
+            "state": "INIT",
+            "version": 0
+        }  #TODO combine pool/spa/spillover controls
         self.spa = {"state": "INIT", "version": 0}
         self.filter = {"state": "INIT", "version": 0}
         self.lights = {"state": "INIT", "version": 0}
@@ -46,14 +49,6 @@ class PoolModel:
         self.valve4 = {"state": "INIT", "version": 0}
         self.spillover = {"state": "INIT", "version": 0}
         self.systemOff = {"state": "INIT", "version": 0}
-        self.aux7 = {"state": "INIT", "version": 0}
-        self.aux8 = {"state": "INIT", "version": 0}
-        self.aux9 = {"state": "INIT", "version": 0}
-        self.aux10 = {"state": "INIT", "version": 0}
-        self.aux11 = {"state": "INIT", "version": 0}
-        self.aux12 = {"state": "INIT", "version": 0}
-        self.aux13 = {"state": "INIT", "version": 0}
-        self.aux14 = {"state": "INIT", "version": 0}
         self.superChlorinate = {"state": "INIT", "version": 0}
         self.flag_data_changed = False  #True if there is new data for web, false if no new data
         self.last_update_time = 0  #Time that model was last updated (when last LED message was parsed)

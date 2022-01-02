@@ -18,3 +18,11 @@ switch.toggler.off {
   border-left-width: 2px;
   border-right-width: 15px;
 }
+
+.button-container {
+  display: table;
+}
+
+.button {
+  display: table-cell;
+}

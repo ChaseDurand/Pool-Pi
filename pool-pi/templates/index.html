@@ -76,7 +76,7 @@
                         // TODO handle init and blinking states
                         if (state == "ON") {
                             color = 'color:green'
-                            if ($("#" + attributeName).attr('class') == "toggler off") {
+                            if ($("#" + attributeName).attr('class') == "togglerOff") {
                                 $("#" + attributeName).toggleClass('off');
                             }
                         }
@@ -149,31 +149,33 @@
         checkSystem: <b><span id="checkSystem"></span></b><br>
     </p>
     <p>
-        heater1: <switch id="heater1" href="#" class="toggler off">&nbsp;</switch><br>
-        valve3: <switch id="valve3" href="#" class="toggler off">&nbsp;</switch><br>
-        pool: <switch id="pool" href="#" class="toggler off">&nbsp;</switch><br>
-        spa: <switch id="spa" href="#" class="toggler off">&nbsp;</switch><br>
-        filter: <switch id="filter" href="#" class="toggler off">&nbsp;</switch><br>
-        lights: <switch id="lights" href="#" class="toggler off">&nbsp;</switch><br>
-        aux1: <switch id="aux1" href="#" class="toggler off">&nbsp;</switch><br>
-        aux2: <switch id="aux2" href="#" class="toggler off">&nbsp;</switch><br>
-        service: <switch id="service" href="#" class="toggler off">&nbsp;</switch><br>
-        aux3: <switch id="aux3" href="#" class="toggler off">&nbsp;</switch><br>
-        aux4: <switch id="aux4" href="#" class="toggler off">&nbsp;</switch><br>
-        aux5: <switch id="aux5" href="#" class="toggler off">&nbsp;</switch><br>
-        aux6: <switch id="aux6" href="#" class="toggler off">&nbsp;</switch><br>
-        valve4: <switch id="valve4" href="#" class="toggler off">&nbsp;</switch><br>
-        spillover: <switch id="spillover" href="#" class="toggler off">&nbsp;</switch><br>
-        systemOff: <switch id="systemOff" href="#" class="toggler off">&nbsp;</switch><br>
-        aux7: <switch id="aux7" href="#" class="toggler off">&nbsp;</switch><br>
-        aux8: <switch id="aux8" href="#" class="toggler off">&nbsp;</switch><br>
-        aux9: <switch id="aux9" href="#" class="toggler off">&nbsp;</switch><br>
-        aux10: <switch id="aux10" href="#" class="toggler off">&nbsp;</switch><br>
-        aux11: <switch id="aux11" href="#" class="toggler off">&nbsp;</switch><br>
-        aux12: <switch id="aux12" href="#" class="toggler off">&nbsp;</switch><br>
-        aux13: <switch id="aux13" href="#" class="toggler off">&nbsp;</switch><br>
-        aux14: <switch id="aux14" href="#" class="toggler off">&nbsp;</switch><br>
-        superChlorinate: <switch id="superChlorinate" href="#" class="toggler off">&nbsp;</switch><br>
+        <!-- TODO combine pool/spa/spillover switches -->
+        service: <switch id="service" href="#" class="togglerOff">&nbsp;</switch><br>
+        pool: <switch id="pool" href="#" class="togglerOff">&nbsp;</switch><br>
+        spa: <switch id="spa" href="#" class="togglerOff">&nbsp;</switch><br>
+        spillover: <switch id="spillover" href="#" class="togglerOff">&nbsp;</switch><br>
+        filter: <switch id="filter" href="#" class="togglerOff">&nbsp;</switch><br>
+        lights: <switch id="lights" href="#" class="togglerOff">&nbsp;</switch><br>
+    <div class="button-container">
+        heater1: <switch id="heater1" href="#" class="togglerOff button">&nbsp;</switch>
+        aux1: <switch id="aux1" href="#" class="togglerOff button">&nbsp;</switch>
+        aux4: <switch id="aux4" href="#" class="togglerOff button">&nbsp;</switch>
+    </div>
+
+    <div class="button-container">
+        valve3: <switch id="valve3" href="#" class="togglerOff button">&nbsp;</switch>
+        aux2: <switch id="aux2" href="#" class="togglerOff button">&nbsp;</switch>
+        aux5: <switch id="aux5" href="#" class="togglerOff button">&nbsp;</switch>
+    </div>
+
+    <div class="button-container">
+        valve4: <switch id="valve4" href="#" class="togglerOff button"></switch>&nbsp;</switch>
+        aux3: <switch id="aux3" href="#" class="togglerOff button"></switch>&nbsp;</switch>
+        aux6: <switch id="aux6" href="#" class="togglerOff button"></switch>&nbsp;</switch>
+    </div>
+
+    systemOff: <switch id="systemOff" href="#" class="togglerOff">&nbsp;</switch><br>
+    superChlorinate: <switch id="superChlorinate" href="#" class="togglerOff">&nbsp;</switch><br>
     </p>
 
 
