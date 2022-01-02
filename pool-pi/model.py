@@ -46,6 +46,14 @@ class PoolModel:
         self.aux4 = {"state": "INIT", "version": 0}
         self.aux5 = {"state": "INIT", "version": 0}
         self.aux6 = {"state": "INIT", "version": 0}
+        self.aux7 = {"state": "INIT", "version": 0}
+        self.aux8 = {"state": "INIT", "version": 0}
+        self.aux9 = {"state": "INIT", "version": 0}
+        self.aux10 = {"state": "INIT", "version": 0}
+        self.aux11 = {"state": "INIT", "version": 0}
+        self.aux12 = {"state": "INIT", "version": 0}
+        self.aux13 = {"state": "INIT", "version": 0}
+        self.aux14 = {"state": "INIT", "version": 0}
         self.valve4 = {"state": "INIT", "version": 0}
         self.spillover = {"state": "INIT", "version": 0}
         self.systemOff = {"state": "INIT", "version": 0}
