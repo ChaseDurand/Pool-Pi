@@ -1,5 +1,6 @@
 body {
   background-color: rgb(230, 240, 255);
+  font-family: helvetica;
 }
 
 .panel {
@@ -13,8 +14,10 @@ body {
 .display {
   border: solid;
   background-color: rgb(45,220,45);
-  font-family: monaco;
-  height: 43px;
+  font-family: 'courier new';
+  font-weight: bold;
+  font-size: 18px;
+  height: 40px;
   margin: 25px;
   text-align: center;
   vertical-align: center;
