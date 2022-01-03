@@ -11,12 +11,14 @@ switch.toggler {
   border-radius: 5px;
   text-decoration: none;
   transition: all 0.1s ease;
+  margin-left: 6px;
 }
 
 switch.toggler.off {
   background: rgb(119, 119, 119);
   border-left-width: 2px;
   border-right-width: 15px;
+  margin-left: 6px;
 }
 
 .switch-row-container {
@@ -27,6 +29,6 @@ switch.toggler.off {
 
 .switch {
   display: flex;
-  width: 140px;
+  width: 160px;
   justify-content: flex-end;
 }
