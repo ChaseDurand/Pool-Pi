@@ -19,10 +19,10 @@ switch.toggler.off {
   border-right-width: 15px;
 }
 
-.button-container {
+.switch-row-container {
   display: table;
 }
 
-.button {
+.switch {
   display: table-cell;
 }
