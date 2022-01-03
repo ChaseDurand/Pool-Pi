@@ -71,8 +71,8 @@
                     }
                     if (attributeName == "display") {
                         // Parse display from one line into two
-                        document.getElementById("display1").textContent = msgObj[attributeName].substring(0, 10);
-                        document.getElementById("display2").textContent = msgObj[attributeName].substring(10, 20);
+                        document.getElementById("display1").textContent = msgObj[attributeName].substring(0, 20);
+                        document.getElementById("display2").textContent = msgObj[attributeName].substring(20, 40);
                         break;
                     }
                     if (typeof (msgObj[attributeName]) == "object") {
