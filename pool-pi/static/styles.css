@@ -3,7 +3,7 @@ body {
 }
 
 switch.toggler {
-  background: green;
+  background: rgb(255, 0, 0);
   cursor: pointer;
   border: 2px solid black;
   border-left-width: 15px;
@@ -14,7 +14,7 @@ switch.toggler {
 }
 
 switch.toggler.off {
-  background: red;
+  background: rgb(119, 119, 119);
   border-left-width: 2px;
   border-right-width: 15px;
 }
