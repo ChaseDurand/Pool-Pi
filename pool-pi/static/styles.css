@@ -27,6 +27,6 @@ switch.toggler.off {
 
 .switch {
   display: flex;
-  width: 120px;
+  width: 140px;
   justify-content: flex-end;
 }
