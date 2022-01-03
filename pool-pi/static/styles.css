@@ -3,7 +3,7 @@ body {
 }
 
 switch.toggler {
-  background: rgb(255, 0, 0);
+  background: rgb(20, 240, 0);
   cursor: pointer;
   border: 2px solid black;
   border-left-width: 15px;
