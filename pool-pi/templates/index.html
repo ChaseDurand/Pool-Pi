@@ -111,14 +111,6 @@
                 socket.emit('my_event', { data: $('#emit_data').val() });
                 return false;
             });
-            $('form#broadcast').submit(function (event) {
-                socket.emit('my_broadcast_event', { data: $('#broadcast_data').val() });
-                return false;
-            });
-            // $("#testform").on("change", "input:checkbox", function(event){
-            //     socket.emit('my_toggle_event', {id:'testid',data: $('#testid:checked').length});
-            //     return false;
-            // });
             $('switch.toggler').click(function () {
                 $(this).toggleClass('off');
                 switchID = $(this).attr('id');
@@ -218,18 +210,6 @@
     aux13: <switch id="aux13" href="#" class="toggler off">&nbsp;</switch><br>
     aux14: <switch id="aux14" href="#" class="toggler off">&nbsp;</switch><br>
     </p>
-
-
-    <!-- <form id="testform" method="POST" action='#'>
-        <label class="switch switch-on-off">
-            <input class="switch-input" type="checkbox" id="testid" checked=''/>
-            <span class="switch-label" data-on="ON" data-off="OFF"></span> 
-            <span class="switch-handle"></span> 
-        </label> -->
-    </form>
-    <form id="broadcast" method="POST" action='#'>
-        <input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message">
-        <input type="submit" value="Broadcast">
     </form>
     <h2>Receive:</h2>
     <div id="log"></div>

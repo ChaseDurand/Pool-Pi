@@ -43,16 +43,6 @@ def my_event(message):
 
 
 @socketio.event
-def my_broadcast_event(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response', {
-        'data': request.sid,
-        'count': session['receive_count']
-    },
-         broadcast=True)
-
-
-@socketio.event
 def my_toggle_event(message):
     # global command_queue
     # command_queue.append((message['id'], message['data'], message['version']))
