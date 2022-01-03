@@ -2,10 +2,9 @@ body {
   background-color: rgb(230, 240, 255);
 }
 
-display {
+.display {
   white-space: pre;
   border: solid;
-  height: 50px;
   width: 200px;
 }
 
