@@ -69,12 +69,7 @@
                         break;
                         // TODO filter this on backend so it's not sent as JSON
                     }
-                    if (attributeName == "display") {
-                        // Parse display from one line into two
-                        document.getElementById("display1").textContent = msgObj[attributeName].substring(0, 20);
-                        document.getElementById("display2").textContent = msgObj[attributeName].substring(20, 40);
-                        break;
-                    }
+
                     if (typeof (msgObj[attributeName]) == "object") {
                         // Attribute has state and version value (is a button)
                         state = msgObj[attributeName].state;
@@ -104,8 +99,16 @@
                     }
                     else {
                         // Attribute only has state value (is not a button)
-                        // Update corrosponding html
-                        document.getElementById(attributeName).textContent = msgObj[attributeName];
+                        if (attributeName == "display") {
+                            // Parse display from one line into two
+                            document.getElementById("display1").textContent = msgObj[attributeName].substring(0, 20);
+                            document.getElementById("display2").textContent = msgObj[attributeName].substring(20, 40);
+                        }
+                        else {
+
+                            // Update corrosponding html
+                            document.getElementById(attributeName).textContent = msgObj[attributeName];
+                        }
                     }
                 }
             });
@@ -137,9 +140,9 @@
 
 <body>
     <h1>Pool-Pi</h1>
-    <p>
-        <span class="display" id="display1"></span><br>
-        <span class="display" id="display2"></span><br>
+    <p class="display">
+        <span id="display1"></span>
+        <span id="display2"></span><br>
     </p>
     <p>
         <!-- TODO combine pool/spa/spillover switches -->

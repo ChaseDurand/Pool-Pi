@@ -4,6 +4,9 @@ body {
 
 display {
   white-space: pre;
+  border: solid;
+  height: 50px;
+  width: 200px;
 }
 
 switch.toggler {
