@@ -20,9 +20,13 @@ switch.toggler.off {
 }
 
 .switch-row-container {
-  display: table;
+  display: flex;
+  table-layout: fixed;
+  margin: 1px;
 }
 
 .switch {
-  display: table-cell;
+  display: flex;
+  width: 120px;
+  justify-content: flex-end;
 }
