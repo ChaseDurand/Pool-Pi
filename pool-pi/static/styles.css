@@ -6,6 +6,7 @@ body {
   border: solid;
   border-radius: 35px;
   padding-bottom: 20px;
+  width: 520px;
 }
 
 .display {
@@ -36,6 +37,10 @@ switch.toggler.off {
   border-left-width: 2px;
   border-right-width: 15px;
   margin-left: 4px;
+}
+
+switch:hover {
+  box-shadow: 0 0px 5px 0px lightgray, 0 0px 5px 0px 
 }
 
 .switch-row-container {
