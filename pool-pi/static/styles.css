@@ -2,6 +2,10 @@ body {
   background-color: rgb(230, 240, 255);
 }
 
+display {
+  white-space: pre;
+}
+
 switch.toggler {
   background: rgb(20, 240, 0);
   cursor: pointer;
@@ -11,14 +15,14 @@ switch.toggler {
   border-radius: 5px;
   text-decoration: none;
   transition: all 0.1s ease;
-  margin-left: 6px;
+  margin-left: 4px;
 }
 
 switch.toggler.off {
   background: rgb(119, 119, 119);
   border-left-width: 2px;
   border-right-width: 15px;
-  margin-left: 6px;
+  margin-left: 4px;
 }
 
 .switch-row-container {
