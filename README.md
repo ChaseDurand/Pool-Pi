@@ -7,7 +7,8 @@ Pool-Pi is a system for interfacing with Goldline/Hayward pool control boards ov
 * TTL to RS485 adapter (ex. MAX485)
 * Weatherproof junction box
 * Non metalic liquid tight flexible conduit
-
+* Concrete screws (ex. Tapcon)
+* Wire
 
 ## Acknowledgements
 Special thanks to other people who have put their own resources/solutions for solving this problem online, including [draythomp](http://www.desert-home.com/), [swilson](https://github.com/swilson/aqualogic), and Pete Tompkins.
