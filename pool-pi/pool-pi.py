@@ -98,7 +98,7 @@ def parseBuffer(poolModel, serialHandler):
             if serialHandler.ready_to_send == True:
                 # TODO fix hardcoded waterfall
                 serialHandler.send(commands['aux4'])
-                serialHandler.read_to_send = False
+                serialHandler.ready_to_send = False
         serialHandler.buffer.clear()
         serialHandler.looking_for_start = True
         serialHandler.buffer_full = False
@@ -110,6 +110,10 @@ def checkCommand(poolModel, serialHandler, commandHandler):
     # Are we currently trying to send a command?
     if commandHandler.sendingMessage == False:
         #We aren't trying to send a command
+        return
+
+    if serialHandler.ready_to_send == True:
+        #We are ready to send, awaiting keep alive
         return
 
     if poolModel.last_update_time >= commandHandler.lastModelTime:
