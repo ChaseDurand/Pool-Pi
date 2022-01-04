@@ -94,35 +94,35 @@ def parseBuffer(poolModel, serialHandler):
                 print(command, data)
         else:
             # Message is keep alive
-            serialHandler.ready_to_send = True
+            # Check if we have an outgoing command to send
+            if serialHandler.ready_to_send == True:
+                # TODO fix hardcoded waterfall
+                serialHandler.send(commands['aux4'])
+                serialHandler.read_to_send = False
         serialHandler.buffer.clear()
         serialHandler.looking_for_start = True
         serialHandler.buffer_full = False
 
 
-def sendCommand(poolModel, serialHandler, commandHandler):
-    #TODO
+def checkCommand(poolModel, serialHandler, commandHandler):
+    # If we are trying to send a message, check most recent pool model
+    # If necessary, queue message attempt
     # Are we currently trying to send a command?
     if commandHandler.sendingMessage == False:
         #We aren't trying to send a command
         return
-    if serialHandler.ready_to_send == False:
-        #Last message wasn't keep alive, not ready to send
-        return
-    #Check model parameter and compare to desired parameter
-    if poolModel.getParameterState(
-            commandHandler.parameter) == commandHandler.targetState:
-        #Model matches
-        commandHandler.sendingMessage = False
-    else:
-        #If they don't match, need to check timeout and send limits
-        # Ensure we've seen a new model
-        if poolModel.last_update_time >= commandHandler.lastModelTime:
-            #Check timeout
+
+    if poolModel.last_update_time >= commandHandler.lastModelTime:
+        #We have a new poolModel
+        if poolModel.getParameterState(
+                commandHandler.parameter) == commandHandler.targetState:
+            #Model matches
+            commandHandler.sendingMessage = False
+        else:
+            #New poolModel doesn't match
             if commandHandler.checkSend() == True:
                 commandHandler.lastModelTime = time.time()
-                serialHandler.send(
-                    commands['aux4'])  # TODO fix hardcoded waterfall
+                serialHandler.ready_to_send = True
 
 
 def getCommand(poolModel, commandHandler):
@@ -193,9 +193,9 @@ def main():
         # If a full serial message has been found, decode it and update model
         parseBuffer(poolModel, serialHandler)
 
-        # Send to Serial Bus
-        # If we have pending commands, check status and send
-        sendCommand(poolModel, serialHandler, commandHandler)
+        # Check if command needs to be sent
+        # If last message was model update, check model and queue message if necessary
+        checkCommand(poolModel, serialHandler, commandHandler)
 
         # Update webview
         sendModel(poolModel)

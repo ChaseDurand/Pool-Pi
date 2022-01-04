@@ -127,7 +127,7 @@ class CommandHandler:
     lastModelTime = 0
 
     def initiateSend(self, commandID, commandState, commandVersion):
-        self.ready_to_send = False
+        self.ready_to_send = True
         self.sendingMessage = True
         self.parameter = commandID
         self.targetState = commandState
