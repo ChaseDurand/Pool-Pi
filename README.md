@@ -20,10 +20,10 @@ TODO add video
 
 ## Installation
 * Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access.
-* Adjust DC-DC converter to reduce pool control board voltage (~10.7-11V) to 5V.
-* Connect Raspberry Pi, DC-DC converter, RS485 adapter, and pool control board.
+* Connect DC-DC converter to pool control board and adjust to reduce input voltage (~10.7-11V) to 5V.
+* Connect Raspberry Pi and RS485 adapter.
 * Clone this repository to the Pi.
-* Install requirements
+* Install requirements.
 * Run python3 pool-pi.py
 * From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000)
 
