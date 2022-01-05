@@ -52,22 +52,20 @@
                         version = msgObj[attributeName].version;
                         // TODO handle init and blinking states
                         if (state == "ON") {
-                            color = 'color:green'
                             if ($("#" + attributeName).attr('class') == "toggler off") {
                                 $("#" + attributeName).toggleClass('off');
                             }
                         }
                         else if (state == "INIT") {
-                            color = 'color:lightgrey'
+                            continue
                         }
                         else if (state == "OFF") {
-                            color = 'color:red'
                             if ($("#" + attributeName).attr('class') == "toggler") {
                                 $("#" + attributeName).toggleClass('off');
                             }
                         }
                         else if (state == "BLINK") {
-                            color = 'color:yellow'
+                            continue
                         }
                         // Update version
                         $("#" + attributeName).attr('version', version);

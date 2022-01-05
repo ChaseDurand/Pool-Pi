@@ -13,9 +13,11 @@ from colorama import Style
 command_queue = []
 sending_attempts = 0
 confirm_attempts = 0
-#lastTime = 0 
+#lastTime = 0
 countKA = 0
 responseTime = 0
+
+
 def readSerialBus(serialHandler):
     global responseTime
     # Read data from the serial bus to build full buffer
@@ -52,14 +54,14 @@ def readSerialBus(serialHandler):
                 DLE,
                 "big"))):  #TODO refresh this- looks like im converting twice?
             # We have found DLE ETX
-#            responseTime = time.clock_gettime(time.CLOCK_REALTIME)
+            #            responseTime = time.clock_gettime(time.CLOCK_REALTIME)
             serialHandler.buffer_full = True
             serialHandler.looking_for_start = True
             return
 
 
-def parseBuffer(poolModel, serialHandler):
-#    global lastTime
+def parseBuffer(poolModel, serialHandler, commandHandler):
+    #    global lastTime
     global countKA
     global responseTime
     '''
@@ -103,15 +105,15 @@ def parseBuffer(poolModel, serialHandler):
             countKA = 0
         else:
             # Message is keep alive
-#            print("KA: ", time.time()-lastTime)
-#            lastTime = time.time()
+            #            print("KA: ", time.time()-lastTime)
+            #            lastTime = time.time()
             # Check if we have an outgoing command to send
             if serialHandler.ready_to_send == True:
                 if countKA == 1:
                     # TODO fix hardcoded waterfall
                     #time.sleep(0.0001)
-                    serialHandler.send(commands['aux4'])
-#                    print("END KA TO COMMAND DELTA= ", time.clock_gettime(time.CLOCK_REALTIME)-responseTime)
+                    serialHandler.send(commands[CommandHandler.parameter])
+                    #                    print("END KA TO COMMAND DELTA= ", time.clock_gettime(time.CLOCK_REALTIME)-responseTime)
                     #serialHandler.send(commands['aux4'])
                     serialHandler.ready_to_send = False
                 else:
@@ -217,7 +219,7 @@ def main():
 
         # Parse Buffer
         # If a full serial message has been found, decode it and update model
-        parseBuffer(poolModel, serialHandler)
+        parseBuffer(poolModel, serialHandler, commandHandler)
 
         # Check if command needs to be sent
         # If last message was model update, check model and queue message if necessary

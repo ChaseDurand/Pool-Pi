@@ -15,8 +15,34 @@ from colorama import Fore, Style
 MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
 
 commands = {
+    'spa':
+    b'\x10\x02\x00\x02\x00\x10\x00\x00\x00\x00\x10\x00\x00\x00\x00\x34\x10\x03',
     'aux4':
-    b'\x10\x02\x00\x02\x00\x10\x00\x00\x00\x00\x10\x00\x00\x00\x00\x34\x10\x03'
+    b'\x10\x02\x00\x02\x00\x10\x00\x00\x00\x00\x10\x00\x00\x00\x00\x34\x10\x03',
+    'spa': b'',
+    'filter': b'',
+    'lights': b'',
+    'aux1': b'',
+    'aux2': b'',
+    'service': b'',
+    'aux3':
+    b'\x10\x02\x00\x02\x08\x00\x00\x00\x08\x00\x00\x00\x00\x24\x10\x03',
+    'aux4':
+    b'\x10\x02\x00\x02\x00\x10\x00\x00\x00\x00\x10\x00\x00\x00\x00\x34\x10\x03',
+    'aux5': b'',
+    'aux6': b'',
+    'aux7': b'',
+    'aux8': b'',
+    'aux9': b'',
+    'aux10': b'',
+    'aux11': b'',
+    'aux12': b'',
+    'aux13': b'',
+    'aux14': b'',
+    'valve4': b'',
+    'spillover': b'',
+    'systemOff': b'',
+    'superChlorinate': b''
 }
 
 
@@ -35,28 +61,8 @@ class PoolModel:
             "state": "INIT",
             "version": 0
         }  #TODO combine pool/spa/spillover controls
-        self.spa = {"state": "INIT", "version": 0}
-        self.filter = {"state": "INIT", "version": 0}
-        self.lights = {"state": "INIT", "version": 0}
-        self.aux1 = {"state": "INIT", "version": 0}
-        self.aux2 = {"state": "INIT", "version": 0}
-        self.service = {"state": "INIT", "version": 0}
-        self.aux3 = {"state": "INIT", "version": 0}
-        self.aux4 = {"state": "INIT", "version": 0}
-        self.aux5 = {"state": "INIT", "version": 0}
-        self.aux6 = {"state": "INIT", "version": 0}
-        self.aux7 = {"state": "INIT", "version": 0}
-        self.aux8 = {"state": "INIT", "version": 0}
-        self.aux9 = {"state": "INIT", "version": 0}
-        self.aux10 = {"state": "INIT", "version": 0}
-        self.aux11 = {"state": "INIT", "version": 0}
-        self.aux12 = {"state": "INIT", "version": 0}
-        self.aux13 = {"state": "INIT", "version": 0}
-        self.aux14 = {"state": "INIT", "version": 0}
-        self.valve4 = {"state": "INIT", "version": 0}
-        self.spillover = {"state": "INIT", "version": 0}
-        self.systemOff = {"state": "INIT", "version": 0}
-        self.superChlorinate = {"state": "INIT", "version": 0}
+        for parameter in commands:
+            setattr(self, parameter, {"state": "INIT", "version": 0})
         self.flag_data_changed = False  #True if there is new data for web, false if no new data
         self.last_update_time = 0  #Time that model was last updated (when last LED message was parsed)
 
