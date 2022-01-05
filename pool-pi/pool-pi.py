@@ -112,7 +112,7 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
                 if countKA == 1:
                     # TODO fix hardcoded waterfall
                     #time.sleep(0.0001)
-                    serialHandler.send(commands[CommandHandler.parameter])
+                    serialHandler.send(commands[commandHandler.parameter])
                     #                    print("END KA TO COMMAND DELTA= ", time.clock_gettime(time.CLOCK_REALTIME)-responseTime)
                     #serialHandler.send(commands['aux4'])
                     serialHandler.ready_to_send = False
