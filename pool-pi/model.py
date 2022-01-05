@@ -4,6 +4,7 @@ import serial
 from gpiozero import LED
 from enum import Enum
 import time
+from colorama import Fore, Style
 
 # class attributeStates(Enum):
 #     INIT: 0
@@ -119,19 +120,17 @@ class CommandHandler:
     targetState = ''
     parameterVersion = ''
     send_attempts = 0
-    confirm_attempts = 0
     nextSendTime = 0
     sendingMessage = False
     lastModelTime = 0
 
     def initiateSend(self, commandID, commandState, commandVersion):
-        self.ready_to_send = True
         self.sendingMessage = True
         self.parameter = commandID
         self.targetState = commandState
         self.parameterVersion = commandVersion
         self.send_attempts = 0
-        # self.checkSend()
+        return
 
     def checkSend(self):
         #Return true if ready to send
@@ -141,5 +140,5 @@ class CommandHandler:
             self.sendingMessage = False
             return False
         self.send_attempts += 1
-        print('Send attempt: ', self.send_attempts)
+        print(f'{Fore.RED}Send attempt:	{Style.RESET_ALL}', self.send_attempts)
         return True
