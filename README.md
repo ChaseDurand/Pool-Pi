@@ -1,8 +1,10 @@
 # Pool-Pi
 Pool-Pi is a system for interfacing with Goldline/Hayward Aqualogic pool control boards over WiFi via a Raspberry Pi. It adds wireless capabilities to non-wireless control boards and a web interface for viewing updates and sending commands. The web interface emulates a local display, allowing for the same controls accessible from the physical unit.
 
-## Demo
-TODO add video
+<img width="535" alt="GUI screenshot" src="https://user-images.githubusercontent.com/50851884/148461897-e62c1e67-c185-4a5d-9e2b-00265cb0063c.png">
+<!-- TODO update GUI -->
+
+<!-- TODO add video -->
 
 ## Requirements
 * Goldline/Hayward Aqualogic control board (tested on Main Software Revision 2.86)
@@ -28,7 +30,7 @@ TODO add video
 * From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000)
 
 ## Example Installation
-TODO add images
+<img width="535" alt="Example installation of system" src="https://user-images.githubusercontent.com/50851884/148461682-f07c4a02-8b73-4562-b3c5-ed5b3da4c904.jpg">
 
 ## Troubleshooting
 Comm Error can appear when multiple devices attempt to drive the serial bus simultaneously.
