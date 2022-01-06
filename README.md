@@ -1,5 +1,5 @@
 # Pool-Pi
-Pool-Pi is a system for interfacing with Goldline/Hayward pool control boards over WiFi via a Raspberry Pi. It adds wireless capabilities to non-wireless control boards and a web interface for viewing updates and sending commands. The web interface emulates a PS8-sized display (2x20 display, 6 AUX buttons), but could be modified to emulate a PS4 or PS16 unit.
+Pool-Pi is a system for interfacing with Goldline/Hayward pool control boards over WiFi via a Raspberry Pi. It adds wireless capabilities to non-wireless control boards and a web interface for viewing updates and sending commands. The web interface emulates a PS8-sized display (2x20 display, 6 AUX buttons), allowing for the same controls accessible from the physical unit.
 
 ## Demo
 TODO add video
