@@ -3,7 +3,6 @@ from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 from threading import Lock
 import uuid
-import pickle
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -65,9 +64,9 @@ def my_toggle_event(message):
 @socketio.event
 def connect():
     global thread
-#    with thread_lock:
-#        if thread is None:
-#            thread = socketio.start_background_task(background_thread)
+    #    with thread_lock:
+    #        if thread is None:
+    #            thread = socketio.start_background_task(background_thread)
     emit('my_response', {'data': 'Connected', 'count': 0})
 
 
