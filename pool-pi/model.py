@@ -12,30 +12,27 @@ from colorama import Fore, Style
 #     BLINK: 2
 #     ON: 3
 
+MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
+
 command_start = b'\x10\x02'
 command_sender = b'\x00\x02'
 command_end = b'\x10\x03'
 
-MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
-
-#TODO replace commands with smallest "command" element and dynamically form full message+checksum
 commands = {
-    'service':
-    b'\x10\x02\x00\x02\x08\x00\x00\x00\x08\x00\x00\x00\x00\x24\x10\x03',
-    'pool': b'\x10\x02\x00\x02\x00\x40\x00\x00\x00\x40\x00\x00\x10\x03',
-    'spa': b'\x10\x02\x00\x02\x00\x40\x00\x00\x00\x40\x00\x00\x10\x03',
-    'spillover': b'\x10\x02\x00\x02\x00\x40\x00\x00\x00\x40\x00\x00\x10\x03',
-    'filter': b'',
-    'lights': b'',
-    'heater1': b'',
-    'valve3': b'',
-    'aux1': b'',
-    'aux2': b'',
-    'aux3':
-    b'\x10\x02\x00\x02\x00\x08\x00\x00\x00\x08\x00\x00\x00\x24\x10\x03',
+    'service': b'\x08\x00\x00\x00',
+    'pool': b'\x00\x40\x00\x00',
+    'spa': b'\x00\x40\x00\x00',
+    'spillover': b'\x00\x40\x00\x00',
+    'filter': b'\x00\x80\x00\x00',
+    'lights': b'\x01\x08\x00\x00',
+    'heater1': b'\x00\x00\x04\x00',
+    'valve3': b'\x00\x00\x01\x00',
+    'aux1': b'\x00\x02\x00\x00',
+    'aux2': b'\x00\x04\x00\x00',
+    'aux3': b'\x00\x08\x00\x00',
     'aux4': b'\x00\x10\x00\x00\x00',
-    'aux5': b'',
-    'aux6': b'',
+    'aux5': b'\x00\x20\x00\x00',
+    'aux6': b'\x00\x40\x00\x00',
     'aux7': b'',
     'aux8': b'',
     'aux9': b'',
