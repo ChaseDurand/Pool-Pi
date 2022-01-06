@@ -112,7 +112,7 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
                 if countKA == 1:
                     # TODO fix hardcoded waterfall
                     #time.sleep(0.0001)
-                    serialHandler.send(commands[commandHandler.parameter])
+                    serialHandler.send(commandHandler.fullCommand)
                     #                    print("END KA TO COMMAND DELTA= ", time.clock_gettime(time.CLOCK_REALTIME)-responseTime)
                     #serialHandler.send(commands['aux4'])
                     serialHandler.ready_to_send = False
@@ -154,6 +154,7 @@ def checkCommand(poolModel, serialHandler, commandHandler):
 def getCommand(poolModel, commandHandler):
     #Get command from command_queue and load into commandHandler
     global command_queue
+    #TODO check if we're currently trying to send a command and skip if we are
     #TODO figure out threading issue
     if exists("command_queue.txt") == False:
         return

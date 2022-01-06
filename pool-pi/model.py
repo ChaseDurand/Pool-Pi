@@ -12,24 +12,28 @@ from colorama import Fore, Style
 #     BLINK: 2
 #     ON: 3
 
+command_start = b'\x10\x02'
+command_sender = b'\x00\x02'
+command_end = b'\x10\x03'
+
 MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
 
+#TODO replace commands with smallest "command" element and dynamically form full message+checksum
 commands = {
-    'spa':
-    b'\x10\x02\x00\x02\x00\x10\x00\x00\x00\x00\x10\x00\x00\x00\x00\x34\x10\x03',
-    'aux4':
-    b'\x10\x02\x00\x02\x00\x10\x00\x00\x00\x00\x10\x00\x00\x00\x00\x34\x10\x03',
-    'spa': b'',
-    'filter': b'',
-    'lights': b'',
-    'aux1': b'',
-    'aux2': b'',
     'service':
     b'\x10\x02\x00\x02\x08\x00\x00\x00\x08\x00\x00\x00\x00\x24\x10\x03',
+    'pool': b'\x10\x02\x00\x02\x00\x40\x00\x00\x00\x40\x00\x00\x10\x03',
+    'spa': b'\x10\x02\x00\x02\x00\x40\x00\x00\x00\x40\x00\x00\x10\x03',
+    'spillover': b'\x10\x02\x00\x02\x00\x40\x00\x00\x00\x40\x00\x00\x10\x03',
+    'filter': b'',
+    'lights': b'',
+    'heater1': b'',
+    'valve3': b'',
+    'aux1': b'',
+    'aux2': b'',
     'aux3':
     b'\x10\x02\x00\x02\x00\x08\x00\x00\x00\x08\x00\x00\x00\x24\x10\x03',
-    'aux4':
-    b'\x10\x02\x00\x02\x00\x10\x00\x00\x00\x00\x10\x00\x00\x00\x00\x34\x10\x03',
+    'aux4': b'\x00\x10\x00\x00\x00',
     'aux5': b'',
     'aux6': b'',
     'aux7': b'',
@@ -41,7 +45,6 @@ commands = {
     'aux13': b'',
     'aux14': b'',
     'valve4': b'',
-    'spillover': b'',
     'systemOff': b'',
     'superChlorinate': b''
 }
@@ -55,13 +58,8 @@ class PoolModel:
         self.pooltemp = "WAITING FOR POOLTEMP"
         self.datetime = "WAITING FOR DATETIME"
         self.salinity = "WAITING FOR SALINITY"
-        self.heater1 = {"state": "INIT", "version": 0}
-        self.valve3 = {"state": "INIT", "version": 0}
         self.checkSystem = "WAITING FOR CHECKSYSTEM"  #TODO check why checksystem stays on init state when LED is off
-        self.pool = {
-            "state": "INIT",
-            "version": 0
-        }  #TODO combine pool/spa/spillover controls
+        #TODO combine pool/spa/spillover controls
         for parameter in commands:
             setattr(self, parameter, {"state": "INIT", "version": 0})
         self.flag_data_changed = False  #True if there is new data for web, false if no new data
@@ -130,8 +128,17 @@ class CommandHandler:
     nextSendTime = 0
     sendingMessage = False
     lastModelTime = 0
+    fullCommand = b''
 
     def initiateSend(self, commandID, commandState, commandVersion):
+        checksum = 0
+        message = command_start + command_sender + commands[
+            commandID] + commands[commandID]
+        for byte in message:
+            checksum += byte
+        checksum = checksum.to_bytes(2, 'big')
+        self.fullCommand = message + checksum + command_end
+
         self.sendingMessage = True
         self.parameter = commandID
         self.targetState = commandState
