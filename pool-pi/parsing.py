@@ -31,6 +31,7 @@ KEEP_ALIVE = (b'\x10\x02\x01\x01\x00\x14\x10\x03', "Keep Alive")
 
 def parseDisplay(data, poolModel):
     # Classify display update and print classification
+    # TODO account for flags/blink selection?
     if DISPLAY_AIRTEMP in data:
         data = data.replace(b'\x5f', b'\xc2\xb0')
         parseAirTemp(data, poolModel)

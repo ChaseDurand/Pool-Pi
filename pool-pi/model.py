@@ -15,16 +15,21 @@ from colorama import Fore, Style
 MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
 
 command_start = b'\x10\x02'
-command_sender = b'\x00\x02'
+command_sender = b'\x00\x02'  #TODO see if this matters or can be anything
 command_end = b'\x10\x03'
 
+DLE = b'\x10'
+STX = b'\x02'
+ETX = b'\x03'
+
+#TODO unify terminology to make command/message names consistent
 commands = {
     'service': b'\x08\x00\x00\x00',
-    'pool': b'\x00\x40\x00\x00',
-    'spa': b'\x00\x40\x00\x00',
-    'spillover': b'\x00\x40\x00\x00',
+    'pool': b'\x40\x00\x00\x00',
+    'spa': b'\x40\x00\x00\x00',
+    'spillover': b'\x40\x00\x00\x00',
     'filter': b'\x00\x80\x00\x00',
-    'lights': b'\x01\x08\x00\x00',
+    'lights': b'\x01\x00\x00\x00',
     'heater1': b'\x00\x00\x04\x00',
     'valve3': b'\x00\x00\x01\x00',
     'aux1': b'\x00\x02\x00\x00',
@@ -128,12 +133,15 @@ class CommandHandler:
     fullCommand = b''
 
     def initiateSend(self, commandID, commandState, commandVersion):
+
+        # Form full message from start tx, command, checksum, and end tx.
         checksum = 0
         message = command_start + command_sender + commands[
             commandID] + commands[commandID]
         for byte in message:
             checksum += byte
         checksum = checksum.to_bytes(2, 'big')
+        # TODO add check for x10 in checksum and append x00 if needed
         self.fullCommand = message + checksum + command_end
 
         self.sendingMessage = True

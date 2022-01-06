@@ -9,17 +9,13 @@ from os import stat
 import time
 from colorama import Fore
 from colorama import Style
-# TODO move these elsewhere (serialHandler?)
-command_queue = []
-sending_attempts = 0
-confirm_attempts = 0
-#lastTime = 0
+#TODO proper logging/text output
+# possibly with binascii hexlify to avoid ascii conversions for non-screen updates
+
 countKA = 0
-responseTime = 0
 
 
 def readSerialBus(serialHandler):
-    global responseTime
     # Read data from the serial bus to build full buffer
     # Serial commands begin with DLE STX and terminate with DLE ETX
     # With the exception of searching for the two start bytes, this function only reads one byte to prevent blocking other processes
@@ -54,16 +50,13 @@ def readSerialBus(serialHandler):
                 DLE,
                 "big"))):  #TODO refresh this- looks like im converting twice?
             # We have found DLE ETX
-            #            responseTime = time.clock_gettime(time.CLOCK_REALTIME)
             serialHandler.buffer_full = True
             serialHandler.looking_for_start = True
             return
 
 
 def parseBuffer(poolModel, serialHandler, commandHandler):
-    #    global lastTime
     global countKA
-    global responseTime
     '''
     The DLE, STX and Command/Data fields are added together to provide the 2-byte Checksum. If 
     any of the bytes of the Command/Data Field or Checksum are equal to the DLE character (10H), a 
@@ -105,16 +98,11 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
             countKA = 0
         else:
             # Message is keep alive
-            #            print("KA: ", time.time()-lastTime)
-            #            lastTime = time.time()
-            # Check if we have an outgoing command to send
+            # Check to see if we have a message to send
             if serialHandler.ready_to_send == True:
+                # TODO check if waiting for second KA is necessary. If so, move countKA out of global and rename
                 if countKA == 1:
-                    # TODO fix hardcoded waterfall
-                    #time.sleep(0.0001)
                     serialHandler.send(commandHandler.fullCommand)
-                    #                    print("END KA TO COMMAND DELTA= ", time.clock_gettime(time.CLOCK_REALTIME)-responseTime)
-                    #serialHandler.send(commands['aux4'])
                     serialHandler.ready_to_send = False
                 else:
                     countKA = 1
@@ -153,9 +141,11 @@ def checkCommand(poolModel, serialHandler, commandHandler):
 
 def getCommand(poolModel, commandHandler):
     #Get command from command_queue and load into commandHandler
-    global command_queue
+
     #TODO check if we're currently trying to send a command and skip if we are
-    #TODO figure out threading issue
+    #TODO figure out threading issue or move command_queue to tmp directory
+    #TODO add handling for buttons and arrows
+    #TODO add handling for unlock code
     if exists("command_queue.txt") == False:
         return
     if stat('command_queue.txt').st_size != 0:
