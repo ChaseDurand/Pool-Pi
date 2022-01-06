@@ -131,6 +131,7 @@ class CommandHandler:
     sendingMessage = False
     lastModelTime = 0
     fullCommand = b''
+    keepAliveCount = 0
 
     def initiateSend(self, commandID, commandState, commandVersion):
 
@@ -144,6 +145,7 @@ class CommandHandler:
         # TODO add check for x10 in checksum and append x00 if needed
         self.fullCommand = message + checksum + command_end
 
+        self.keepAliveCount = 0
         self.sendingMessage = True
         self.parameter = commandID
         self.targetState = commandState

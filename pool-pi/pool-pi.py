@@ -12,8 +12,6 @@ from colorama import Style
 #TODO proper logging/text output
 # possibly with binascii hexlify to avoid ascii conversions for non-screen updates
 
-countKA = 0
-
 
 def readSerialBus(serialHandler):
     # Read data from the serial bus to build full buffer
@@ -56,7 +54,6 @@ def readSerialBus(serialHandler):
 
 
 def parseBuffer(poolModel, serialHandler, commandHandler):
-    global countKA
     '''
     The DLE, STX and Command/Data fields are added together to provide the 2-byte Checksum. If 
     any of the bytes of the Command/Data Field or Checksum are equal to the DLE character (10H), a 
@@ -95,19 +92,18 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
                 parseLEDs(data, poolModel)
             else:
                 print(command, data)
-            countKA = 0
+            commandHandler.keepAliveCount = 0
         else:
             # Message is keep alive
             # Check to see if we have a message to send
             if serialHandler.ready_to_send == True:
-                # TODO check if waiting for second KA is necessary. If so, move countKA out of global and rename
-                if countKA == 1:
+                if commandHandler.keepAliveCount == 1:
                     serialHandler.send(commandHandler.fullCommand)
                     serialHandler.ready_to_send = False
                 else:
-                    countKA = 1
+                    commandHandler.keepAliveCount = 1
             else:
-                countKA = 0
+                commandHandler.keepAliveCount = 0
         serialHandler.buffer.clear()
         serialHandler.looking_for_start = True
         serialHandler.buffer_full = False
