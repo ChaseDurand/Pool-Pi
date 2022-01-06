@@ -1,24 +1,24 @@
 # Pool-Pi
-Pool-Pi is a system for interfacing with Goldline/Hayward pool control boards over WiFi via a Raspberry Pi. It adds wireless capabilities to non-wireless control boards and a web interface for viewing updates and sending commands. The web interface emulates a PS8-sized display (2x20 display, 6 AUX buttons), allowing for the same controls accessible from the physical unit.
+Pool-Pi is a system for interfacing with Goldline/Hayward Aqualogic pool control boards over WiFi via a Raspberry Pi. It adds wireless capabilities to non-wireless control boards and a web interface for viewing updates and sending commands. The web interface emulates a local display, allowing for the same controls accessible from the physical unit.
 
 ## Demo
 TODO add video
 
 ## Requirements
-* Goldline/Hayward AquaLogic control board (tested on Main Software Revision 2.86)
-* Raspberry Pi with Wifi (ex. Raspberry Pi Zero W)
-* Adjustable DC-DC step down buck boost converter (ex. LM2596)
-* TTL to RS485 adapter (ex. MAX485)
+* Goldline/Hayward Aqualogic control board (tested on Main Software Revision 2.86)
+* Raspberry Pi with Wifi
+* Adjustable DC-DC step down buck boost converter
+* TTL to RS485 adapter
 * Installation hardware:
     * Weatherproof junction box
     * Non metalic liquid tight flexible conduit
-    * Concrete screws (ex. Tapcon)
+    * Concrete screws
     * Wire
 * Tools:
     * Multimeter
     * Drill
 
-## Installation
+## Setup
 * Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access.
 * Connect DC-DC converter to pool control board and adjust to reduce input voltage (~10.7-11V) to 5V.
 * Connect Raspberry Pi and RS485 adapter.
