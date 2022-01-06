@@ -80,7 +80,7 @@ Example Aux 1 button toggle frame: x10x02x00x02x00x02x00x00x00x02x00x00x00x1Cx10
 | Service            | x08x00x00x00                           |
 | Pool/Spa/Spillover | x40x00x00x00                           |
 | Filter             | x00x80x00x00                           |
-| Lights             | x01x00x00x00                           |
+| Lights             | x00x01x00x00                           |
 | Heater1            | x00x00x04x00                           |
 | Valve3             | x00x00x01x00                           |
 | Aux1               | x00x02x00x00                           |
