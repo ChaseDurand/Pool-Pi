@@ -20,6 +20,8 @@ Pool-Pi is a system for interfacing with Goldline/Hayward Aqualogic pool control
     * Multimeter
     * Drill
 
+Exact parts used can be found in the [parts list](/PARTS_LIST.md).
+
 ## Setup
 * Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access.
 * Connect DC-DC converter to pool control board and adjust to reduce input voltage (~10.7-11V) to 5V.
