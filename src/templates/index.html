@@ -108,8 +108,9 @@
                 console.log(switchID, switchState, switchVersion);
                 socket.emit('my_toggle_event', { 'id': switchID, 'data': switchState, 'version': switchVersion });
             });
-            $("#testButton").click(function () {
-                alert("Handler for .click() called.");
+            $("button").click(function () {
+                buttonID = $(this).attr('id')
+                alert("Handler for " + buttonID + " called.");
             });
         });
     </script>
@@ -122,7 +123,8 @@
         <div class="loading">
             <img class="loading-image" src='/../static/loading.gif' alt="Loading..." />
         </div>
-        <div id="testButton" type="button">Test button!</div>
+        <div id="button1" class="button">Button 1</div>
+        <div id="button2" class="button">Button 2</div>
         <div class="display">
             <div id="display1"></div>
             <div id="display2"></div>

@@ -70,3 +70,7 @@ switch:hover {
   width: 160px;
   justify-content: flex-end;
 }
+
+.button {
+  cursor: pointer;
+}
