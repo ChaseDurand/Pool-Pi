@@ -1,4 +1,3 @@
-from posixpath import split
 from commands import *
 from threading import Thread
 from model import *
@@ -9,6 +8,9 @@ from os import stat
 import time
 from colorama import Fore
 from colorama import Style
+
+#TODO start this on pi startup
+
 #TODO proper logging/text output
 # possibly with binascii hexlify to avoid ascii conversions for non-screen updates
 

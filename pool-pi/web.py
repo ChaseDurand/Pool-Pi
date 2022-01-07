@@ -1,4 +1,3 @@
-from posixpath import join
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 from threading import Lock
@@ -43,17 +42,12 @@ def my_event(message):
 
 @socketio.event
 def my_toggle_event(message):
-    # global command_queue
-    # command_queue.append((message['id'], message['data'], message['version']))
-    #Workaround for command_queue until I figure out variables with threads
-    # command = (message['id'], message['data'], message['version'])
     f = open('command_queue.txt', 'a')
     command = str(message['id'] + ',' + str(message['data']) + ',' +
                   message['version'])
     print(command)
     f.write(command)
     f.close()
-    # pickle.dump(message, open('command_queue.dump', 'wb'))
     emit('my_response', {
         'data': message['data'],
         'count': message['id']
