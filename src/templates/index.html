@@ -108,7 +108,9 @@
                 console.log(switchID, switchState, switchVersion);
                 socket.emit('my_toggle_event', { 'id': switchID, 'data': switchState, 'version': switchVersion });
             });
-
+            $("#testButton").click(function () {
+                alert("Handler for .click() called.");
+            });
         });
     </script>
 </head>
@@ -120,6 +122,7 @@
         <div class="loading">
             <img class="loading-image" src='/../static/loading.gif' alt="Loading..." />
         </div>
+        <div id="testButton" type="button">Test button!</div>
         <div class="display">
             <div id="display1"></div>
             <div id="display2"></div>
@@ -178,7 +181,6 @@
     </div>
 
     <p>
-        Average ping/pong latency: <b><span id="ping-pong"></span>ms</b><br>
         air temp: <b><span id="airtemp"></span></b><br>
         pool temp: <b><span id="pooltemp"></span></b><br>
         day: <b><span id="datetime"></span></b><br>
