@@ -108,7 +108,7 @@
                 console.log(switchID, switchState, switchVersion);
                 socket.emit('my_toggle_event', { 'id': switchID, 'data': switchState, 'version': switchVersion });
             });
-            $("button").click(function () {
+            $("#button").click(function () {
                 buttonID = $(this).attr('id')
                 alert("Handler for " + buttonID + " called.");
             });
