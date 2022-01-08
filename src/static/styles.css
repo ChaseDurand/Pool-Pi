@@ -25,30 +25,21 @@ body {
 
 .topPanel{
   display: table;
-  height: 120px;
-  background: black;
-  width: 400px;
-  margin: 20px;
-  border: 2px dashed green;
+  width: 100%;
+  margin: 0px;
 }
 
 .topLeft {
   display: table-cell;
   margin: 0;
-  background: white;
-  color: black;
-  padding: 10px;
-  border: 2px solid purple;
+  padding: 5px;
   vertical-align: middle;
 }
 
 .topRight {
   display: table-cell;
   margin: 0;
-  background: white;
-  color: black;
-  padding: 10px;
-  border: 2px solid blue;
+  padding: 5px;
   vertical-align: middle;
 }
 
@@ -60,15 +51,15 @@ body {
   font-size: 18px;
   height: 40px;
   text-align: center;
-  width: 350px;
+  width: 320px;
   display: inline-block;
   margin: 0 auto;
+  margin-left: 10px;
 }
 
 .buttonContainer {
   display: inline-block;
-  width: 120px;
-  /* justify-content: flex-end; */
+  width: 160px;
   text-align: center;
   margin: 0 auto;
 }
@@ -83,8 +74,7 @@ body {
 .button {
   cursor: pointer;
   display: inline-block;
-  width: 60px;
-  /* justify-content: flex-end; */
+  width: 45px;
   border: solid;
   border-radius: 1px;
   border-color: black;
