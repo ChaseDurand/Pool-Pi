@@ -24,7 +24,7 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 * Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access.
 * Clone this repository to the Pi.
 * Install requirements.
-* Run python3 pool-pi.py
+* Run python3 src/pool-pi.py
 * From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000)
 <!-- TODO configure GUI to match local aqualogic system -->
 

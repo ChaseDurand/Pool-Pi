@@ -16,14 +16,17 @@ from colorama import Style
 
 
 def readSerialBus(serialHandler):
-    # Read data from the serial bus to build full buffer
-    # Serial commands begin with DLE STX and terminate with DLE ETX
+    # Read data from the serial bus to build full frame in buffer
+    # Serial frames begin with DLE STX and terminate with DLE ETX
     # With the exception of searching for the two start bytes, this function only reads one byte to prevent blocking other processes
-    # When looking for start of message, looking_for_start is True
-    # When buffer is filled with a full command and ready to be parseed, set buffer_full to True
-    if (serialHandler.in_waiting() == 0):
+    # When looking for start of frame, looking_for_start is True
+    # When buffer is filled with a full frame and ready to be parseed, set buffer_full to True
+
+    if (serialHandler.in_waiting() == 0
+        ):  #Check is we have serial data to read
         return
-    if (serialHandler.buffer_full == True):
+    if (serialHandler.buffer_full == True
+        ):  #Check if we already have a full buffer
         return
     serChar = serialHandler.read()
     if serialHandler.looking_for_start:
@@ -56,14 +59,21 @@ def readSerialBus(serialHandler):
 
 
 def parseBuffer(poolModel, serialHandler, commandHandler):
+    # If we have a full frame in buffer, parse it.
+    # If frame is keep alive, check to see if we are ready to send a command and if so send it.
     '''
-    The DLE, STX and Command/Data fields are added together to provide the 2-byte Checksum. If 
-    any of the bytes of the Command/Data Field or Checksum are equal to the DLE character (10H), a 
+    Frame structure:
+    | Start  | Frame Type |     Data     | Checksum  |  End   |
+    | x10x02 | <2 bytes>  | <0-? bytes>  | <2 bytes> | x10x03 |
+
+    The Start, Frame Type, and Data fields are added together to provide the 2-byte Checksum. If 
+    any of the bytes of the Frame Type, Data fields, or Checksum are equal to the DLE character (10H), a 
     NULL character (00H) is inserted into the transmitted data stream immediately after that byte. That 
     NULL character must then be removed by the receiver.
     '''
     if (serialHandler.buffer_full):
         # Confirm checksum
+        #TODO identify and account for possible x00 after x10 (DLE)
         if (confirmChecksum(serialHandler.buffer) == False):
             print("Checksum mismatch! ", serialHandler.buffer)
             #If checksum doesn't match, message is invalid.
@@ -73,9 +83,9 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
             serialHandler.buffer_full = False
             return
 
-        # Get message
+        # Parse frame
         if (serialHandler.buffer != KEEP_ALIVE[0]):
-            #TODO identify and account for possible x00 after x10 (DLE)
+            # TODO rework this and move to before checksum
             while (True):
                 try:
                     index_to_remove = serialHandler.buffer.index(DLE, 2,
@@ -86,14 +96,14 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
                         print('Error, expected 00 but removed', removed)
                 except ValueError:
                     break
-            command = serialHandler.buffer[2:4]
+            frame_type = serialHandler.buffer[2:4]
             data = serialHandler.buffer[4:-4]
-            if command == FRAME_UPDATE_DISPLAY[0]:
+            if frame_type == FRAME_UPDATE_DISPLAY[0]:
                 parseDisplay(data, poolModel)
-            elif command == FRAME_UPDATE_LEDS[0]:
+            elif frame_type == FRAME_UPDATE_LEDS[0]:
                 parseLEDs(data, poolModel)
             else:
-                print(command, data)
+                print(frame_type, data)
             commandHandler.keepAliveCount = 0
         else:
             # Message is keep alive
@@ -128,17 +138,18 @@ def checkCommand(poolModel, serialHandler, commandHandler):
         if poolModel.getParameterState(
                 commandHandler.parameter) == commandHandler.targetState:
             #Model matches
-            print(f'{Fore.GREEN}SUCCESS!!!!!{Style.RESET_ALL}')
+            print(f'{Fore.GREEN}Command success!{Style.RESET_ALL}')
             commandHandler.sendingMessage = False
         else:
             #New poolModel doesn't match
-            if commandHandler.checkSend() == True:
+            if commandHandler.checkSendAttempts() == True:
                 commandHandler.lastModelTime = time.time()
                 serialHandler.ready_to_send = True
 
 
 def getCommand(poolModel, commandHandler):
-    #Get command from command_queue and load into commandHandler
+    # If we're not currently sending a command, check if there are new commands.
+    # Get new command from command_queue, validate, and initiate send with commandHandler.
 
     #TODO check if we're currently trying to send a command and skip if we are
     #TODO figure out threading issue or move command_queue to tmp directory
@@ -177,7 +188,7 @@ def getCommand(poolModel, commandHandler):
                                   commandVersion)
                             #Push to command handler
                             commandHandler.initiateSend(
-                                commandID, commandState, commandVersion)
+                                commandID, commandState)
                     else:
                         print('invalid command! version mismatch',
                               poolModel.getParameterVersion(commandID),
@@ -188,6 +199,7 @@ def getCommand(poolModel, commandHandler):
 
 
 def sendModel(poolModel):
+    # If we have new date for the front end, send data as JSON
     if poolModel.flag_data_changed == True:
         print("Sent model!")
         socketio.emit('model', poolModel.toJSON())
@@ -196,8 +208,6 @@ def sendModel(poolModel):
 
 
 def main():
-    # TODO get states from memory on startup
-
     poolModel = PoolModel()
     serialHandler = SerialHandler()
     commandHandler = CommandHandler()
@@ -207,20 +217,19 @@ def main():
         readSerialBus(serialHandler)
 
         # Parse Buffer
-        # If a full serial message has been found, decode it and update model
+        # If a full serial frame has been found, decode it and update model.
+        # If we have a command ready to be sent, send.
         parseBuffer(poolModel, serialHandler, commandHandler)
 
-        # Check if command needs to be sent
-        # If last message was model update, check model and queue message if necessary
+        # If we are sending a command, check if command needs to be sent.
+        # Check model for updates to see if command was accepted.
         checkCommand(poolModel, serialHandler, commandHandler)
 
-        # Update webview
+        # Send updates to front end.
         sendModel(poolModel)
 
-        # Check for new commands
+        # If we're not sending, check for new commands from front end.
         getCommand(poolModel, commandHandler)
-
-        #checkCommand(poolModel, serialHandler, commandHandler)
 
 
 if __name__ == '__main__':

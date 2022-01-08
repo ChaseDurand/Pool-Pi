@@ -96,18 +96,21 @@ class PoolModel:
 
 class SerialHandler:
     def __init__(self):
-        self.buffer = bytearray()
-        self.buffer_full = False
-        self.looking_for_start = True
+        self.buffer = bytearray()  #Buffer to store serial frame
+        self.buffer_full = False  #Flag to indicate if buffer has a full frame
+        self.looking_for_start = True  #Flag to indicate if we are awaiting frame start (DLE STX)
         self.ser = serial.Serial(port='/dev/ttyAMA0',
                                  baudrate=19200,
                                  parity=serial.PARITY_NONE,
                                  stopbits=serial.STOPBITS_TWO)
-        self.send_enable = LED(17)
-        self.send_enable.off()
-        self.ready_to_send = False
+        self.send_enable = LED(
+            17
+        )  #GPIO connected to MAX485 ~RE and DE. High = sending, low = receiving.
+        self.send_enable.off()  #Set to receive mode
+        self.ready_to_send = False  #Flag if we have a command to send and have checked to determine we need to send the command
 
     def send(self, msg):
+        # Enable RS485 output, send message, disable RS485 output.
         self.send_enable.on()
         self.ser.write(msg)
         self.ser.flush()
@@ -122,44 +125,42 @@ class SerialHandler:
 
 
 class CommandHandler:
-    sending_queue = []
-    parameter = ''
-    targetState = ''
-    parameterVersion = ''
-    send_attempts = 0
-    nextSendTime = 0
-    sendingMessage = False
-    lastModelTime = 0
-    fullCommand = b''
-    keepAliveCount = 0
+    parameter = ''  # Name of parameter command is changing
+    targetState = ''  # State we want parameter to be in
+    send_attempts = 0  # Number of times command has been sent
+    sendingMessage = False  #Flag if we are currently trying to send a command
+    lastModelTime = 0  #Timestamp of last model (LED update) seen to ensure we witness a new model before attempting additional send
+    fullCommand = b''  #Bytearray of full frame to send
+    keepAliveCount = 0  #Number of keep alive frames we have seen in a row
 
-    def initiateSend(self, commandID, commandState, commandVersion):
-
-        # Form full message from start tx, command, checksum, and end tx.
+    def initiateSend(self, commandID, commandState):
+        # Form full frame to send from start tx, frame type, command, checksum, and end tx.
+        partialFrame = command_start + command_sender + commands[
+            commandID] + commands[
+                commandID]  # Form partial frame from start tx, frame type, and command.
+        #Calculate checksum
         checksum = 0
-        message = command_start + command_sender + commands[
-            commandID] + commands[commandID]
-        for byte in message:
+        for byte in partialFrame:
             checksum += byte
         checksum = checksum.to_bytes(2, 'big')
         # TODO add check for x10 in checksum and append x00 if needed
-        self.fullCommand = message + checksum + command_end
-
+        self.fullCommand = partialFrame + checksum + command_end
         self.keepAliveCount = 0
         self.sendingMessage = True
         self.parameter = commandID
         self.targetState = commandState
-        self.parameterVersion = commandVersion
         self.send_attempts = 0
         return
 
-    def checkSend(self):
-        #Return true if ready to send
+    def checkSendAttempts(self):
+        # Return true if we have more sending attemtps to try
+        # Return false and stop command sending if we have exceeded max send attempts
         if self.send_attempts >= MAX_SEND_ATTEMPTS:
-            #message failed
-            print('message failed')
+            # Command failed
+            print(f'{Fore.RED}Command failed.{Style.RESET_ALL}')
             self.sendingMessage = False
             return False
         self.send_attempts += 1
-        print(f'{Fore.RED}Send attempt:	{Style.RESET_ALL}', self.send_attempts)
+        print(f'{Fore.YELLOW}Send attempt:	{Style.RESET_ALL}',
+              self.send_attempts)
         return True

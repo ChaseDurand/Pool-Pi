@@ -57,7 +57,6 @@ def parseDisplay(data, poolModel):
         print('spa temp update', end='')
     else:
         print('unclassified display update', end='')
-    # Print data
     try:
         poolModel.display = data.decode('utf-8')
         poolModel.flag_data_changed = True
@@ -66,7 +65,7 @@ def parseDisplay(data, poolModel):
         try:
             poolModel.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
             poolModel.flag_data_changed = True
-            print(poolModel.display)  #: is encoded as xBA
+            print(poolModel.display)  # Colon : is encoded as xBA
         except UnicodeDecodeError as e:
             print(e)
             print(data)
@@ -150,6 +149,7 @@ def confirmChecksum(message):
     # Check if the calculated checksum for messages equals the expected sent checksum
     # Return True if checksums match, False if not
     # Checksum is 4th and 3rd to last bytes of command (last bytes prior to DLE ETX)
+    # TODO this assumes no additional x00 from x10, need to remove extra x10 prior to this
     # Checksum includes DLE STX and command/data
     target_checksum = int.from_bytes(
         message[-4:-2],
