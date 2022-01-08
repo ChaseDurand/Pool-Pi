@@ -34,26 +34,35 @@ body {
   text-align: center;
   vertical-align: center;
   width: 350px;
+  display: inline-block;
+  justify-content: flex-end;
+  margin: 0 auto;
 }
 
 .buttonContainer {
+  display: inline-block;
+  width: 120px;
+  justify-content: flex-end;
   text-align: center;
-  display: flex;
-  table-layout: fixed;
+  margin: 0 auto;
 }
 
 .buttonRow{
   display: flex;
+  table-layout: fixed;
+  text-align: center;
 }
 
 .button {
   cursor: pointer;
-  display: flex;
-  width: 80px;
+  display: inline-block;
+  width: 60px;
   justify-content: flex-end;
   border: solid;
+  border-radius: 1px;
   border-color: black;
-  border-width: 2px;
+  text-align: center;
+  margin: 0 auto;
 }
 
 switch.toggler {
@@ -90,4 +99,3 @@ switch:hover {
   width: 160px;
   justify-content: flex-end;
 }
-
