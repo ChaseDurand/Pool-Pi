@@ -23,6 +23,29 @@ body {
   background-color: lightgray;
 }
 
+.topLeft {
+  display: inlinetblock;
+  width: 120px;
+  justify-content: flex-end;
+  border: solid;
+  border-radius: 1px;
+  border-color: red;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.topRight {
+  display: inline-block;
+  width: 120px;
+  justify-content: flex-end;
+  border: solid;
+  border-radius: 1px;
+  border-color: blue;
+  text-align: center;
+  margin: 0 auto;
+  float: right;
+}
+
 .display {
   border: solid;
   background-color: rgb(45,220,45);
@@ -30,12 +53,10 @@ body {
   font-weight: bold;
   font-size: 18px;
   height: 40px;
-  margin: 25px;
   text-align: center;
   vertical-align: center;
   width: 350px;
   display: inline-block;
-  justify-content: flex-end;
   margin: 0 auto;
 }
 
@@ -47,9 +68,10 @@ body {
   margin: 0 auto;
 }
 
-.buttonRow{
+.buttonRow {
   display: flex;
   table-layout: fixed;
+  margin: 1px;
   text-align: center;
 }
 
