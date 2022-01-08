@@ -72,6 +72,8 @@ body {
 }
 
 .button {
+  background: rgb(100, 100, 100);
+  color: white;
   cursor: pointer;
   display: inline-block;
   width: 45px;
@@ -79,6 +81,8 @@ body {
   border-radius: 1px;
   border-color: black;
   text-align: center;
+  height: 30px;
+  line-height: 30px;
   margin: 0 auto;
 }
 
