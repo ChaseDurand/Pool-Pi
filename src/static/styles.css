@@ -23,27 +23,33 @@ body {
   background-color: lightgray;
 }
 
+.topPanel{
+  display: table;
+  height: 120px;
+  background: black;
+  width: 400px;
+  margin: 20px;
+  border: 2px dashed green;
+}
+
 .topLeft {
-  display: inlinetblock;
-  width: 120px;
-  justify-content: flex-end;
-  border: solid;
-  border-radius: 1px;
-  border-color: red;
-  text-align: center;
-  margin: 0 auto;
+  display: table-cell;
+  margin: 0;
+  background: white;
+  color: black;
+  padding: 10px;
+  border: 2px solid purple;
+  vertical-align: middle;
 }
 
 .topRight {
-  display: inline-block;
-  width: 120px;
-  justify-content: flex-end;
-  border: solid;
-  border-radius: 1px;
-  border-color: blue;
-  text-align: center;
-  margin: 0 auto;
-  float: right;
+  display: table-cell;
+  margin: 0;
+  background: white;
+  color: black;
+  padding: 10px;
+  border: 2px solid blue;
+  vertical-align: middle;
 }
 
 .display {
@@ -54,7 +60,6 @@ body {
   font-size: 18px;
   height: 40px;
   text-align: center;
-  vertical-align: center;
   width: 350px;
   display: inline-block;
   margin: 0 auto;
@@ -63,7 +68,7 @@ body {
 .buttonContainer {
   display: inline-block;
   width: 120px;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
   text-align: center;
   margin: 0 auto;
 }
@@ -79,7 +84,7 @@ body {
   cursor: pointer;
   display: inline-block;
   width: 60px;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
   border: solid;
   border-radius: 1px;
   border-color: black;
