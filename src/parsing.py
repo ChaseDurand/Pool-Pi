@@ -31,46 +31,38 @@ KEEP_ALIVE = (b'\x10\x02\x01\x01\x00\x14\x10\x03', "Keep Alive")
 
 
 def parseDisplay(data, poolModel):
-    # Classify display update and print classification
-    # TODO account for flags/blink selection?
+    # Classify display update and pass to appropriate parser
+    data = data.replace(
+        b'\x5f', b'\xc2\xb0')  #Degree symbol ° is encoded as underscore x5f
+    data = data.replace(b'\xba', b'\x3a')  # Colon : is encoded as xBA
     if DISPLAY_AIRTEMP in data:
-        data = data.replace(b'\x5f', b'\xc2\xb0')
         parseAirTemp(data, poolModel)
     elif DISPLAY_POOLTEMP in data:
-        data = data.replace(b'\x5f', b'\xc2\xb0')
         parsePoolTemp(data, poolModel)
     elif DISPLAY_GASHEATER in data:
-        print('gas heater update:', end='')
+        print('Gas Heater update:', end='')
     elif DISPLAY_CHLORINATOR_PERCENT in data:
-        print('chlorinator percent update:', end='')
+        print('Chlorinator Percent update:', end='')
     elif DISPLAY_CHLORINATOR_STATUS in data:
-        print('chlorinator status update:', end='')
+        print('Chlorinator Status update:', end='')
     elif DISPLAY_DATE in data:
         parseDateTime(data, poolModel)
     elif DISPLAY_CHECK in data:
         if DISPLAY_VERY_LOW_SALT in data:
             parseSalinity(data, poolModel)
         else:
-            print('check system update', end='')
+            print('Check System update', end='')
     elif DISPLAY_SALT_LEVEL in data:
         parseSalinity(data, poolModel)
     elif DISPLAY_SPA_TEMP in data:
-        print('spa temp update', end='')
+        print('Spa Temp update', end='')
     else:
-        print('unclassified display update', end='')
+        print('Unclassified display update', end='')
     try:
         poolModel.display = data.decode('utf-8')
         poolModel.flag_data_changed = True
         print(poolModel.display)
-    except UnicodeDecodeError as e:
-        try:
-            poolModel.display = data.replace(b'\xba', b'\x3a').decode('utf-8')
-            poolModel.flag_data_changed = True
-            print(poolModel.display)  # Colon : is encoded as xBA
-        except UnicodeDecodeError as e:
-            print(e)
-            print(data)
-    except Exception as e:
+    except (UnicodeDecodeError, Exception) as e:
         print(e)
         print(data)
     return
@@ -83,7 +75,7 @@ def parseDateTime(data, poolModel):
     if newDateTime != previousDateTIme:
         poolModel.flag_data_changed = True
         poolModel.datetime = newDateTime
-    print('date time update:', end='')
+    print('Date Time update:', end='')
     return
 
 
@@ -99,7 +91,7 @@ def parseAirTemp(data, poolModel):
     if newAirTemp != previousAirTemp:
         poolModel.flag_data_changed = True
         poolModel.airtemp = newAirTemp
-    print('air temp update:', end='')
+    print('Air Temp update:', end='')
     return
 
 
@@ -109,7 +101,7 @@ def parsePoolTemp(data, poolModel):
     if newPoolTemp != previousPoolTemp:
         poolModel.flag_data_changed = True
         poolModel.pooltemp = newPoolTemp
-    print('pooltemp update:', end='')
+    print('Pool Temp update:', end='')
     return
 
 
@@ -122,27 +114,29 @@ def parseSalinity(data, poolModel):
     if newSaltLevel != previousSaltLevel:
         poolModel.flag_data_changed = True
         poolModel.salinity = newSaltLevel
-    print('salt level update:', end='')
+    print('Salt Level update:', end='')
     return
 
 
 def parseLEDs(data, poolModel):
-    #    poolModel.flag_data_changed = True  # Force model update to send regarless of states
     poolModel.updateTime()  # Record when we recieved this LED update
-    print('led update:')
+    print('LED update:')
     #Look at corrosponding LED bit flags to determine which LEDs are on
     for i in range(0, 4):
         for item in LED_MASK[i]:
             if item[0] & data[i]:
                 #LED is either on or blinking
                 if item[0] & data[i + 4]:
-                    poolModel.updateParameter(item[1], "BLINK")
+                    newState = "BLINK"
                     print('     ', item[1], 'blink')
                 else:
-                    poolModel.updateParameter(item[1], "ON")
+                    newState = "ON"
                     print('     ', item[1], 'on')
             else:
-                poolModel.updateParameter(item[1], "OFF")
+                newState = "OFF"
+            if poolModel.getParameterState(item[1]) != newState:
+                poolModel.updateParameter(item[1], newState)
+                poolModel.flag_datachanged = True  # Raise flag if any model parameter has changed
     return
 
 
