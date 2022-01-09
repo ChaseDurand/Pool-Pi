@@ -99,7 +99,7 @@ class PoolModel:
         jsonItems = vars(self)
         jsonItems.pop('flag_data_changed')
         jsonItems.pop('last_update_time')
-        return json.dumps(vars(self))
+        return json.dumps(jsonItems)
 
 
 class SerialHandler:
