@@ -83,7 +83,13 @@ class PoolModel:
         return getattr(self, parameter)["version"]
 
     def getParameterState(self, parameter):
-        return getattr(self, parameter)["state"]
+        attribute = getattr(self, parameter)
+        if isinstance(attribute, dict):
+            # Attribute is dict and has version
+            return getattr(self, parameter)["state"]
+        if isinstance(attribute, str):
+            # Attribute is string and does not require a version
+            return attribute
 
     def updateTime(self):
         self.last_update_time = time.time()
