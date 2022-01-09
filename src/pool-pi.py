@@ -91,9 +91,10 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
         # Use frame type to determine parsing function
         if frameType == FRAME_TYPE_KEEPALIVE:
             # Message is keep alive
-            # Check to see if we have a message to send
+            # Check to see if we have a command to send
             if serialHandler.ready_to_send == True:
                 if commandHandler.keepAliveCount == 1:
+                    # If this is the second sequential keep alive frame, send command
                     serialHandler.send(commandHandler.fullCommand)
                     serialHandler.ready_to_send = False
                 else:
@@ -145,11 +146,12 @@ def checkCommand(poolModel, serialHandler, commandHandler):
 def getCommand(poolModel, commandHandler):
     # If we're not currently sending a command, check if there are new commands.
     # Get new command from command_queue, validate, and initiate send with commandHandler.
-
-    #TODO check if we're currently trying to send a command and skip if we are
     #TODO figure out threading issue or move command_queue to tmp directory
     #TODO add handling for buttons and arrows
     #TODO add handling for unlock code
+    if commandHandler.sendingMessage == True:
+        #We are currently trying to send a command, don't need to check for others
+        return
     if exists("command_queue.txt") == False:
         return
     if stat('command_queue.txt').st_size != 0:
