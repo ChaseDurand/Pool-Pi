@@ -9,8 +9,9 @@ LED_MASK = [[(1 << 0, 'heater1'), (1 << 1, 'valve3'), (1 << 2, 'checkSystem'),
              (1 << 6, 'aux12'), (1 << 7, 'aux13')],
             [(1 << 0, 'aux14'), (1 << 1, 'superChlorinate')]]
 
-FRAME_UPDATE_LEDS = (b'\x01\x02', "FRAME_UPDATE_LEDS")
-FRAME_UPDATE_DISPLAY = (b'\x01\x03', "FRAME_UPDATE_DISPLAY")
+FRAME_TYPE_KEEPALIVE = b'\x01\x01'
+FRAME_TYPE_LEDS = b'\x01\x02'
+FRAME_TYPE_DISPLAY = b'\x01\x03'
 DISPLAY_AIRTEMP = 'Air Temp'.encode('utf-8')
 DISPLAY_POOLTEMP = 'Pool Temp'.encode('utf-8')
 DISPLAY_GASHEATER = 'Gas Heater'.encode('utf-8')
@@ -149,8 +150,7 @@ def confirmChecksum(message):
     # Check if the calculated checksum for messages equals the expected sent checksum
     # Return True if checksums match, False if not
     # Checksum is 4th and 3rd to last bytes of command (last bytes prior to DLE ETX)
-    # TODO this assumes no additional x00 from x10, need to remove extra x10 prior to this
-    # Checksum includes DLE STX and command/data
+    # Checksum includes start DLE STX, frame type, and data
     target_checksum = int.from_bytes(
         message[-4:-2],
         byteorder='big')  # Convert two byte checksum to single value

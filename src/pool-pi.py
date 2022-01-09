@@ -73,7 +73,9 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
     '''
     if (serialHandler.buffer_full):
         # Confirm checksum
-        #TODO identify and account for possible x00 after x10 (DLE)
+        frame = serialHandler.buffer
+        #Replace any x00 after x10
+        frame = frame.replace(b'\x10\x00', b'\x10')
         if (confirmChecksum(serialHandler.buffer) == False):
             print("Checksum mismatch! ", serialHandler.buffer)
             #If checksum doesn't match, message is invalid.
@@ -83,29 +85,11 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
             serialHandler.buffer_full = False
             return
 
-        # Parse frame
-        if (serialHandler.buffer != KEEP_ALIVE[0]):
-            # TODO rework this and move to before checksum
-            while (True):
-                try:
-                    index_to_remove = serialHandler.buffer.index(DLE, 2,
-                                                                 -2) + 1
-                    removed = serialHandler.buffer.pop(index_to_remove)
-                    #TODO fix unknown bug here
-                    if removed != b'\x00':
-                        print('Error, expected 00 but removed', removed)
-                except ValueError:
-                    break
-            frame_type = serialHandler.buffer[2:4]
-            data = serialHandler.buffer[4:-4]
-            if frame_type == FRAME_UPDATE_DISPLAY[0]:
-                parseDisplay(data, poolModel)
-            elif frame_type == FRAME_UPDATE_LEDS[0]:
-                parseLEDs(data, poolModel)
-            else:
-                print(frame_type, data)
-            commandHandler.keepAliveCount = 0
-        else:
+        frameType = frame[2:4]
+        data = frame[4:-4]
+
+        # Use frame type to determine parsing function
+        if frameType == FRAME_TYPE_KEEPALIVE:
             # Message is keep alive
             # Check to see if we have a message to send
             if serialHandler.ready_to_send == True:
@@ -116,6 +100,17 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
                     commandHandler.keepAliveCount = 1
             else:
                 commandHandler.keepAliveCount = 0
+        else:
+            # Message is not keep alive
+            commandHandler.keepAliveCount = 0
+            if frameType == FRAME_TYPE_DISPLAY:
+                parseDisplay(data, poolModel)
+                commandHandler.keepAliveCount = 0
+            elif frameType == FRAME_TYPE_LEDS:
+                parseLEDs(data, poolModel)
+            else:
+                print(frameType, data)
+        # Clear buffer and reset flags
         serialHandler.buffer.clear()
         serialHandler.looking_for_start = True
         serialHandler.buffer_full = False
