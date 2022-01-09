@@ -156,40 +156,37 @@ def getCommand(poolModel, commandHandler):
         return
     if stat('command_queue.txt').st_size != 0:
         f = open('command_queue.txt', 'r+')
-        for line in f.readlines():
-            if line is not '':
-                commandID = line.split(',')[0]
-                commandState = line.split(',')[1]
-                commandVersion = int(line.split(',')[2])
+        line = f.readline()
+        if line is not '':
+            commandID = line.split(',')[0]
+            commandState = line.split(',')[1]
+            commandVersion = int(line.split(',')[2])
 
-                #Check if command is valid
-                #If valid, add to send queue
-                #If not, provide feedback to user
-                if poolModel.getParameterState(commandID) == "INIT":
-                    print('invalid command! target command is in init state')
-                    f.close()
-                    return
-                else:
-                    if commandVersion == poolModel.getParameterVersion(
-                            commandID):
-                        #Front end and back end versions are synced
-                        #Extra check to ensure we are not already in our desired state
-                        if commandState == poolModel.getParameterState(
-                                commandID):
-                            print('invalid command! state mismatch',
-                                  poolModel.getParameterState(commandID),
-                                  commandState)
-                        else:
-                            # Command is valid
-                            print('valid command', commandID, commandState,
-                                  commandVersion)
-                            #Push to command handler
-                            commandHandler.initiateSend(
-                                commandID, commandState)
+            #Check if command is valid
+            #If valid, add to send queue
+            #If not, provide feedback to user
+            if poolModel.getParameterState(commandID) == "INIT":
+                print('invalid command! target command is in init state')
+                f.close()
+                return
+            else:
+                if commandVersion == poolModel.getParameterVersion(commandID):
+                    #Front end and back end versions are synced
+                    #Extra check to ensure we are not already in our desired state
+                    if commandState == poolModel.getParameterState(commandID):
+                        print('invalid command! state mismatch',
+                              poolModel.getParameterState(commandID),
+                              commandState)
                     else:
-                        print('invalid command! version mismatch',
-                              poolModel.getParameterVersion(commandID),
+                        # Command is valid
+                        print('valid command', commandID, commandState,
                               commandVersion)
+                        #Push to command handler
+                        commandHandler.initiateSend(commandID, commandState)
+                else:
+                    print('invalid command! version mismatch',
+                          poolModel.getParameterVersion(commandID),
+                          commandVersion)
         f.truncate(0)
         f.close()
     return
