@@ -5,10 +5,10 @@
 
 <head>
     <title>Pool-Pi</title>
-    <!-- TODO add favicon -->
-    <link rel="stylesheet" href="/../static/styles.css">
-    <script src='/../static/jquery.min.js'></script>
-    <script src='/../static/socket.io.js'></script>
+    <link rel="shortcut icon" href="../static/favicon.svg" type="image/x-icon">
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src='../static/jquery.min.js'></script>
+    <script src='../static/socket.io.js'></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function () {
             // Connect to the Socket.IO server.
@@ -89,13 +89,8 @@
                 }
             });
 
-            // Handlers for the different forms in the page.
-            // These accept data from the user and send it to the server in a
-            // variety of ways
-            $('form#emit').submit(function (event) {
-                socket.emit('my_event', { data: $('#emit_data').val() });
-                return false;
-            });
+            // Handlers for forms in the page.
+            // Handler for the toggle controls
             $('switch.toggler').click(function () {
                 $(this).toggleClass('off');
                 switchID = $(this).attr('id');
@@ -107,8 +102,9 @@
                     switchState = 'OFF';
                 }
                 console.log(switchID, switchState, switchVersion);
-                socket.emit('my_toggle_event', { 'id': switchID, 'data': switchState, 'version': switchVersion });
+                socket.emit('command_event', { 'id': switchID, 'data': switchState, 'version': switchVersion });
             });
+            // Handler for menu buttons
             $('.button').click(function () {
                 buttonID = $(this).attr('id');
                 alert("Handler for " + buttonID + " called.");
@@ -122,7 +118,7 @@
 
     <div class="panel">
         <div class="loading">
-            <img class="loading-image" src='/../static/loading.gif' alt="Loading..." />
+            <img class="loading-image" src='../static/loading.gif' alt="Loading..." />
         </div>
         <div class="topPanel">
             <div class="topLeft">
@@ -221,7 +217,6 @@
     aux13: <switch id="aux13" href="#" class="toggler off">&nbsp;</switch><br>
     aux14: <switch id="aux14" href="#" class="toggler off">&nbsp;</switch><br>
     </p>
-    </form>
     <h2>Receive:</h2>
     <div id="log"></div>
 </body>

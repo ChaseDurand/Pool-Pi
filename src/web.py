@@ -41,7 +41,7 @@ def my_event(message):
 
 
 @socketio.event
-def my_toggle_event(message):
+def command_event(message):
     f = open('command_queue.txt', 'a')
     command = str(message['id'] + ',' + str(message['data']) + ',' +
                   message['version'])
