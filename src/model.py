@@ -35,7 +35,7 @@ commands = {
     'aux1': b'\x00\x02\x00\x00',
     'aux2': b'\x00\x04\x00\x00',
     'aux3': b'\x00\x08\x00\x00',
-    'aux4': b'\x00\x10\x00\x00\x00',
+    'aux4': b'\x00\x10\x00\x00',
     'aux5': b'\x00\x20\x00\x00',
     'aux6': b'\x00\x40\x00\x00',
     'aux7': b'',
@@ -96,6 +96,7 @@ class PoolModel:
         return
 
     def toJSON(self):
+        # Remove data not used in front end and convert to JSON
         jsonItems = vars(self).copy()
         jsonItems.pop('flag_data_changed')
         jsonItems.pop('last_update_time')
@@ -146,13 +147,16 @@ class CommandHandler:
         partialFrame = command_start + command_sender + commands[
             commandID] + commands[
                 commandID]  # Form partial frame from start tx, frame type, and command.
-        #Calculate checksum
+        # Calculate checksum
         checksum = 0
         for byte in partialFrame:
             checksum += byte
         checksum = checksum.to_bytes(2, 'big')
-        # TODO add check for x10 in checksum and append x00 if needed
-        self.fullCommand = partialFrame + checksum + command_end
+        partialFrame = partialFrame + checksum
+        # If any x10 appears in frameType, data, or checksum, add additional x00
+        partialFrame = partialFrame[0:2] + partialFrame[2:].replace(
+            b'\x10', b'\x10\x00') + command_end
+        self.fullCommand = partialFrame
         self.keepAliveCount = 0
         self.sendingMessage = True
         self.parameter = commandID
