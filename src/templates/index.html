@@ -39,15 +39,6 @@
                 // For every item in json message, need to update
                 for (var i = 0, len = Object.keys(msgObj).length; i < len; ++i) {
                     attributeName = Object.keys(msgObj)[i]
-                    if (attributeName == "flag_data_changed") {
-                        break;
-                        // TODO filter this on backend so it's not sent as JSON
-                    }
-                    if (attributeName == "last_update_time") {
-                        break;
-                        // TODO filter this on backend so it's not sent as JSON
-                    }
-
                     if (typeof (msgObj[attributeName]) == "object") {
                         // Attribute has state and version value (is a button)
                         state = msgObj[attributeName].state;

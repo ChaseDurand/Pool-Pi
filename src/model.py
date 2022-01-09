@@ -96,8 +96,10 @@ class PoolModel:
         return
 
     def toJSON(self):
+        jsonItems = vars(self)
+        jsonItems.pop('flag_data_changed')
+        jsonItems.pop('last_update_time')
         return json.dumps(vars(self))
-        #TODO strip flag_data_changed before sending to front end
 
 
 class SerialHandler:
