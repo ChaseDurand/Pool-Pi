@@ -60,11 +60,11 @@ def parseDisplay(data, poolModel):
         print('Unclassified display update', end='')
     try:
         poolModel.display = data.decode('utf-8')
-        poolModel.flag_data_changed = True
-        print(poolModel.display)
     except (UnicodeDecodeError, Exception) as e:
         print(e)
         print(data)
+    poolModel.flag_data_changed = True
+    print(poolModel.display)
     return
 
 
