@@ -6,7 +6,7 @@ The serial bus is used to communicate between the Aqualogic board, the local dis
 
 The protocol use 1 start bit, 8 data bits, no parity, and 2 stop bits with a baud rate of 19.2k.
 
-Frames are structured with DLE STX (x10x02), two bytes indicating the command/frame type, multiple data bytes, a two byte checksum, and DLE ETX (x10x03). The two byte checksum includes all bytes before the checksum (excluding DLE STX). If any byte besides the start and end DLE (x10) are equal to x10, a NULL (x00) is inserted immediately after that byte. This NULL must be removed when received. I am assuming that this NULL prevents an extra x10 from being incorrectly interpreted as the ending sequence (but isn't that what the ETX is for?).
+Frames are structured with DLE STX (x10x02), two bytes indicating the command/frame type, multiple data bytes, a two byte checksum, and DLE ETX (x10x03). The two byte checksum includes all bytes before the checksum (excluding DLE STX). If any byte besides the start and end DLE (x10) are equal to x10, a NULL (x00) is inserted immediately after that byte. This NULL must be removed when parsing frames.
 
 | Start | Frame Type | Command/Data | Checksum | End |
 | :---: | :---:| :---: | :---: | :---: |
@@ -15,15 +15,15 @@ Frames are structured with DLE STX (x10x02), two bytes indicating the command/fr
 ## Aqualogic to Controller
 The Aqualogic board acts as a master unit providing a heartbeat/keep alive packet, screen updates, and LED updates.
 
-A keep alive frame is sent every 100ms with a frame type of x01x01 and zero data bytes. If any serial device has a message to send, it must respond immediately after the keep alive frame. While I do not know the exact timing limitations of the response window, a logic analyzer shows OEM device responses beginning 0.5ms after the end of the keep alive frame.
+A keep alive frame is sent every 100ms with a frame type of x01x01 and zero data bytes. If any serial device has a message to send, it must respond immediately after the keep alive frame. OEM devices begin responding 0.5ms after the end of the keep alive frame.
 
 Keep alive frame: x10x02x01x01x00x14x10x03
 
-Screen updates have the frame type x01x03. Different display models have different screen sizes (2x16 instead of 2x20), and I do not know if different display packets are sent or if the local displays parse frames differently to accomodate different screen sizes. There is possibly a handshake between the Aqualogic and any connected devices on startup to communicate screen size and software versions, but I have not tested this theory.
+Screen updates have the frame type x01x03. Different devices have different screen sizes (2 by 16 instead of 2 by 20). I do not know if different display packets are sent, or if the local displays parse frames differently to accomodate different screen sizes. There might be a handshake between the Aqualogic and any connected devices on startup to communicate screen size and software versions (which could also explain Communication Err 1).
 
-For display updates that show time, the colon : (x3A) is encoded as xBA and must be manually replaced.
+For display updates that show time, the colon : (x3A) is encoded as xBA and must be replaced.
 
-For display updates that show temperature, the degree symbol ° is encoded as an underscore (x5F) and must be replaced with xC2xB0 for UTF-8 decoding.
+For display updates that show temperature, the degree symbol ° is encoded as an underscore (x5F) and must be replaced with xC2xB0.
 
 LED updates have the frame type x01x02. The first 4 bytes indicate on/off, and the second 4 bytes indicate blinking (if the corresponding on/off bit is also on). Within the bytes, a single bit corresponds to a specific LED.
 
@@ -91,8 +91,8 @@ Example Aux 1 button toggle frame: x10x02x00x02x00x02x00x00x00x02x00x00x00x1Cx10
 | Aux6               | x00x40x00x00                           |
 <!-- TODO add remaining commands -->
 
-## Missing Functions
-Aqualogic supports Hayward variable speed pumps that send their own frame type with speed and power information. Because I don't have a Hawyard VSP, I am not able to implement support.
+## Variable Speed Pump Control
+Aqualogic supports Hayward variable speed pumps that send their own frame type with speed and power information. I don't have a Hawyard VSP, so I am not able to implement support.
 
 ## Bonus On/Off Commands
 While commands from the PS-4/8/16 series are the same for on/off, older controllers such as the AQL-SS-RF and AQL-P-4 use slightly modified commands with separate on/off capabilities. The frame type is x00x05. The commands are repeated twice and end with x7F before the checksum. While using these commands would make programming far easier, these on/off commands only cover a subset of the PS-4/8/16 controls. Because my setup involves commands outside of this subset and I achieved high reliability with only the toggle commands, I did not implement them.
