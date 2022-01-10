@@ -6,8 +6,6 @@ from enum import Enum
 import time
 from colorama import Fore, Style
 
-from src.parsing import confirmChecksum
-
 # class attributeStates(Enum):
 #     INIT: 0
 #     OFF: 1
