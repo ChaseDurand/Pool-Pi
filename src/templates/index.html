@@ -98,7 +98,7 @@
             // Handler for menu buttons
             $('.button').click(function () {
                 buttonID = $(this).attr('id');
-                socket.emit('command_event', { 'id': buttonID, 'data': 'na', 'version': 'na', 'confirm': '0' });
+                socket.emit('command_event', { 'id': buttonID, 'data': 'na', 'version': '0', 'confirm': '0' });
             });
         });
     </script>
