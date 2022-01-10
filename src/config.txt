@@ -1,0 +1,26 @@
+This file customizes the front end to match individual system setups.
+
+Display names can be customized to match labels on physical units.
+Unused controls can be hidden from front end.
+
+Schema: PARAMETER = [DISPLAY_NAME, SHOW/HIDE]
+
+FILTER = ["FILTER PUMP", SHOW]
+LIGHTS = ["POOL LIGHT", SHOW]
+HEATER1 = ["HEATER 1", SHOW]
+VALVE3 = ["VALVE3", SHOW]
+VALVE4 = ["VALVE4", SHOW]
+AUX1 = ["SPA LIGHT", SHOW]
+AUX2 = ["BLOWER", SHOW]
+AUX3 = ["CLEANER", SHOW]
+AUX4 = ["WATERFALL", SHOW]
+AUX5 = ["AUX5", HIDE]
+AUX6 = ["AUX6", HIDE]
+AUX7 = ["AUX7", HIDE]
+AUX8 = ["AUX8", HIDE]
+AUX9 = ["AUX9", HIDE]
+AUX10 = ["AUX10", HIDE]
+AUX11 = ["AUX11", HIDE]
+AUX12 = ["AUX12", HIDE
+AUX13 = ["AUX13", HIDE]
+AUX14 = ["AUX14", HIDE]
