@@ -44,7 +44,7 @@ def my_event(message):
 def command_event(message):
     f = open('command_queue.txt', 'a')
     command = str(message['id'] + ',' + str(message['data']) + ',' +
-                  message['version'])
+                  message['version'] + ',' + message['confirm'])
     print(command)
     f.write(command)
     f.close()

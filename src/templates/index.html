@@ -93,12 +93,12 @@
                     switchState = 'OFF';
                 }
                 console.log(switchID, switchState, switchVersion);
-                socket.emit('command_event', { 'id': switchID, 'data': switchState, 'version': switchVersion });
+                socket.emit('command_event', { 'id': switchID, 'data': switchState, 'version': switchVersion, 'confirm': '1' });
             });
             // Handler for menu buttons
             $('.button').click(function () {
                 buttonID = $(this).attr('id');
-                alert("Handler for " + buttonID + " called.");
+                socket.emit('command_event', { 'id': buttonID, 'data': 'na', 'version': 'na', 'confirm': '0' });
             });
         });
     </script>
@@ -127,7 +127,7 @@
                     <div class="buttonRow">
                         <div id="left" class="button">Left</div>
                         <div id="menu" class="button">Menu</div>
-                        <div id="rigt" class="button">Right</div>
+                        <div id="right" class="button">Right</div>
                     </div>
                     <div class="buttonRow">
                         <div id="minus" class="button">-</div>

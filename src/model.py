@@ -6,6 +6,8 @@ from enum import Enum
 import time
 from colorama import Fore, Style
 
+from src.parsing import confirmChecksum
+
 # class attributeStates(Enum):
 #     INIT: 0
 #     OFF: 1
@@ -50,6 +52,14 @@ commands = {
     'valve4': b'',
     'systemOff': b'',
     'superChlorinate': b''
+}
+
+buttons = {
+    'left': b'\x04\x00\x00\x00',
+    'right': b'\x01\x00\x00\x00',
+    'plus': b'\x20\x00\x00\x00',
+    'minus': b'\x10\x00\x00\x00',
+    'menu': b'\x02\x00\x00\x00'
 }
 
 
@@ -142,12 +152,17 @@ class CommandHandler:
     lastModelTime = 0  #Timestamp of last model (LED update) seen to ensure we witness a new model before attempting additional send
     fullCommand = b''  #Bytearray of full frame to send
     keepAliveCount = 0  #Number of keep alive frames we have seen in a row
+    confirm = True  # True if command needs to be confirmed, false if not (menu command)
 
-    def initiateSend(self, commandID, commandState):
+    def initiateSend(self, commandID, commandState, commandConfirm):
+        if commandConfirm == '1':
+            self.confirm = True
+            commandData = commands[commandID]
+        else:
+            self.confirm = False
+            commandData = buttons[commandID]
         # Form full frame to send from start tx, frame type, command, checksum, and end tx.
-        partialFrame = command_start + command_sender + commands[
-            commandID] + commands[
-                commandID]  # Form partial frame from start tx, frame type, and command.
+        partialFrame = command_start + command_sender + commandData + commandData  # Form partial frame from start tx, frame type, and command.
         # Calculate checksum
         checksum = 0
         for byte in partialFrame:

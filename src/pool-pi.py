@@ -98,6 +98,8 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
                 if commandHandler.keepAliveCount == 1:
                     # If this is the second sequential keep alive frame, send command
                     serialHandler.send(commandHandler.fullCommand)
+                    if commandHandler.confirm == False:
+                        commandHandler.sendingMessage = False
                     serialHandler.ready_to_send = False
                 else:
                     commandHandler.keepAliveCount = 1
@@ -145,7 +147,7 @@ def checkCommand(poolModel, serialHandler, commandHandler):
                 serialHandler.ready_to_send = True
 
 
-def getCommand(poolModel, commandHandler):
+def getCommand(poolModel, serialHandler, commandHandler):
     # If we're not currently sending a command, check if there are new commands.
     # Get new command from command_queue, validate, and initiate send with commandHandler.
     #TODO figure out threading issue or move command_queue to tmp directory
@@ -165,31 +167,45 @@ def getCommand(poolModel, commandHandler):
             commandID = line.split(',')[0]
             commandState = line.split(',')[1]
             commandVersion = int(line.split(',')[2])
-            #Check if command is valid
-            #If valid, add to send queue
-            #If not, provide feedback to user
-            if poolModel.getParameterState(commandID) == "INIT":
-                print('invalid command! target command is in init state')
-                f.close()
-                return
-            else:
-                if commandVersion == poolModel.getParameterVersion(commandID):
-                    #Front end and back end versions are synced
-                    #Extra check to ensure we are not already in our desired state
-                    if commandState == poolModel.getParameterState(commandID):
-                        print('invalid command! state mismatch',
-                              poolModel.getParameterState(commandID),
-                              commandState)
-                    else:
-                        # Command is valid
-                        print('valid command', commandID, commandState,
-                              commandVersion)
-                        #Push to command handler
-                        commandHandler.initiateSend(commandID, commandState)
+            commandConfirm = line.split(',')[3]
+
+            if commandConfirm == '1':
+                # Not a menu button. We need to confirm the command was successful
+                #Check if command is valid
+                #If valid, add to send queue
+                #If not, provide feedback to user
+                if poolModel.getParameterState(commandID) == "INIT":
+                    print('invalid command! target command is in init state')
+                    f.close()
+                    return
                 else:
-                    print('invalid command! version mismatch',
-                          poolModel.getParameterVersion(commandID),
-                          commandVersion)
+                    if commandVersion == poolModel.getParameterVersion(
+                            commandID):
+                        #Front end and back end versions are synced
+                        #Extra check to ensure we are not already in our desired state
+                        if commandState == poolModel.getParameterState(
+                                commandID):
+                            print('Invalid command! State mismatch',
+                                  poolModel.getParameterState(commandID),
+                                  commandState)
+                        else:
+                            # Command is valid
+                            print('Valid command', commandID, commandState,
+                                  commandVersion)
+                            #Push to command handler
+                            commandHandler.initiateSend(
+                                commandID, commandState, commandConfirm)
+
+                    else:
+                        print('Invalid command! Version mismatch',
+                              poolModel.getParameterVersion(commandID),
+                              commandVersion)
+            else:
+                # Menu button. Do not need to confirm command.
+                # Immediately load for sending.
+                commandHandler.initiateSend(commandID, commandState,
+                                            commandConfirm)
+                serialHandler.ready_to_send = True
         f.truncate(0)
         f.close()
     return
@@ -226,7 +242,7 @@ def main():
         sendModel(poolModel)
 
         # If we're not sending, check for new commands from front end.
-        getCommand(poolModel, commandHandler)
+        getCommand(poolModel, serialHandler, commandHandler)
 
 
 if __name__ == '__main__':
