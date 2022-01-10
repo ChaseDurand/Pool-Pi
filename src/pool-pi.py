@@ -16,11 +16,13 @@ from colorama import Style
 
 
 def readSerialBus(serialHandler):
-    # Read data from the serial bus to build full frame in buffer
-    # Serial frames begin with DLE STX and terminate with DLE ETX
-    # With the exception of searching for the two start bytes, this function only reads one byte to prevent blocking other processes
-    # When looking for start of frame, looking_for_start is True
-    # When buffer is filled with a full frame and ready to be parseed, set buffer_full to True
+    '''
+    Read data from the serial bus to build full frame in buffer.
+    Serial frames begin with DLE STX and terminate with DLE ETX.
+    With the exception of searching for the two start bytes, this function only reads one byte to prevent blocking other processes.
+    When looking for start of frame, looking_for_start is True.
+    When buffer is filled with a full frame and ready to be parseed, set buffer_full to True.
+    '''
 
     if (serialHandler.in_waiting() == 0
         ):  #Check is we have serial data to read
@@ -67,19 +69,19 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
     | x10x02 | <2 bytes>  | <0-? bytes>  | <2 bytes> | x10x03 |
 
     The Start, Frame Type, and Data fields are added together to provide the 2-byte Checksum. If 
-    any of the bytes of the Frame Type, Data fields, or Checksum are equal to the DLE character (10H), a 
-    NULL character (00H) is inserted into the transmitted data stream immediately after that byte. That 
-    NULL character must then be removed by the receiver.
+    any of the bytes of the Frame Type, Data fields, or Checksum are equal to the DLE character (x10), a 
+    NULL character (x00) is inserted into the transmitted data stream immediately after that byte. That 
+    NULL character must be removed by the receiver.
     '''
     if (serialHandler.buffer_full):
         # Confirm checksum
         frame = serialHandler.buffer
         #Replace any x00 after x10
         frame = frame.replace(b'\x10\x00', b'\x10')
-        if (confirmChecksum(serialHandler.buffer) == False):
-            print("Checksum mismatch! ", serialHandler.buffer)
+        if (confirmChecksum(frame) == False):
             #If checksum doesn't match, message is invalid.
             #Clear buffer and don't attempt parsing.
+            print("Checksum mismatch! ", frame)
             serialHandler.buffer.clear()
             serialHandler.looking_for_start = True
             serialHandler.buffer_full = False
@@ -157,11 +159,12 @@ def getCommand(poolModel, commandHandler):
     if stat('command_queue.txt').st_size != 0:
         f = open('command_queue.txt', 'r+')
         line = f.readline()
+        # TODO check if this if statement is necessary or if it's redundant with st_size check
         if line is not '':
+            # Extract csv command info
             commandID = line.split(',')[0]
             commandState = line.split(',')[1]
             commandVersion = int(line.split(',')[2])
-
             #Check if command is valid
             #If valid, add to send queue
             #If not, provide feedback to user

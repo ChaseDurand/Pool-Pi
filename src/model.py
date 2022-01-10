@@ -22,7 +22,8 @@ DLE = b'\x10'
 STX = b'\x02'
 ETX = b'\x03'
 
-#TODO unify terminology to make command/message names consistent
+# TODO unify terminology to make command/message names consistent
+# Consolidate with LED bitmask?
 commands = {
     'service': b'\x08\x00\x00\x00',
     'pool': b'\x40\x00\x00\x00',
