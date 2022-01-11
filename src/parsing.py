@@ -154,4 +154,6 @@ def confirmChecksum(message):
     if checksum == target_checksum:
         return True
     else:
+        print("Target: ", target_checksum)
+        print("Caclulated: ", checksum)
         return False
