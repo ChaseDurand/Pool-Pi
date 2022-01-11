@@ -84,6 +84,7 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
             serialHandler.buffer.clear()
             serialHandler.looking_for_start = True
             serialHandler.buffer_full = False
+            serialHandler.clear_input()
             return
 
         frameType = frame[2:4]

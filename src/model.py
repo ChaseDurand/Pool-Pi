@@ -141,6 +141,10 @@ class SerialHandler:
     def in_waiting(self):
         return self.ser.in_waiting
 
+    def clear_input(self):
+        self.ser.reset_input_buffer()
+        return
+
 
 class CommandHandler:
     parameter = ''  # Name of parameter command is changing
