@@ -7,6 +7,7 @@ from os.path import exists
 from os import stat
 import time
 from colorama import Fore, Style
+import logging
 
 #TODO start this on pi startup
 
@@ -81,6 +82,20 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
             #If checksum doesn't match, message is invalid.
             #Clear buffer and don't attempt parsing.
             print(f'{Fore.RED}Checksum mismatch! {Style.RESET_ALL}', frame)
+            serialHandler.buffer.clear()
+            serialHandler.looking_for_start = True
+            serialHandler.buffer_full = False
+            serialHandler.clear_input()
+            return
+        if b'\x10\x02' in frame[2:-2]:
+            print(f'{Fore.RED}DLE STX in frame! {Style.RESET_ALL}', frame)
+            serialHandler.buffer.clear()
+            serialHandler.looking_for_start = True
+            serialHandler.buffer_full = False
+            serialHandler.clear_input()
+            return
+        if b'\x10\x03' in frame[2:-2]:
+            print(f'{Fore.RED}DLE ETX in frame! {Style.RESET_ALL}', frame)
             serialHandler.buffer.clear()
             serialHandler.looking_for_start = True
             serialHandler.buffer_full = False
@@ -224,6 +239,7 @@ def main():
     poolModel = PoolModel()
     serialHandler = SerialHandler()
     commandHandler = CommandHandler()
+    logger = logging.getLogger("poolpi-logger")
     while (True):
         # Read Serial Bus
         # If new serial data is available, read from the buffer
