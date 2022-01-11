@@ -78,15 +78,6 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
         frame = serialHandler.buffer
         #Replace any x00 after x10
         frame = frame.replace(b'\x10\x00', b'\x10')
-        if (confirmChecksum(frame) == False):
-            #If checksum doesn't match, message is invalid.
-            #Clear buffer and don't attempt parsing.
-            print(f'{Fore.RED}Checksum mismatch! {Style.RESET_ALL}', frame)
-            serialHandler.buffer.clear()
-            serialHandler.looking_for_start = True
-            serialHandler.buffer_full = False
-            serialHandler.clear_input()
-            return
         if b'\x10\x02' in frame[2:-2]:
             print(f'{Fore.RED}DLE STX in frame! {Style.RESET_ALL}', frame)
             serialHandler.buffer.clear()
@@ -96,6 +87,15 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
             return
         if b'\x10\x03' in frame[2:-2]:
             print(f'{Fore.RED}DLE ETX in frame! {Style.RESET_ALL}', frame)
+            serialHandler.buffer.clear()
+            serialHandler.looking_for_start = True
+            serialHandler.buffer_full = False
+            serialHandler.clear_input()
+            return
+        if (confirmChecksum(frame) == False):
+            #If checksum doesn't match, message is invalid.
+            #Clear buffer and don't attempt parsing.
+            print(f'{Fore.RED}Checksum mismatch! {Style.RESET_ALL}', frame)
             serialHandler.buffer.clear()
             serialHandler.looking_for_start = True
             serialHandler.buffer_full = False
