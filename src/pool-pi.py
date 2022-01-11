@@ -6,8 +6,7 @@ from parsing import *
 from os.path import exists
 from os import stat
 import time
-from colorama import Fore
-from colorama import Style
+from colorama import Fore, Style
 
 #TODO start this on pi startup
 
@@ -81,7 +80,7 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
         if (confirmChecksum(frame) == False):
             #If checksum doesn't match, message is invalid.
             #Clear buffer and don't attempt parsing.
-            print("Checksum mismatch! ", frame)
+            print(f'{Fore.RED}Checksum mismatch! {Style.RESET_ALL}', frame)
             serialHandler.buffer.clear()
             serialHandler.looking_for_start = True
             serialHandler.buffer_full = False
@@ -175,7 +174,7 @@ def getCommand(poolModel, serialHandler, commandHandler):
                 #If valid, add to send queue
                 #If not, provide feedback to user
                 if poolModel.getParameterState(commandID) == "INIT":
-                    print('invalid command! target command is in init state')
+                    print('Invalid command! Target command is in init state')
                     f.close()
                     return
                 else:
