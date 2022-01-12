@@ -40,14 +40,14 @@ body {
 
 .topLeft {
   display: table-cell;
-  margin: 0;
+  /* margin: 0; */
   padding: 5px;
   vertical-align: middle;
 }
 
 .topRight {
   display: table-cell;
-  margin: 0;
+  /* margin: 0; */
   padding: 5px;
   vertical-align: middle;
 }
@@ -68,7 +68,7 @@ body {
 
 .buttonContainer {
   display: inline-block;
-  width: 160px;
+  width: 200px;
   text-align: center;
   margin: 0 auto;
 }
@@ -76,23 +76,38 @@ body {
 .buttonRow {
   display: flex;
   table-layout: fixed;
-  margin: 1px;
+  padding: 5px;
   text-align: center;
 }
 
 .button {
-  background: rgb(100, 100, 100);
-  color: white;
-  cursor: pointer;
   display: inline-block;
-  width: 45px;
-  border: solid;
-  border-radius: 1px;
-  border-color: black;
-  text-align: center;
-  height: 30px;
-  line-height: 30px;
+  padding: 5px 10px;
   margin: 0 auto;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: rgb(0, 0, 0);
+  background-color: #e2e2e2;
+  border: none;
+  width: 35px;
+  border-radius: 50%;
+  box-shadow: 0 6px rgb(102, 102, 102);
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+
+.button:hover {background-color: #b9b9b9}
+
+.button:active {
+  background-color: #696969;
+  box-shadow: 0 2px rgb(65, 65, 65);
+  transform: translateY(4px);
 }
 
 switch.toggler {
@@ -115,7 +130,7 @@ switch.toggler.off {
 }
 
 switch:hover {
-  box-shadow: 0 0px 5px 0px lightgray, 0 0px 5px 0px 
+  box-shadow: 0 0px 5px 0px lightgray, 0 0px 5px 0px;
 }
 
 .switch-row-container {

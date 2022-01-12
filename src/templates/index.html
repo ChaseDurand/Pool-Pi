@@ -62,12 +62,11 @@
                         }
                         // Update version
                         $("#" + attributeName).attr('version', version);
-
                     }
                     else {
                         // Attribute only has state value (is not a button)
                         if (attributeName == "sendingMessage") {
-                            if (attributeName == true) {
+                            if (msgObj[attributeName] == true) {
                                 document.getElementsByClassName('overlay')[0].style.display = "flex"
                             }
                             else {
