@@ -156,6 +156,7 @@ def checkCommand(poolModel, serialHandler, commandHandler):
             print(f'{Fore.GREEN}Command success!{Style.RESET_ALL}')
             commandHandler.sendingMessage = False
             poolModel.sendingMessage = False
+            poolModel.flag_data_changed = True
         else:
             #New poolModel doesn't match
             if commandHandler.checkSendAttempts() == True:
