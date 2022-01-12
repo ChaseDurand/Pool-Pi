@@ -155,6 +155,7 @@ def checkCommand(poolModel, serialHandler, commandHandler):
             #Model matches
             print(f'{Fore.GREEN}Command success!{Style.RESET_ALL}')
             commandHandler.sendingMessage = False
+            poolModel.sendingMessage = False
         else:
             #New poolModel doesn't match
             if commandHandler.checkSendAttempts() == True:
@@ -210,6 +211,7 @@ def getCommand(poolModel, serialHandler, commandHandler):
                             #Push to command handler
                             commandHandler.initiateSend(
                                 commandID, commandState, commandConfirm)
+                            poolModel.sendingMessage = True
 
                     else:
                         print('Invalid command! Version mismatch',

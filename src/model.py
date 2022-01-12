@@ -75,6 +75,7 @@ class PoolModel:
             setattr(self, parameter, {"state": "INIT", "version": 0})
         self.flag_data_changed = False  #True if there is new data for web, false if no new data
         self.last_update_time = 0  #Time that model was last updated (when last LED message was parsed)
+        self.sendingMessage = False
 
     def updateParameter(self, parameter, data):
         attribute = getattr(self, parameter)

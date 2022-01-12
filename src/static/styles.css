@@ -15,6 +15,15 @@ body {
   margin-top: 120px;
 }
 
+.overlay {
+  position: absolute;
+  display: flex; /* toggled to none when not shown */
+  width: 520px;
+  height: 338px;
+  border-radius: 31px;
+  background-color: rgba(0,0,0,0.5);
+}
+
 .panel {
   border: solid;
   border-radius: 35px;

@@ -66,6 +66,17 @@
                     }
                     else {
                         // Attribute only has state value (is not a button)
+                        if (attributeName == "sendingMessage") {
+                            if (attributeName == true) {
+                                document.getElementsByClassName('overlay')[0].style.display = "flex"
+                            }
+                            else {
+                                document.getElementsByClassName('overlay')[0].style.display = "none"
+                            }
+
+                        }
+
+
                         if (attributeName == "display") {
                             // Parse display from one line into two
                             document.getElementById("display1").textContent = msgObj[attributeName].substring(0, 20);
@@ -108,8 +119,10 @@
     <h1>Pool-Pi</h1>
 
     <div class="panel">
-        <div class="loading">
-            <img class="loading-image" src='../static/loading.gif' alt="Loading..." />
+        <div class="overlay">
+            <div class="loading">
+                <img class="loading-image" src='../static/loading.gif' alt="Loading..." />
+            </div>
         </div>
         <div class="topPanel">
             <div class="topLeft">
