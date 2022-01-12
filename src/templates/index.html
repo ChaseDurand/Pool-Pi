@@ -91,6 +91,7 @@
             // Handlers for forms in the page.
             // Handler for the toggle controls
             $('switch.toggler').click(function () {
+                document.getElementsByClassName('overlay')[0].style.display = "flex"
                 $(this).toggleClass('off');
                 switchID = $(this).attr('id');
                 switchVersion = $(this).attr('version');
