@@ -73,11 +73,8 @@
                             else {
                                 document.getElementsByClassName('overlay')[0].style.display = "none"
                             }
-
                         }
-
-
-                        if (attributeName == "display") {
+                        else if (attributeName == "display") {
                             // Parse display from one line into two
                             document.getElementById("display1").textContent = msgObj[attributeName].substring(0, 20);
                             document.getElementById("display2").textContent = msgObj[attributeName].substring(20, 40);
