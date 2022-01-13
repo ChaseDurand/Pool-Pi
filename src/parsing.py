@@ -42,7 +42,6 @@ def parseDisplay(data, poolModel):
         print("Display didn't end with null!")
 
     # Check characters for 7th bit for blinking
-    poolModel.display.clear()
     poolModel.displayMask.clear()
     for i in range(len(data)):
         if data[i] & 0b10000000:

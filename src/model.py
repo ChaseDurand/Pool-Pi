@@ -64,10 +64,7 @@ buttons = {
 # Records states of the pool
 class PoolModel:
     def __init__(self):
-        self.display = [
-            'W', 'A', 'I', 'T', 'I', 'N', 'G', ' ', 'F', 'O', 'R', ' ', 'D',
-            'I', 'S', 'P', 'L', 'A', 'Y'
-        ]
+        self.display = "WAITING FOR DISPLAY"
         self.displayMask = [
             1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ]
