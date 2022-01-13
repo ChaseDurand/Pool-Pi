@@ -36,7 +36,7 @@ def parseDisplay(data, poolModel):
     # Remove last bit (null)
     print("Display length: ", len(data))
 
-    if data[-1] == b'\x00':
+    if data[-1] == 0:
         data = data[:-1]
     else:
         print("Display didn't end with null!")
