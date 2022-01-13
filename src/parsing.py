@@ -52,7 +52,7 @@ def parseDisplay(data, poolModel):
         else:
             # Character is not blinking
             poolModel.displayMask.append(False)
-        poolModel.display.append(data[i].decode('utf-8'))
+        poolModel.display.append(chr(data[i]))
 
     data = data.replace(
         b'\x5f', b'\xc2\xb0')  #Degree symbol ° is encoded as underscore x5f
