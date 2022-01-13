@@ -32,6 +32,20 @@ KEEP_ALIVE = (b'\x10\x02\x01\x01\x00\x14\x10\x03', "Keep Alive")
 
 def parseDisplay(data, poolModel):
     # Classify display update and pass to appropriate parser
+
+    # Check characters for 7th bit for blinking
+    poolModel.display.clear()
+    poolModel.displayMask.clear()
+    for i in range(len(data)):
+        if data[i] & 0b10000000:
+            # Character is blinking
+            data[i] &= 0b01111111
+            poolModel.displayMask.append(True)
+        else:
+            # Character is not blinking
+            poolModel.displayMask.append(False)
+        poolModel.display.append(data[i])
+
     data = data.replace(
         b'\x5f', b'\xc2\xb0')  #Degree symbol ° is encoded as underscore x5f
     data = data.replace(b'\xba', b'\x3a')  # Colon : is encoded as xBA
@@ -59,12 +73,11 @@ def parseDisplay(data, poolModel):
     else:
         print('Unclassified display update', end='')
     try:
-        poolModel.display = data.decode('utf-8')
+        print(data.decode('utf-8'))
     except (UnicodeDecodeError, Exception) as e:
         print(e)
         print(data)
     poolModel.flag_data_changed = True
-    print(poolModel.display)
     return
 
 

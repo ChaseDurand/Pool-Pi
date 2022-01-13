@@ -47,7 +47,6 @@ body {
 
 .topRight {
   display: table-cell;
-  /* margin: 0; */
   padding: 5px;
   vertical-align: middle;
 }
@@ -64,6 +63,16 @@ body {
   display: inline-block;
   margin: 0 auto;
   margin-left: 10px;
+}
+
+.blinkingText{
+  animation: blinking 1s step-start infinite;
+}
+
+@keyframes blinking {
+  50% {
+  background-color: rgb(55,170,55);
+  }
 }
 
 .buttonContainer {
