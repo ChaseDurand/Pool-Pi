@@ -42,10 +42,20 @@
                 document.getElementById("display2").innerHTML = '';
 
                 for (var i = 0; i < len / 2; ++i) {
-                    document.getElementById("display1").innerHTML += msgObj["display"].charAt(i);
+                    if (msgObj["displayMask"] == '1') {
+                        document.getElementById("display1").innerHTML = "<span class=blinkingText>" + msgObj["display"].charAt(i) + "</span>";
+                    }
+                    else {
+                        document.getElementById("display1").innerHTML += msgObj["display"].charAt(i);
+                    }
                 }
                 for (var i = len / 2; i < len; ++i) {
-                    document.getElementById("display2").innerHTML += msgObj["display"].charAt(i);
+                    if (msgObj["displayMask"] == '1') {
+                        document.getElementById("display2").innerHTML = "<span class=blinkingText>" + msgObj["display"].charAt(i) + "</span>";
+                    }
+                    else {
+                        document.getElementById("display2").innerHTML += msgObj["display"].charAt(i);
+                    }
                 }
                 delete msgObj["display"];
                 delete msgObj["displayMask"];
