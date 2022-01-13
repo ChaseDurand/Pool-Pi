@@ -34,6 +34,8 @@ def parseDisplay(data, poolModel):
     # Classify display update and pass to appropriate parser
 
     # Remove last bit (null)
+    print("Display length: ", len(data))
+
     if data[-1] == b'\x00':
         data = data[:-1]
     else:
@@ -50,7 +52,7 @@ def parseDisplay(data, poolModel):
         else:
             # Character is not blinking
             poolModel.displayMask.append(False)
-        poolModel.display.append(data[i])
+        poolModel.display.append(data[i].decode('utf-8'))
 
     data = data.replace(
         b'\x5f', b'\xc2\xb0')  #Degree symbol ° is encoded as underscore x5f
