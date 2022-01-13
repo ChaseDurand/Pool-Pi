@@ -34,8 +34,6 @@ def parseDisplay(data, poolModel):
     # Classify display update and pass to appropriate parser
 
     # Remove last bit (null)
-    print("Display length: ", len(data))
-
     if data[-1] == 0:
         data = data[:-1]
     else:
@@ -45,7 +43,7 @@ def parseDisplay(data, poolModel):
     # Check characters for 7th bit for blinking
     poolModel.displayMask.clear()
     for i in range(len(data)):
-        if (data[i] & 0b10000000) == data[i]:
+        if (data[i] & 0b01111111) == data[i]:
             # Character is blinking
             data[i] = (data[i] & 0b01111111)
             poolModel.displayMask.append(True)
