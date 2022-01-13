@@ -71,7 +71,7 @@ body {
 
 @keyframes blinking {
   50% {
-  background-color: rgb(55,170,55);
+  opacity: 0%;
   }
 }
 
