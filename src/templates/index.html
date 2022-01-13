@@ -39,6 +39,9 @@
                 // For every item in json message, need to update
                 for (var i = 0, len = Object.keys(msgObj).length; i < len; ++i) {
                     attributeName = Object.keys(msgObj)[i]
+                    if (attributeName == "display") {
+                        console.log(msgObj[attributeName])
+                    }
                     if (typeof (msgObj[attributeName]) == "object") {
                         // Attribute has state and version value (is a button)
                         state = msgObj[attributeName].state;
@@ -72,6 +75,9 @@
                             else {
                                 document.getElementsByClassName('overlay')[0].style.display = "none"
                             }
+                        }
+                        else if (attributeName == "displayMask") {
+                            continue
                         }
                         else if (attributeName == "display") {
                             console.log(msgObj[attributeName])
