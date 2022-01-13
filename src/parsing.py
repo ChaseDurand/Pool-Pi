@@ -33,6 +33,12 @@ KEEP_ALIVE = (b'\x10\x02\x01\x01\x00\x14\x10\x03', "Keep Alive")
 def parseDisplay(data, poolModel):
     # Classify display update and pass to appropriate parser
 
+    # Remove last bit (null)
+    if data[-1] == b'\x00':
+        data = data[:-1]
+    else:
+        print("Display didn't end with null!")
+
     # Check characters for 7th bit for blinking
     poolModel.display.clear()
     poolModel.displayMask.clear()
