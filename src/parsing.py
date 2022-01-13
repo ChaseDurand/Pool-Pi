@@ -52,7 +52,7 @@ def parseDisplay(data, poolModel):
         else:
             # Character is not blinking
             poolModel.displayMask.append(False)
-        poolModel.display.append(chr(data[i]))
+        data[i] = data[i].to_bytes(1, byteorder="big")
 
     data = data.replace(
         b'\x5f', b'\xc2\xb0')  #Degree symbol ° is encoded as underscore x5f
@@ -81,10 +81,11 @@ def parseDisplay(data, poolModel):
     else:
         print('Unclassified display update', end='')
     try:
-        print(data.decode('utf-8'))
+        poolModel.display = data.decode('utf-8')
     except (UnicodeDecodeError, Exception) as e:
         print(e)
         print(data)
+    print(poolModel.display)
     poolModel.flag_data_changed = True
     return
 
