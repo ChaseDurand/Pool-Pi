@@ -42,7 +42,7 @@
                 document.getElementById("display2").innerHTML = '';
 
                 for (var i = 0; i < len / 2; ++i) {
-                    if (msgObj["displayMask"] == '1') {
+                    if (msgObj["displayMask"][i] == '1') {
                         document.getElementById("display1").innerHTML = "<span class=blinkingText>" + msgObj["display"].charAt(i) + "</span>";
                     }
                     else {
@@ -50,7 +50,7 @@
                     }
                 }
                 for (var i = len / 2; i < len; ++i) {
-                    if (msgObj["displayMask"] == '1') {
+                    if (msgObj["displayMask"][i] == '1') {
                         document.getElementById("display2").innerHTML = "<span class=blinkingText>" + msgObj["display"].charAt(i) + "</span>";
                     }
                     else {
