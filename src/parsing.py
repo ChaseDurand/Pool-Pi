@@ -44,7 +44,7 @@ def parseDisplay(data, poolModel):
     # Check characters for 7th bit for blinking
     poolModel.displayMask.clear()
     for i in range(len(data)):
-        if data[i] & 0b10000000:
+        if (data[i] & 0b10000000) == data[i]:
             # Character is blinking
             data[i] = (data[i] & 0b01111111).to_bytes(1, byteorder="big")
             poolModel.displayMask.append(True)
