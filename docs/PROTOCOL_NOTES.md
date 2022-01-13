@@ -6,7 +6,7 @@ The serial bus is used to communicate between the Aqualogic board, the local dis
 
 The protocol use 1 start bit, 8 data bits, no parity, and 2 stop bits with a baud rate of 19.2k.
 
-Frames are structured with DLE STX (x10x02), two bytes indicating the command/frame type, multiple data bytes, a two byte checksum, and DLE ETX (x10x03). The two byte checksum includes all bytes before the checksum (excluding DLE STX). If any byte besides the start and end DLE (x10) are equal to x10, a NULL (x00) is inserted immediately after that byte. This NULL must be removed when parsing frames.
+Frames are structured with DLE STX (x10x02), two bytes indicating the origin device and command, multiple data bytes, a two byte checksum, and DLE ETX (x10x03). The two byte checksum includes all bytes before the checksum (excluding DLE STX). If any byte besides the start and end DLE (x10) are equal to x10, a NULL (x00) is inserted immediately after that byte. This NULL must be removed when parsing frames.
 
 | Start | Frame Type | Command/Data | Checksum | End |
 | :---: | :---:| :---: | :---: | :---: |
@@ -15,11 +15,11 @@ Frames are structured with DLE STX (x10x02), two bytes indicating the command/fr
 ## Aqualogic to Controller
 The Aqualogic board acts as a master unit providing a heartbeat/keep alive packet, screen updates, and LED updates.
 
-A keep alive frame is sent every 100ms with a frame type of x01x01 and zero data bytes. If any serial device has a message to send, it must respond immediately after the keep alive frame. OEM devices begin responding 0.5ms after the end of the keep alive frame.
+A keep alive frame is sent every 100ms with a frame type of x01x01 and zero data bytes. If any serial device has a message to send, it must respond immediately after the keep alive frame. OEM controllers and display devices begin responding 0.5ms after the end of the keep alive frame. The aqualogic sends any other commands 40ms after the end of the keep alive packet.
 
 Keep alive frame: x10x02x01x01x00x14x10x03
 
-Screen updates have the frame type x01x03. Different devices have different screen sizes (2 by 16 instead of 2 by 20). I do not know if different display packets are sent, or if the local displays parse frames differently to accomodate different screen sizes. There might be a handshake between the Aqualogic and any connected devices on startup to communicate screen size and software versions (which could also explain Communication Err 1).
+Screen updates have the frame type x01x03. Different devices have different screen sizes (2 by 16 instead of 2 by 20). I do not know if different display packets are sent, or if the local displays parse frames differently to accomodate different screen sizes. There might be a handshake between the Aqualogic and any connected devices on startup to communicate screen size and software versions (which could also explain Communication Err 1). A NULL x00 is inserted after the display bytes.
 
 Blinking characters are used to indicate selections on menus and time. To indicated blinking, the highest bit (1<<7) is set as 1 on a per character basis. The colon : always appears as blinking (xBA instead of x3A).
 
