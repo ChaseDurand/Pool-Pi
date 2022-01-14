@@ -126,6 +126,7 @@ $(document).ready(function () {
         if (document.getElementsByClassName('overlay')[0].style.display != "none") {
             return
         }
+        document.getElementsByClassName('overlay')[0].style.display = "flex";
         buttonID = $(this).attr('id');
         buttonVersion = $(this).attr('version');
 
