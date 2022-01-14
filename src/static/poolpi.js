@@ -91,10 +91,10 @@ $(document).ready(function () {
             // Parse check system
             else if (attributeName == "checkSystem") {
                 if (msgObj["checkSystem"] == "ON") {
-                    document.getElementById("checkSystem").className = "LED orange"
+                    document.getElementById("checkSystem").className = "LED orange";
                 }
                 else {
-                    document.getElementById("checkSystem").className = "LED off"
+                    document.getElementById("checkSystem").className = "LED off";
                 }
             }
 
