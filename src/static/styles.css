@@ -18,8 +18,8 @@ body {
 .overlay {
   position: absolute;
   display: flex; /* toggled to none when not shown */
-  width: 608px;
-  height: 338px;
+  width: 620px;
+  height: 497px;
   border-radius: 31px;
   background-color: rgba(0,0,0,0.5);
 }
