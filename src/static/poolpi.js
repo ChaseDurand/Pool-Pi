@@ -65,16 +65,16 @@ $(document).ready(function () {
             // Parse service
             if (attributeName == "service") {
                 if (msgObj["service"].state == "ON") {
-                    document.getElementById("service").children["led"].parentElement.className = "LED red" + " toggle-element";
+                    document.getElementById("service").parentElement.children["led"].className = "LED red" + " toggle-element";
                 }
                 else if (msgObj["service"].state == "OFF") {
-                    document.getElementById("service").children["led"].parentElement.className = "LED off" + " toggle-element";
+                    document.getElementById("service").parentElement.children["led"].className = "LED off" + " toggle-element";
                 }
                 else if (msgObj["service"].state == "BLINK") {
-                    document.getElementById("service").children["led"].parentElement.className = "LED red blink" + " toggle-element";
+                    document.getElementById("service").parentElement.children["led"].className = "LED red blink" + " toggle-element";
                 }
                 else if (msgObj["service"].state == "INIT") {
-                    document.getElementById("service").children["led"].parentElement.className = "LED off" + " toggle-element";
+                    document.getElementById("service").parentElement.children["led"].className = "LED off" + " toggle-element";
                 }
             }
 
