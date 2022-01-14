@@ -113,22 +113,6 @@ $(document).ready(function () {
         }
     });
 
-    // Handler for the toggle controls
-    $('switch.toggler').click(function () {
-        document.getElementsByClassName('overlay')[0].style.display = "flex"
-        $(this).toggleClass('off');
-        switchID = $(this).attr('id');
-        switchVersion = $(this).attr('version');
-        if ($(this).attr('class') == 'toggler') {
-            switchState = 'ON';
-        }
-        else {
-            switchState = 'OFF';
-        }
-        console.log(switchID, switchState, switchVersion);
-        socket.emit('command_event', { 'id': switchID, 'data': switchState, 'version': switchVersion, 'confirm': '1' });
-    });
-
     // Handler for menu buttons
     $('.button-menu').click(function () {
         buttonID = $(this).attr('id');
@@ -147,42 +131,55 @@ $(document).ready(function () {
 
         if (buttonID == 'pool-spa-spillover') {
             // Need to check which pool/spa/spillover is lit
+            // Pool->Spa->Spillover
             if (!(document.getElementById('pool-spa-spillover').parentElement.parentElement.children['pool'].children['led'].classList.contains('off'))) {
-                buttonState = 'pool';
+                // Pool is on, need spa on
+                buttonID = 'spa'
+                targetState = 'ON';
             }
             else if (!(document.getElementById('pool-spa-spillover').parentElement.parentElement.children['spa'].children['led'].classList.contains('off'))) {
-                buttonState = 'spa';
+                // Spa is on, need spillover on
+                buttonID = 'spillover'
+                targetState = 'ON';
             }
             else if (!(document.getElementById('pool-spa-spillover').parentElement.parentElement.children['spillover'].children['led'].classList.contains('off'))) {
-                buttonState = 'spill';
+                // Spillover is on, need pool on
+                buttonID = 'pool'
+                targetState = 'ON';
             }
             else {
-                buttonState = 'init';
+                // We haven't initialized yet
+                targetState = 'INIT';
             }
 
         }
         else if (buttonID == 'service') {
             // Need to check if on/off/blinking
             if (document.getElementById(buttonID).parentElement.children['led'].classList.contains('off')) {
-                buttonState = 'OFF';
+                // Currently off, need on
+                targetState = 'ON';
             }
             else if (document.getElementById(buttonID).parentElement.children['led'].classList.contains('blink')) {
-                buttonState = 'BLINK';
+                // Currently blinking, target off
+                targetState = 'OFF';
             }
             else {
-                buttonState = 'ON';
+                // Currently on, need blinking
+                targetState = 'BLINK';
             }
         }
         else {
             // Need to check if on/off
             if (document.getElementById(buttonID).parentElement.children['led'].classList.contains('off')) {
-                buttonState = 'OFF';
+                // Button is off, we need it on
+                targetState = 'ON';
             }
             else {
-                buttonState = 'ON';
+                // Button is on, we need it off
+                targetState = 'OFF';
             }
         }
-        console.log(buttonID, buttonState, buttonVersion, "1");
-        socket.emit('command_event', { 'id': buttonID, 'data': buttonState, 'version': buttonVersion, 'confirm': '1' });
+        console.log(buttonID, targetState, buttonVersion, "1");
+        socket.emit('command_event', { 'id': buttonID, 'data': targetState, 'version': buttonVersion, 'confirm': '1' });
     });
 });

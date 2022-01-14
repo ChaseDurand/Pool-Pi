@@ -182,7 +182,7 @@ def getCommand(poolModel, serialHandler, commandHandler):
         if line is not '':
             # Extract csv command info
             commandID = line.split(',')[0]
-            commandState = line.split(',')[1]
+            commandDesiredState = line.split(',')[1]
             commandVersion = int(line.split(',')[2])
             commandConfirm = line.split(',')[3]
 
@@ -200,18 +200,18 @@ def getCommand(poolModel, serialHandler, commandHandler):
                             commandID):
                         #Front end and back end versions are synced
                         #Extra check to ensure we are not already in our desired state
-                        if commandState == poolModel.getParameterState(
+                        if commandDesiredState == poolModel.getParameterState(
                                 commandID):
                             print('Invalid command! State mismatch',
                                   poolModel.getParameterState(commandID),
-                                  commandState)
+                                  commandDesiredState)
                         else:
                             # Command is valid
-                            print('Valid command', commandID, commandState,
-                                  commandVersion)
+                            print('Valid command', commandID,
+                                  commandDesiredState, commandVersion)
                             #Push to command handler
                             commandHandler.initiateSend(
-                                commandID, commandState, commandConfirm)
+                                commandID, commandDesiredState, commandConfirm)
                             poolModel.sendingMessage = True
 
                     else:
@@ -221,7 +221,7 @@ def getCommand(poolModel, serialHandler, commandHandler):
             else:
                 # Menu button. Do not need to confirm command.
                 # Immediately load for sending.
-                commandHandler.initiateSend(commandID, commandState,
+                commandHandler.initiateSend(commandID, commandDesiredState,
                                             commandConfirm)
                 serialHandler.ready_to_send = True
         f.truncate(0)
