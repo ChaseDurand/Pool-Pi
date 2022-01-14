@@ -33,6 +33,7 @@ commands = {
     'lights': b'\x00\x01\x00\x00',
     'heater1': b'\x00\x00\x04\x00',
     'valve3': b'\x00\x00\x01\x00',
+    'valve4': b'',
     'aux1': b'\x00\x02\x00\x00',
     'aux2': b'\x00\x04\x00\x00',
     'aux3': b'\x00\x08\x00\x00',
@@ -47,7 +48,6 @@ commands = {
     'aux12': b'',
     'aux13': b'',
     'aux14': b'',
-    'valve4': b'',
     'systemOff': b'',
     'superChlorinate': b''
 }
@@ -113,6 +113,20 @@ class PoolModel:
         jsonItems = vars(self).copy()
         jsonItems.pop('flag_data_changed')
         jsonItems.pop('last_update_time')
+        jsonItems.pop('airtemp')
+        jsonItems.pop('pooltemp')
+        jsonItems.pop('datetime')
+        jsonItems.pop('salinity')
+        jsonItems.pop('systemOff')
+        jsonItems.pop('superChlorinate')
+        jsonItems.pop('aux7')
+        jsonItems.pop('aux8')
+        jsonItems.pop('aux9')
+        jsonItems.pop('aux10')
+        jsonItems.pop('aux11')
+        jsonItems.pop('aux12')
+        jsonItems.pop('aux13')
+        jsonItems.pop('aux14')
         return json.dumps(jsonItems)
 
 

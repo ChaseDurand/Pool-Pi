@@ -18,7 +18,7 @@ body {
 .overlay {
   position: absolute;
   display: flex; /* toggled to none when not shown */
-  width: 520px;
+  width: 608px;
   height: 338px;
   border-radius: 31px;
   background-color: rgba(0,0,0,0.5);
@@ -28,7 +28,7 @@ body {
   border: solid;
   border-radius: 35px;
   padding-bottom: 20px;
-  width: 520px;
+  width: 620px;
   background-color: lightgray;
 }
 
@@ -40,7 +40,6 @@ body {
 
 .topLeft {
   display: table-cell;
-  /* margin: 0; */
   padding: 5px;
   vertical-align: middle;
 }
@@ -77,32 +76,18 @@ body {
 
 .buttonContainer {
   display: inline-block;
-  width: 200px;
+  width: 250px;
   text-align: center;
   margin: 0 auto;
 }
 
 .buttonRow {
   display: flex;
-  table-layout: fixed;
-  padding: 5px;
+  padding: 1px 1px;
   text-align: center;
 }
 
-.button {
-  display: inline-block;
-  padding: 5px 10px;
-  margin: 0 auto;
-  font-size: 16px;
-  text-align: center;
-  cursor: pointer;
-  outline: none;
-  color: rgb(0, 0, 0);
-  background-color: #e2e2e2;
-  border: none;
-  width: 35px;
-  border-radius: 50%;
-  box-shadow: 0 6px rgb(102, 102, 102);
+.noSelect{
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */
@@ -111,13 +96,215 @@ body {
   user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 
-.button:hover {background-color: #b9b9b9}
+/* Menu buttons */
 
-.button:active {
-  background-color: #696969;
-  box-shadow: 0 2px rgb(65, 65, 65);
-  transform: translateY(4px);
+.button-menu-text{
+  text-align: center;
+  position: relative;
+  -ms-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
+
+.button-menu-oval {
+  display: inline-block;
+  width: 80px;
+  height: 35px;
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
+  background-color: #757575;
+  border-radius: 50%;
+  border: 1px solid #353636;
+  font: bold 16px Arial;
+  vertical-align: middle;
+  color: #fff;
+  background-color: #757575;
+  background: linear-gradient(#c2c2c2, #696969);
+  box-shadow: inset 0 2px 2px #d1d1d1, inset 1px 0 3px #8b8b8b,
+    inset -1px 0 3px #aaaaaa, inset 0 -2px 2px #5a5a5a,
+    0 0 3px rgba(0, 0, 0, 0.24);
+  position: relative;
+  text-shadow: 0 1px #313131;
+  outline: none;
+  margin: auto;
+}
+.button-menu-oval:before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  background: #3d3d3d;
+  z-index: -1;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px #bbb;
+}
+.button-menu-oval:hover {
+  background: linear-gradient(#dadbdb, #8f9192);
+  box-shadow: inset 0 2px 2px #d1d1d1, inset 1px 0 3px #a9abac,
+    inset -1px 0 3px #a3b2b6, inset 0 -2px 2px #6e7b80,
+    0 0 3px rgba(0, 0, 0, 0.24);
+}
+.button-menu-oval:active {
+  background: linear-gradient(#a7a7a7, #585858);
+  box-shadow: inset 0 3px 7px #4e4e4e;
+}
+
+/* Blue toggle buttons */
+
+.button-toggle-blue-oval {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%;
+  border: 1px solid #353636;
+  font: bold 16px Arial;
+  vertical-align: middle;
+  color: #fff;
+  background-color: #757575;
+  background: linear-gradient(#5398da, #1662c5);
+  box-shadow: inset 0 2px 2px #b3d4ff, inset 1px 0 3px #558bf1,
+    inset -1px 0 3px #3b4dee, inset 0 -2px 2px #1834cf,
+    0 0 3px rgba(0, 0, 0, 0.24);
+  position: relative;
+  outline: none;
+}
+.button-toggle-blue-oval:before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  background: #3d3d3d;
+  z-index: -1;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px #bbb;
+}
+.button-toggle-blue-oval:hover {
+  background: linear-gradient(#7eadda, #1662c5);
+  box-shadow: inset 0 2px 0 #b3def1, inset 0 2px 0 #87bbec,
+    inset 0 3px 0 #7ca6e6, inset 0 5px 0 #5f9bcc, inset 1px 0 3px #2d88dc,
+    inset -1px 0 3px #2d6adc, inset 0 -2px 2px #3d4888,
+    0 0 3px rgba(0, 0, 0, 0.24);
+}
+.button-toggle-blue-oval:active {
+  background: linear-gradient(#377bbb, #02459c);
+  box-shadow: inset 0 3px 7px #001d7b;
+  padding: 1px 0 0 1px;
+}
+
+.button-toggle-blue-oval {
+  margin: 0px;
+}
+
+/* Red toggle button */
+
+.button-toggle-red-oval {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%;
+  border: 1px solid #353636;
+  font: bold 16px Arial;
+  vertical-align: middle;
+  color: #fff;
+  background-color: #757575;
+  background: linear-gradient(#da5353, #c51616);
+  box-shadow: inset 0 2px 2px #ffb3b3, inset 1px 0 3px #f15555,
+    inset -1px 0 3px #ee3b3b, inset 0 -2px 2px #5e0e0e,
+    0 0 3px rgba(0, 0, 0, 0.24);
+  position: relative;
+  outline: none;
+}
+.button-toggle-red-oval:before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  background: #3d3d3d;
+  z-index: -1;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px #bbb;
+}
+.button-toggle-red-oval:hover {
+  background: linear-gradient(#da7e7e, #c51616);
+  box-shadow: inset 0 2px 0 #f1b3b3, inset 0 2px 0 #ec8787,
+    inset 0 3px 0 #e67c7c, inset 0 5px 0 #cc5f5f, inset 1px 0 3px #dc2d2d,
+    inset -1px 0 3px #dc2d2d, inset 0 -2px 2px #883d3d,
+    0 0 3px rgba(0, 0, 0, 0.24);
+}
+.button-toggle-red-oval:active {
+  background: linear-gradient(#bb3737, #9c0202);
+  box-shadow: inset 0 3px 7px #7b0000;
+  padding: 1px 0 0 1px;
+}
+
+.button-toggle-red-oval {
+  margin: 0px;
+}
+
+.LED{
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #353636;
+}
+
+.LED.blink{
+  animation: blinking 1s step-start infinite;
+}
+
+@keyframes blinking {
+  50% {
+    box-shadow: inset 0 2px 2px #e6e6e6, inset 1px 0 2px #848484,
+    inset -1px 0 2px #4f4f4f, inset 0 -1px 1px #2f2f2f,
+    0 0 2px rgba(0, 0, 0, 0.24);
+    background: linear-gradient(#fff, #484848);
+  }
+}
+
+.LED.green{
+  box-shadow: inset 0 2px 2px #f0ffed, inset 1px 0 2px #48ff00,
+  inset -1px 0 2px #70e17a, inset 0 -1px 1px #2a5524,
+  0 0 2px rgba(0, 0, 0, 0.24);
+  background: linear-gradient(#0cff34, #25b92c);
+}
+
+.LED.red{
+  box-shadow: inset 0 2px 2px #fbb, inset 1px 0 2px #f00,
+  inset -1px 0 2px #e17070, inset 0 -1px 1px #5e2525,
+  0 0 2px rgba(0, 0, 0, 0.24);
+  background: linear-gradient(#ff2323, #b90000);
+}
+
+.LED.orange{
+  box-shadow: inset 0 2px 2px rgb(233, 172, 122), inset 1px 0 2px rgb(255, 102, 0),
+  inset -1px 0 2px #e77e4d, inset 0 -1px 1px #5e4125,
+  0 0 2px rgba(0, 0, 0, 0.24);
+  background: linear-gradient(#fc6711, #b95300);
+}
+
+.LED.off{
+  box-shadow: inset 0 2px 2px #e6e6e6, inset 1px 0 2px #848484,
+  inset -1px 0 2px #4f4f4f, inset 0 -1px 1px #2f2f2f,
+  0 0 2px rgba(0, 0, 0, 0.24);
+  background: linear-gradient(#fff, #484848);
+}
+
 
 switch.toggler {
   background: rgb(20, 240, 0);
@@ -142,14 +329,49 @@ switch:hover {
   box-shadow: 0 0px 5px 0px lightgray, 0 0px 5px 0px;
 }
 
-.switch-row-container {
-  display: flex;
+.toggle-row{
+  display:flex;
+  align-items:center;
+}
+
+.button-row-container {
   table-layout: fixed;
-  margin: 1px;
+  width: 200px;
+  margin: 4px 1px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.pool-spa-spillover-container{
+  margin: -8px 1px;
+}
+
+.toggle-element{
+  margin: 0px 6px;
+}
+
+.toggle-text{
+  padding-top: 2px;
 }
 
 .switch {
   display: flex;
   width: 160px;
   justify-content: flex-end;
+}
+
+.check-system-row {
+  table-layout: fixed;
+  margin: 0px 0px 2px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+  font: bold 12px Arial;
+}
+
+.button-spacer{
+  width: 35px;
+  margin: 0px 6px;
 }
