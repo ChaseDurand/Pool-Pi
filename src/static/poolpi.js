@@ -51,6 +51,7 @@ $(document).ready(function () {
         // Parse every item in json message
         for (var i = 0, len = Object.keys(msgObj).length; i < len; ++i) {
             attributeName = Object.keys(msgObj)[i];
+            console.log(attributeName);
             // Parse sendingMessage flag (no version)
             if (attributeName == "sendingMessage") {
                 if (msgObj[attributeName] == true) {
@@ -63,7 +64,7 @@ $(document).ready(function () {
             }
 
             // Parse service
-            if (attributeName == "service") {
+            else if (attributeName == "service") {
                 if (msgObj["service"].state == "ON") {
                     document.getElementById("service").parentElement.children["led"].className = "LED red" + " toggle-element";
                 }
@@ -79,7 +80,7 @@ $(document).ready(function () {
             }
 
             // Parse check system
-            if (attributeName == "checkSystem") {
+            else if (attributeName == "checkSystem") {
                 if (msgObj["checkSystem"] == "ON") {
                     document.getElementById("checkSystem").className = "LED orange"
                 }
@@ -89,11 +90,13 @@ $(document).ready(function () {
             }
 
             // Parse other buttons
-            if (msgObj[attributeName] == "ON") {
-                document.getElementById(attributeName).parentElement.children["led"].className = "LED green" + " toggle-element";
-            }
             else {
-                document.getElementById(attributeName).parentElement.children["led"].className = "LED off" + " toggle-element";
+                if (msgObj[attributeName] == "ON") {
+                    document.getElementById(attributeName).parentElement.children["led"].className = "LED green" + " toggle-element";
+                }
+                else {
+                    document.getElementById(attributeName).parentElement.children["led"].className = "LED off" + " toggle-element";
+                }
             }
 
             // Update version
