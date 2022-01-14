@@ -90,10 +90,10 @@ $(document).ready(function () {
 
             // Parse other buttons
             else if (msgObj[attributeName] == "ON") {
-                document.getElementById(attributeName).children["led"].className = "LED green" + " toggle-element";
+                document.getElementById(attributeName).parentElement.children["led"].className = "LED green" + " toggle-element";
             }
             else {
-                document.getElementById(attributeName).children["led"].className = "LED off" + " toggle-element";
+                document.getElementById(attributeName).parentElement.children["led"].className = "LED off" + " toggle-element";
             }
 
             // Update version
