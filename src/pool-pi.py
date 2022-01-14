@@ -243,6 +243,11 @@ def main():
     serialHandler = SerialHandler()
     commandHandler = CommandHandler()
     logger = logging.getLogger("poolpi-logger")
+    if exists("command_queue.txt") == True:
+        if stat('command_queue.txt').st_size != 0:
+            f = open('command_queue.txt', 'r+')
+            f.truncate(0)
+            f.close()
     while (True):
         # Read Serial Bus
         # If new serial data is available, read from the buffer
