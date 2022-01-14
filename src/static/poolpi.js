@@ -100,7 +100,7 @@ $(document).ready(function () {
 
             // Parse other buttons
             else {
-                if (msgObj[attributeName] == "ON") {
+                if (msgObj[attributeName].state == "ON") {
                     document.getElementById(attributeName).parentElement.children["led"].className = "LED green" + " toggle-element";
                 }
                 else {
