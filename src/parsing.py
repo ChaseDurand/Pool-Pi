@@ -32,7 +32,6 @@ KEEP_ALIVE = (b'\x10\x02\x01\x01\x00\x14\x10\x03', "Keep Alive")
 
 def parseDisplay(data, poolModel):
     # Classify display update and pass to appropriate parser
-
     # Remove last bit (null)
     if data[-1] == 0:
         data = data[:-1]
@@ -53,7 +52,7 @@ def parseDisplay(data, poolModel):
 
     data = data.replace(
         b'\x5f', b'\xc2\xb0')  #Degree symbol ° is encoded as underscore x5f
-    data = data.replace(b'\xba', b'\x3a')  # Colon : is encoded as xBA
+
     if DISPLAY_AIRTEMP in data:
         parseAirTemp(data, poolModel)
     elif DISPLAY_POOLTEMP in data:
