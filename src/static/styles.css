@@ -65,10 +65,10 @@ body {
 }
 
 .blinkingText{
-  animation: blinking 1s step-start infinite;
+  animation: blinking-text 1s step-start infinite;
 }
 
-@keyframes blinking {
+@keyframes blinking-text {
   50% {
   opacity: 0%;
   }
@@ -265,10 +265,10 @@ body {
 }
 
 .LED.blink{
-  animation: blinking 1s step-start infinite;
+  animation: blinking-led 1s step-start infinite;
 }
 
-@keyframes blinking {
+@keyframes blinking-led {
   50% {
     box-shadow: inset 0 2px 2px #e6e6e6, inset 1px 0 2px #848484,
     inset -1px 0 2px #4f4f4f, inset 0 -1px 1px #2f2f2f,

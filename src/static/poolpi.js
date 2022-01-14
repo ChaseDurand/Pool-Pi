@@ -51,7 +51,6 @@ $(document).ready(function () {
         // Parse every item in json message
         for (var i = 0, len = Object.keys(msgObj).length; i < len; ++i) {
             attributeName = Object.keys(msgObj)[i];
-            console.log(attributeName);
             // Parse sendingMessage flag (no version)
             if (attributeName == "sendingMessage") {
                 if (msgObj[attributeName] == true) {
