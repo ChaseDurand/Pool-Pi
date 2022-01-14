@@ -79,6 +79,16 @@ $(document).ready(function () {
                 }
             }
 
+            // Parse pool/spa/spillover
+            else if ((attributeName == "pool") || (attributeName == "spa") || (attributeName == "spillover")) {
+                if (msgObj[attributeName].state == "ON") {
+                    document.getElementById(attributeName).children["led"].className = "LED green" + " toggle-element";
+                }
+                else {
+                    document.getElementById(attributeName).children["led"].className = "LED off" + " toggle-element";
+                }
+            }
+
             // Parse check system
             else if (attributeName == "checkSystem") {
                 if (msgObj["checkSystem"] == "ON") {
