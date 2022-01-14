@@ -182,7 +182,7 @@ $(document).ready(function () {
                 buttonState = 'ON';
             }
         }
-        console.log(buttonID, buttonState, buttonVersion, "0");
+        console.log(buttonID, buttonState, buttonVersion, "1");
         socket.emit('command_event', { 'id': buttonID, 'data': buttonState, 'version': buttonVersion, 'confirm': '1' });
     });
 });
