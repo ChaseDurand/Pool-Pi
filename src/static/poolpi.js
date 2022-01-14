@@ -79,7 +79,7 @@ $(document).ready(function () {
             }
 
             // Parse check system
-            else if (attributeName == "checkSystem") {
+            if (attributeName == "checkSystem") {
                 if (msgObj["checkSystem"] == "ON") {
                     document.getElementById("checkSystem").className = "LED orange"
                 }
@@ -89,7 +89,7 @@ $(document).ready(function () {
             }
 
             // Parse other buttons
-            else if (msgObj[attributeName] == "ON") {
+            if (msgObj[attributeName] == "ON") {
                 document.getElementById(attributeName).parentElement.children["led"].className = "LED green" + " toggle-element";
             }
             else {
