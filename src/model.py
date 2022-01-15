@@ -72,8 +72,7 @@ class PoolModel:
         self.pooltemp = "WAITING FOR POOLTEMP"
         self.datetime = "WAITING FOR DATETIME"
         self.salinity = "WAITING FOR SALINITY"
-        self.checkSystem = "WAITING FOR CHECKSYSTEM"  #TODO check why checksystem stays on init state when LED is off
-        #TODO combine pool/spa/spillover controls
+        self.checkSystem = "WAITING FOR CHECKSYSTEM"
         for parameter in commands:
             setattr(self, parameter, {"state": "INIT", "version": 0})
         self.flag_data_changed = False  #True if there is new data for web, false if no new data
@@ -90,7 +89,7 @@ class PoolModel:
         if isinstance(attribute, str):
             # Attribute is string and does not require a version
             if attribute != data:
-                attribute = data
+                setattr(self, parameter, data)
 
     def getParameterVersion(self, parameter):
         return getattr(self, parameter)["version"]
