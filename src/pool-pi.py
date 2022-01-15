@@ -5,8 +5,6 @@ from web import *
 from parsing import *
 from os.path import exists
 from os import stat
-import time
-from colorama import Fore, Style
 import logging
 
 #TODO start this on pi startup
@@ -159,7 +157,6 @@ def getCommand(poolModel, serialHandler, commandHandler):
     # If we're not currently sending a command, check if there are new commands.
     # Get new command from command_queue, validate, and initiate send with commandHandler.
     #TODO figure out threading issue or move command_queue to tmp directory
-    #TODO add handling for unlock code
     if commandHandler.sending_message == True:
         #We are currently trying to send a command, don't need to check for others
         return

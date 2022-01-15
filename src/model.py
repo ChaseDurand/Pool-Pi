@@ -2,15 +2,8 @@
 import json
 import serial
 from gpiozero import LED
-from enum import Enum
 import time
 from colorama import Fore, Style
-
-# class attributeStates(Enum):
-#     INIT: 0
-#     OFF: 1
-#     BLINK: 2
-#     ON: 3
 
 MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
 
@@ -24,7 +17,7 @@ ETX = b'\x03'
 
 # TODO unify terminology to make command/message names consistent
 # Consolidate with LED bitmask?
-commands = {
+button_toggle = {
     'service': b'\x08\x00\x00\x00',
     'pool': b'\x40\x00\x00\x00',
     'spa': b'\x40\x00\x00\x00',
@@ -52,7 +45,7 @@ commands = {
     'superchlorinate': b''
 }
 
-buttons = {
+buttons_menu = {
     'left': b'\x04\x00\x00\x00',
     'right': b'\x01\x00\x00\x00',
     'plus': b'\x20\x00\x00\x00',
@@ -73,7 +66,7 @@ class PoolModel:
         self.datetime = 'WAITING FOR DATETIME'
         self.salinity = 'WAITING FOR SALINITY'
         self.checksystem = 'WAITING FOR CHECKSYSTEM'
-        for parameter in commands:
+        for parameter in button_toggle:
             setattr(self, parameter, {'state': 'INIT', 'version': 0})
         self.flag_data_changed = False  #True if there is new data for web, false if no new data
         self.last_update_time = 0  #Time that model was last updated (when last LED message was parsed)
@@ -108,7 +101,7 @@ class PoolModel:
         return
 
     def toJSON(self):
-        # Remove data not used in front end and convert to JSON
+        # Remove data not used in front end then convert to JSON
         jsonItems = vars(self).copy()
         jsonItems.pop('flag_data_changed')
         jsonItems.pop('last_update_time')
@@ -178,10 +171,10 @@ class CommandHandler:
     def initiateSend(self, commandID, commandState, commandConfirm):
         if commandConfirm == '1':
             self.confirm = True
-            commandData = commands[commandID]
+            commandData = button_toggle[commandID]
         else:
             self.confirm = False
-            commandData = buttons[commandID]
+            commandData = buttons_menu[commandID]
         # Form full frame to send from start tx, frame type, command, checksum, and end tx.
         partialFrame = command_start + command_sender + commandData + commandData  # Form partial frame from start tx, frame type, and command.
         # Calculate checksum
