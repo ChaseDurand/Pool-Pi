@@ -21,7 +21,7 @@ Keep alive frame: x10x02x01x01x00x14x10x03
 
 Screen updates have the frame type x01x03. Different devices have different screen sizes (2 by 16 instead of 2 by 20). I do not know if different display packets are sent, or if the local displays parse frames differently to accomodate different screen sizes. There might be a handshake between the Aqualogic and any connected devices on startup to communicate screen size and software versions (which could also explain Communication Err 1). A NULL x00 is inserted after the display bytes.
 
-Blinking characters are used to indicate selections on menus and time. To indicated blinking, the highest bit (1<<7) is set as 1 on a per character basis. The colon : always appears as blinking (xBA instead of x3A).
+Blinking characters are used to indicate selections on menus and time. To indicated blinking, the highest bit (1<<7) is set as 1 on a per character basis. For example, the colon symbol : almost always appears as blinking (xBA instead of x3A).
 
 The degree symbol ° is encoded as an underscore (x5F) and must be replaced with xC2xB0.
 
