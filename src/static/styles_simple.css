@@ -19,6 +19,7 @@ body h1 {
 
 .loading {
   width: 100%;
+  padding: 6px;
   height: 0;
   text-align: center;
 }
@@ -34,6 +35,7 @@ body h1 {
   display: flex; /* toggled to none when not shown */
   z-index: 7;
   width: 100%;
+  padding: -8px;
   height: 100%;
   border-radius: 31px;
   background-color: rgba(0,0,0,0.5);
@@ -45,18 +47,14 @@ body h1 {
   padding-bottom: 20px;
   width: 100%;
   background-color: lightgray;
+  overflow: hidden;
+  position: relative;
 }
 
 .topPanel{
   display: table;
   width: 100%;
-  margin: 0px;
-}
-
-.topLeft {
-  display: table-cell;
-  padding: 5px;
-  vertical-align: middle;
+  margin: 0px auto;
 }
 
 .display {
@@ -70,6 +68,8 @@ body h1 {
   width: 90%;
   display: inline-block;
   margin: 0 auto;
+  margin-left: 5%;
+  margin-top: 15px;
 }
 
 .blinkingText{
@@ -221,7 +221,7 @@ body h1 {
 
 .toggle-text{
   padding-top: 2px;
-  font-size: 34px;
+  font-size: 30px;
 }
 
 .switch {
