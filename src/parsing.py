@@ -4,10 +4,10 @@ LED_MASK = [[(1 << 0, 'heater1'), (1 << 1, 'valve3'), (1 << 2, 'checksystem'),
             [(1 << 0, 'aux2'), (1 << 1, 'service'), (1 << 2, 'aux3'),
              (1 << 3, 'aux4'), (1 << 4, 'aux5'), (1 << 5, 'aux6'),
              (1 << 6, 'valve4'), (1 << 7, 'spillover')],
-            [(1 << 0, 'systemOff'), (1 << 1, 'aux7'), (1 << 2, 'aux8'),
+            [(1 << 0, 'systemoff'), (1 << 1, 'aux7'), (1 << 2, 'aux8'),
              (1 << 3, 'aux9'), (1 << 4, 'aux10'), (1 << 5, 'aux11'),
              (1 << 6, 'aux12'), (1 << 7, 'aux13')],
-            [(1 << 0, 'aux14'), (1 << 1, 'superChlorinate')]]
+            [(1 << 0, 'aux14'), (1 << 1, 'superchlorinate')]]
 
 FRAME_TYPE_KEEPALIVE = b'\x01\x01'
 FRAME_TYPE_LEDS = b'\x01\x02'
