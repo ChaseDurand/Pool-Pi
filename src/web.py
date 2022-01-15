@@ -3,7 +3,7 @@ from flask_socketio import SocketIO, emit
 from threading import Lock
 import uuid
 
-# Set this variable to "threading", "eventlet" or "gevent" to test the
+# Set this variable to 'threading', 'eventlet' or 'gevent' to test the
 # different async modes, or leave it set to None for the application to choose
 # the best option based on installed packages.
 async_mode = None
@@ -15,7 +15,7 @@ thread_lock = Lock()
 
 #TODO implement heartbeat/connection functionality for front end
 #def background_thread():
-#    """Example of how to send server generated events to clients."""
+#    '''Example of how to send server generated events to clients.'''
 #    count = 0
 #    while True:
 #        socketio.sleep(10)

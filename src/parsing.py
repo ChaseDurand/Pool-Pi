@@ -1,4 +1,4 @@
-LED_MASK = [[(1 << 0, 'heater1'), (1 << 1, 'valve3'), (1 << 2, 'checkSystem'),
+LED_MASK = [[(1 << 0, 'heater1'), (1 << 1, 'valve3'), (1 << 2, 'checksystem'),
              (1 << 3, 'pool'), (1 << 4, 'spa'), (1 << 5, 'filter'),
              (1 << 6, 'lights'), (1 << 7, 'aux1')],
             [(1 << 0, 'aux2'), (1 << 1, 'service'), (1 << 2, 'aux3'),
@@ -27,7 +27,7 @@ DLE = b'\x10'
 STX = b'\x02'
 ETX = b'\x03'
 
-KEEP_ALIVE = (b'\x10\x02\x01\x01\x00\x14\x10\x03', "Keep Alive")
+KEEP_ALIVE = (b'\x10\x02\x01\x01\x00\x14\x10\x03', 'Keep Alive')
 
 
 def parseDisplay(data, poolModel):
@@ -36,19 +36,19 @@ def parseDisplay(data, poolModel):
     if data[-1] == 0:
         data = data[:-1]
     else:
-        print("Display didn't end with null!")
-        print("Display ended with: ", data[-1])
+        print('Display didn\'t end with null!')
+        print('Display ended with: ', data[-1])
 
     # Check characters for 7th bit for blinking
-    poolModel.displayMask.clear()
+    poolModel.display_mask.clear()
     for i in range(len(data)):
         if (data[i] & 0b01111111) == data[i]:
             # Character is not blinking
-            poolModel.displayMask.append('0')
+            poolModel.display_mask.append('0')
         else:
             # Character is blinking
             data[i] = (data[i] & 0b01111111)
-            poolModel.displayMask.append('1')
+            poolModel.display_mask.append('1')
 
     data = data.replace(
         b'\x5f', b'\xc2\xb0')  #Degree symbol ° is encoded as underscore x5f
@@ -105,7 +105,7 @@ def parseAirTemp(data, poolModel):
     except UnicodeDecodeError as e:
         print(e)
         print(data)
-        newAirTemp = "Error"
+        newAirTemp = 'Error'
     if newAirTemp != previousAirTemp:
         poolModel.flag_data_changed = True
         poolModel.airtemp = newAirTemp
@@ -126,7 +126,7 @@ def parsePoolTemp(data, poolModel):
 def parseSalinity(data, poolModel):
     previousSaltLevel = poolModel.salinity
     if DISPLAY_VERY_LOW_SALT in data:
-        newSaltLevel = "Very Low Salt"
+        newSaltLevel = 'Very Low Salt'
     else:
         newSaltLevel = data.decode('utf-8').split()[-3]
     if newSaltLevel != previousSaltLevel:
@@ -145,13 +145,13 @@ def parseLEDs(data, poolModel):
             if item[0] & data[i]:
                 #LED is either on or blinking
                 if item[0] & data[i + 4]:
-                    newState = "BLINK"
+                    newState = 'BLINK'
                     print('     ', item[1], 'blink')
                 else:
-                    newState = "ON"
+                    newState = 'ON'
                     print('     ', item[1], 'on')
             else:
-                newState = "OFF"
+                newState = 'OFF'
             if poolModel.getParameterState(item[1]) != newState:
                 poolModel.updateParameter(item[1], newState)
                 poolModel.flag_data_changed = True  # Raise flag if any model parameter has changed
@@ -172,6 +172,6 @@ def confirmChecksum(message):
     if checksum == target_checksum:
         return True
     else:
-        print("Target: ", target_checksum)
-        print("Caclulated: ", checksum)
+        print('Target: ', target_checksum)
+        print('Caclulated: ', checksum)
         return False

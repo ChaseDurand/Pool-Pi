@@ -157,7 +157,7 @@ body h1 {
   margin: auto;
 }
 .button-menu-oval:before {
-  content: "";
+  content: '';
   position: absolute;
   top: -2px;
   left: -2px;
@@ -203,7 +203,7 @@ body h1 {
   outline: none;
 }
 .button-toggle-blue-oval:before {
-  content: "";
+  content: '';
   position: absolute;
   top: -2px;
   left: -2px;
@@ -255,7 +255,7 @@ body h1 {
   outline: none;
 }
 .button-toggle-red-oval:before {
-  content: "";
+  content: '';
   position: absolute;
   top: -2px;
   left: -2px;

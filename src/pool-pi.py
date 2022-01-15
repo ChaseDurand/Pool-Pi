@@ -53,7 +53,7 @@ def readSerialBus(serialHandler):
         # Check if we have found DLE ETX
         if ((serChar == ETX) and (serialHandler.buffer[-2] == int.from_bytes(
                 DLE,
-                "big"))):  #TODO refresh this- looks like im converting twice?
+                'big'))):  #TODO refresh this- looks like im converting twice?
             # We have found DLE ETX
             serialHandler.buffer_full = True
             serialHandler.looking_for_start = True
@@ -74,32 +74,26 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
     NULL character must be removed by the receiver.
     '''
     if (serialHandler.buffer_full):
-        # Confirm checksum
         frame = serialHandler.buffer
-        #Replace any x00 after x10
+        # Remove any extra x00 after x10
         frame = frame.replace(b'\x10\x00', b'\x10')
+
+        # Ensure no erroneous start/stop within frame
         if b'\x10\x02' in frame[2:-2]:
             print(f'{Fore.RED}DLE STX in frame! {Style.RESET_ALL}', frame)
-            serialHandler.buffer.clear()
-            serialHandler.looking_for_start = True
-            serialHandler.buffer_full = False
-            serialHandler.clear_input()
+            serialHandler.reset()
             return
         if b'\x10\x03' in frame[2:-2]:
             print(f'{Fore.RED}DLE ETX in frame! {Style.RESET_ALL}', frame)
-            serialHandler.buffer.clear()
-            serialHandler.looking_for_start = True
-            serialHandler.buffer_full = False
-            serialHandler.clear_input()
+            serialHandler.reset()
             return
+
+        # Compare calculated checksum to frame checksum
         if (confirmChecksum(frame) == False):
-            #If checksum doesn't match, message is invalid.
-            #Clear buffer and don't attempt parsing.
+            # If checksum doesn't match, message is invalid.
+            # Clear buffer and don't attempt parsing.
             print(f'{Fore.RED}Checksum mismatch! {Style.RESET_ALL}', frame)
-            serialHandler.buffer.clear()
-            serialHandler.looking_for_start = True
-            serialHandler.buffer_full = False
-            serialHandler.clear_input()
+            serialHandler.reset()
             return
 
         frameType = frame[2:4]
@@ -107,60 +101,57 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
 
         # Use frame type to determine parsing function
         if frameType == FRAME_TYPE_KEEPALIVE:
-            # Message is keep alive
             # Check to see if we have a command to send
             if serialHandler.ready_to_send == True:
-                if commandHandler.keepAliveCount == 1:
+                if commandHandler.keep_alive_count == 1:
                     # If this is the second sequential keep alive frame, send command
-                    serialHandler.send(commandHandler.fullCommand)
+                    serialHandler.send(commandHandler.full_command)
                     if commandHandler.confirm == False:
-                        commandHandler.sendingMessage = False
+                        commandHandler.sending_message = False
                     serialHandler.ready_to_send = False
                 else:
-                    commandHandler.keepAliveCount = 1
+                    commandHandler.keep_alive_count = 1
             else:
-                commandHandler.keepAliveCount = 0
+                commandHandler.keep_alive_count = 0
         else:
             # Message is not keep alive
-            commandHandler.keepAliveCount = 0
+            commandHandler.keep_alive_count = 0
             if frameType == FRAME_TYPE_DISPLAY:
                 parseDisplay(data, poolModel)
-                commandHandler.keepAliveCount = 0
+                commandHandler.keep_alive_count = 0
             elif frameType == FRAME_TYPE_LEDS:
                 parseLEDs(data, poolModel)
             else:
                 print(frameType, data)
         # Clear buffer and reset flags
-        serialHandler.buffer.clear()
-        serialHandler.looking_for_start = True
-        serialHandler.buffer_full = False
+        serialHandler.reset()
 
 
 def checkCommand(poolModel, serialHandler, commandHandler):
-    # If we are trying to send a message, check most recent pool model
-    # If necessary, queue message attempt
+    # If we are trying to send a message, wait for a new pool model to get pool states
+    # If necessary, queue message to be sent after second keep alive
     # Are we currently trying to send a command?
-    if commandHandler.sendingMessage == False:
-        #We aren't trying to send a command
+    if commandHandler.sending_message == False:
+        # We aren't trying to send a command
         return
 
     if serialHandler.ready_to_send == True:
-        #We are ready to send, awaiting keep alive
+        # We are already ready to send, awaiting keep alive
         return
 
-    if poolModel.last_update_time >= commandHandler.lastModelTime:
-        #We have a new poolModel
+    if poolModel.last_update_time >= commandHandler.last_model_time:
+        # We have a new poolModel
         if poolModel.getParameterState(
-                commandHandler.parameter) == commandHandler.targetState:
-            #Model matches
+                commandHandler.parameter) == commandHandler.target_state:
+            # Model matches
             print(f'{Fore.GREEN}Command success!{Style.RESET_ALL}')
-            commandHandler.sendingMessage = False
-            poolModel.sendingMessage = False
+            commandHandler.sending_message = False
+            poolModel.sending_message = False
             poolModel.flag_data_changed = True
         else:
-            #New poolModel doesn't match
+            # New poolModel doesn't match
             if commandHandler.checkSendAttempts() == True:
-                commandHandler.lastModelTime = time.time()
+                commandHandler.last_model_time = time.time()
                 serialHandler.ready_to_send = True
 
 
@@ -168,12 +159,11 @@ def getCommand(poolModel, serialHandler, commandHandler):
     # If we're not currently sending a command, check if there are new commands.
     # Get new command from command_queue, validate, and initiate send with commandHandler.
     #TODO figure out threading issue or move command_queue to tmp directory
-    #TODO add handling for buttons and arrows
     #TODO add handling for unlock code
-    if commandHandler.sendingMessage == True:
+    if commandHandler.sending_message == True:
         #We are currently trying to send a command, don't need to check for others
         return
-    if exists("command_queue.txt") == False:
+    if exists('command_queue.txt') == False:
         return
     if stat('command_queue.txt').st_size != 0:
         f = open('command_queue.txt', 'r+')
@@ -187,11 +177,12 @@ def getCommand(poolModel, serialHandler, commandHandler):
             commandConfirm = line.split(',')[3]
 
             if commandConfirm == '1':
-                # Not a menu button. We need to confirm the command was successful
-                #Check if command is valid
-                #If valid, add to send queue
-                #If not, provide feedback to user
-                if poolModel.getParameterState(commandID) == "INIT":
+                # Command is not a menu button.
+                # Confirmation if command was successful is needed
+                # Check against model to see if command state and version are valid
+                # If valid, add to send queue
+                # If not, provide feedback to user
+                if poolModel.getParameterState(commandID) == 'INIT':
                     print('Invalid command! Target command is in init state')
                     f.close()
                     return
@@ -212,18 +203,22 @@ def getCommand(poolModel, serialHandler, commandHandler):
                             #Push to command handler
                             commandHandler.initiateSend(
                                 commandID, commandDesiredState, commandConfirm)
-                            poolModel.sendingMessage = True
+                            poolModel.sending_message = True
 
                     else:
                         print('Invalid command! Version mismatch',
                               poolModel.getParameterVersion(commandID),
                               commandVersion)
             else:
-                # Menu button. Do not need to confirm command.
+                # Command is a menu button
+                # No confirmation needed. Only send once.
+                # No check against model states/versions needed.
                 # Immediately load for sending.
                 commandHandler.initiateSend(commandID, commandDesiredState,
                                             commandConfirm)
                 serialHandler.ready_to_send = True
+
+        # Clear file contents
         f.truncate(0)
         f.close()
     return
@@ -232,7 +227,7 @@ def getCommand(poolModel, serialHandler, commandHandler):
 def sendModel(poolModel):
     # If we have new date for the front end, send data as JSON
     if poolModel.flag_data_changed == True:
-        print("Sent model!")
+        print('Sent model!')
         socketio.emit('model', poolModel.toJSON())
         poolModel.flag_data_changed = False
     return
@@ -242,8 +237,8 @@ def main():
     poolModel = PoolModel()
     serialHandler = SerialHandler()
     commandHandler = CommandHandler()
-    logger = logging.getLogger("poolpi-logger")
-    if exists("command_queue.txt") == True:
+    # logger = logging.getLogger('poolpi-logger')
+    if exists('command_queue.txt') == True:
         if stat('command_queue.txt').st_size != 0:
             f = open('command_queue.txt', 'r+')
             f.truncate(0)
@@ -270,13 +265,6 @@ def main():
 
 
 if __name__ == '__main__':
-    # thread_web = Thread(
-    #     target=lambda: socketio.run(app, debug=False, host='0.0.0.0'))
-    # thread_local = Thread(target=main)
-    # thread_web.start()
-    # thread_local.start()
-    # thread_web.join()
-    # thread_local.join()
     Thread(
         target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
     Thread(target=main).start()
