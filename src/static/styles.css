@@ -89,6 +89,16 @@ body h1 {
   }
 }
 
+.check-system-row {
+  table-layout: fixed;
+  margin: 0px 0px 2px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+  font: bold 12px Arial;
+}
+
 .buttonContainer {
   display: inline-block;
   width: 250px;
@@ -102,6 +112,8 @@ body h1 {
   text-align: center;
 }
 
+
+/* Prevents text selection when clicking labeled buttons */
 .noSelect{
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
@@ -320,30 +332,6 @@ body h1 {
   background: linear-gradient(#fff, #484848);
 }
 
-
-switch.toggler {
-  background: rgb(20, 240, 0);
-  cursor: pointer;
-  border: 2px solid black;
-  border-left-width: 15px;
-  padding: 0 5px;
-  border-radius: 5px;
-  text-decoration: none;
-  transition: all 0.1s ease;
-  margin-left: 4px;
-}
-
-switch.toggler.off {
-  background: rgb(119, 119, 119);
-  border-left-width: 2px;
-  border-right-width: 15px;
-  margin-left: 4px;
-}
-
-switch:hover {
-  box-shadow: 0 0px 5px 0px lightgray, 0 0px 5px 0px;
-}
-
 .toggle-row{
   display:flex;
   align-items:center;
@@ -362,6 +350,11 @@ switch:hover {
   margin: -8px 1px;
 }
 
+.button-spacer{
+  width: 35px;
+  margin: 0px 6px;
+}
+
 .toggle-element{
   margin: 0px 6px;
 }
@@ -374,19 +367,4 @@ switch:hover {
   display: flex;
   width: 160px;
   justify-content: flex-end;
-}
-
-.check-system-row {
-  table-layout: fixed;
-  margin: 0px 0px 2px 0px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  text-align: center;
-  font: bold 12px Arial;
-}
-
-.button-spacer{
-  width: 35px;
-  margin: 0px 6px;
 }
