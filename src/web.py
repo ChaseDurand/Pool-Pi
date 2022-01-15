@@ -32,7 +32,7 @@ def index():
 
 
 @app.route('/simple')
-def index():
+def simple():
     return render_template('simple.html', async_mode=socketio.async_mode)
 
 
