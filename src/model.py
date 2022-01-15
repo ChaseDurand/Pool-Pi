@@ -1,57 +1,13 @@
-# Represents the state of the system
 import json
 import serial
 from gpiozero import LED
 import time
 from colorama import Fore, Style
-
-MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
+from commands import *
 
 command_start = b'\x10\x02'
 command_sender = b'\x00\x02'  #TODO see if this matters or can be anything
 command_end = b'\x10\x03'
-
-DLE = b'\x10'
-STX = b'\x02'
-ETX = b'\x03'
-
-# TODO unify terminology to make command/message names consistent
-# Consolidate with LED bitmask?
-button_toggle = {
-    'service': b'\x08\x00\x00\x00',
-    'pool': b'\x40\x00\x00\x00',
-    'spa': b'\x40\x00\x00\x00',
-    'spillover': b'\x40\x00\x00\x00',
-    'filter': b'\x00\x80\x00\x00',
-    'lights': b'\x00\x01\x00\x00',
-    'heater1': b'\x00\x00\x04\x00',
-    'valve3': b'\x00\x00\x01\x00',
-    'valve4': b'',
-    'aux1': b'\x00\x02\x00\x00',
-    'aux2': b'\x00\x04\x00\x00',
-    'aux3': b'\x00\x08\x00\x00',
-    'aux4': b'\x00\x10\x00\x00',
-    'aux5': b'\x00\x20\x00\x00',
-    'aux6': b'\x00\x40\x00\x00',
-    'aux7': b'',
-    'aux8': b'',
-    'aux9': b'',
-    'aux10': b'',
-    'aux11': b'',
-    'aux12': b'',
-    'aux13': b'',
-    'aux14': b'',
-    'systemoff': b'',
-    'superchlorinate': b''
-}
-
-buttons_menu = {
-    'left': b'\x04\x00\x00\x00',
-    'right': b'\x01\x00\x00\x00',
-    'plus': b'\x20\x00\x00\x00',
-    'minus': b'\x10\x00\x00\x00',
-    'menu': b'\x02\x00\x00\x00'
-}
 
 
 # Records states of the pool
@@ -60,7 +16,7 @@ class PoolModel:
         self.display = 'WAITING FOR DISPLAY'
         self.display_mask = [
             1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        ]
+        ]  # 1 if blinking, 0 if not
         self.airtemp = 'WAITING FOR AIRTEMP'
         self.pooltemp = 'WAITING FOR POOLTEMP'
         self.datetime = 'WAITING FOR DATETIME'
@@ -176,7 +132,7 @@ class CommandHandler:
             self.confirm = False
             commandData = buttons_menu[commandID]
         # Form full frame to send from start tx, frame type, command, checksum, and end tx.
-        partialFrame = command_start + command_sender + commandData + commandData  # Form partial frame from start tx, frame type, and command.
+        partialFrame = DLE + STX + FRAME_TYPE_LOCAL_TOGGLE + commandData + commandData  # Form partial frame from start tx, frame type, and command.
         # Calculate checksum
         checksum = 0
         for byte in partialFrame:
@@ -185,7 +141,7 @@ class CommandHandler:
         partialFrame = partialFrame + checksum
         # If any x10 appears in frameType, data, or checksum, add additional x00
         partialFrame = partialFrame[0:2] + partialFrame[2:].replace(
-            b'\x10', b'\x10\x00') + command_end
+            b'\x10', b'\x10\x00') + DLE + ETX
         self.full_command = partialFrame
         self.keep_alive_count = 0
         self.sending_message = True

@@ -1,33 +1,5 @@
-LED_MASK = [[(1 << 0, 'heater1'), (1 << 1, 'valve3'), (1 << 2, 'checksystem'),
-             (1 << 3, 'pool'), (1 << 4, 'spa'), (1 << 5, 'filter'),
-             (1 << 6, 'lights'), (1 << 7, 'aux1')],
-            [(1 << 0, 'aux2'), (1 << 1, 'service'), (1 << 2, 'aux3'),
-             (1 << 3, 'aux4'), (1 << 4, 'aux5'), (1 << 5, 'aux6'),
-             (1 << 6, 'valve4'), (1 << 7, 'spillover')],
-            [(1 << 0, 'systemoff'), (1 << 1, 'aux7'), (1 << 2, 'aux8'),
-             (1 << 3, 'aux9'), (1 << 4, 'aux10'), (1 << 5, 'aux11'),
-             (1 << 6, 'aux12'), (1 << 7, 'aux13')],
-            [(1 << 0, 'aux14'), (1 << 1, 'superchlorinate')]]
-
-FRAME_TYPE_KEEPALIVE = b'\x01\x01'
-FRAME_TYPE_LEDS = b'\x01\x02'
-FRAME_TYPE_DISPLAY = b'\x01\x03'
-DISPLAY_AIRTEMP = 'Air Temp'.encode('utf-8')
-DISPLAY_POOLTEMP = 'Pool Temp'.encode('utf-8')
-DISPLAY_GASHEATER = 'Gas Heater'.encode('utf-8')
-DISPLAY_CHLORINATOR_PERCENT = 'Pool Chlorinator'.encode('utf-8')
-DISPLAY_CHLORINATOR_STATUS = 'Chlorinator'.encode('utf-8')
-DISPLAY_SALT_LEVEL = 'Salt Level'.encode('utf-8')
-DISPLAY_DATE = 'day'.encode('utf-8')
-DISPLAY_CHECK = 'Check System'.encode('utf-8')
-DISPLAY_VERY_LOW_SALT = 'Very Low Salt'.encode('utf-8')
-DISPLAY_SPA_TEMP = 'Spa Temp'.encode('utf-8')
-
-DLE = b'\x10'
-STX = b'\x02'
-ETX = b'\x03'
-
-KEEP_ALIVE = (b'\x10\x02\x01\x01\x00\x14\x10\x03', 'Keep Alive')
+from commands import *
+from colorama import Fore, Style
 
 
 def parseDisplay(data, poolModel):
@@ -36,8 +8,8 @@ def parseDisplay(data, poolModel):
     if data[-1] == 0:
         data = data[:-1]
     else:
-        print('Display didn\'t end with null!')
-        print('Display ended with: ', data[-1])
+        print(f'{Fore.RED}Display didn\'t end with null!{Style.RESET_ALL}')
+        print(f'{Fore.RED}Display ended with: {Style.RESET_ALL}', data[-1])
 
     # Check characters for 7th bit for blinking
     poolModel.display_mask.clear()
@@ -88,8 +60,7 @@ def parseDisplay(data, poolModel):
 
 def parseDateTime(data, poolModel):
     previousDateTIme = poolModel.datetime
-    newDateTime = data.replace(b'\xba',
-                               b'\x3a').decode('utf-8')  #: is encoded as xBA
+    newDateTime = data.decode('utf-8')
     if newDateTime != previousDateTIme:
         poolModel.flag_data_changed = True
         poolModel.datetime = newDateTime
@@ -100,8 +71,7 @@ def parseDateTime(data, poolModel):
 def parseAirTemp(data, poolModel):
     previousAirTemp = poolModel.airtemp
     try:
-        newAirTemp = data.decode('utf-8').split(
-        )[2]  #TODO fix unknown error UnicodeDecodeError: 'utf-8' codec can't decode byte 0xdf in position 13: invalid continuation byte
+        newAirTemp = data.decode('utf-8').split()[2]
     except UnicodeDecodeError as e:
         print(e)
         print(data)
