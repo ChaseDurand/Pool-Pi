@@ -1,0 +1,231 @@
+body {
+  background-color: rgb(230, 240, 255);
+  font-family: helvetica;
+}
+
+.header {
+  table-layout: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 48px;
+  margin: 6px;
+}
+
+body h1 {
+  padding: 6px;
+  margin-top: 25px;
+}
+
+.loading {
+  width: 100%;
+  height: 0;
+  text-align: center;
+}
+
+.loading-image {
+  width: 50px;
+  border-radius: 5px;
+  margin-top: 100px;
+}
+
+.overlay {
+  position: absolute;
+  display: flex; /* toggled to none when not shown */
+  z-index: 7;
+  width: 100%;
+  height: 100%;
+  border-radius: 31px;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.panel {
+  border: solid;
+  border-radius: 35px;
+  padding-bottom: 20px;
+  width: 100%;
+  background-color: lightgray;
+}
+
+.topPanel{
+  display: table;
+  width: 100%;
+  margin: 0px;
+}
+
+.topLeft {
+  display: table-cell;
+  padding: 5px;
+  vertical-align: middle;
+}
+
+.display {
+  border: solid;
+  background-color: rgb(45,220,45);
+  font-family: 'courier new';
+  font-weight: bold;
+  font-size: 18px;
+  height: 40px;
+  text-align: center;
+  width: 90%;
+  display: inline-block;
+  margin: 0 auto;
+  margin-left: 10px;
+}
+
+.blinkingText{
+  animation: blinking-text 1s step-start infinite;
+}
+
+@keyframes blinking-text {
+  50% {
+  opacity: 0%;
+  }
+}
+
+.buttonContainer {
+  display: inline-block;
+  width: 90%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.buttonRow {
+  display: flex;
+  padding: 1px 1px;
+  text-align: center;
+}
+
+
+/* Prevents text selection when clicking labeled buttons */
+.noSelect{
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+
+/* Blue toggle buttons */
+
+.button-toggle-blue-oval {
+  display: inline-block;
+  width: 75px;
+  height: 75px;
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%;
+  border: 1px solid #353636;
+  font: bold 16px Arial;
+  vertical-align: middle;
+  color: #fff;
+  background-color: #757575;
+  background: linear-gradient(#5398da, #1662c5);
+  box-shadow: inset 0 2px 2px #b3d4ff, inset 1px 0 3px #558bf1,
+    inset -1px 0 3px #3b4dee, inset 0 -2px 2px #1834cf,
+    0 0 3px rgba(0, 0, 0, 0.24);
+  position: relative;
+  outline: none;
+}
+.button-toggle-blue-oval:before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  background: #3d3d3d;
+  z-index: -1;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px #bbb;
+}
+.button-toggle-blue-oval:hover {
+  background: linear-gradient(#7eadda, #1662c5);
+  box-shadow: inset 0 2px 0 #b3def1, inset 0 2px 0 #87bbec,
+    inset 0 3px 0 #7ca6e6, inset 0 5px 0 #5f9bcc, inset 1px 0 3px #2d88dc,
+    inset -1px 0 3px #2d6adc, inset 0 -2px 2px #3d4888,
+    0 0 3px rgba(0, 0, 0, 0.24);
+}
+.button-toggle-blue-oval:active {
+  background: linear-gradient(#377bbb, #02459c);
+  box-shadow: inset 0 3px 7px #001d7b;
+  padding: 1px 0 0 1px;
+}
+
+.button-toggle-blue-oval {
+  margin: 0px;
+}
+
+.LED{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #353636;
+}
+
+.LED.blink{
+  animation: blinking-led 1s step-start infinite;
+}
+
+@keyframes blinking-led {
+  50% {
+    box-shadow: inset 0 2px 2px #e6e6e6, inset 1px 0 2px #848484,
+    inset -1px 0 2px #4f4f4f, inset 0 -1px 1px #2f2f2f,
+    0 0 2px rgba(0, 0, 0, 0.24);
+    background: linear-gradient(#fff, #484848);
+  }
+}
+
+.LED.green{
+  box-shadow: inset 0 2px 2px #f0ffed, inset 1px 0 2px #48ff00,
+  inset -1px 0 2px #70e17a, inset 0 -1px 1px #2a5524,
+  0 0 2px rgba(0, 0, 0, 0.24);
+  background: linear-gradient(#0cff34, #25b92c);
+}
+
+.LED.off{
+  box-shadow: inset 0 2px 2px #e6e6e6, inset 1px 0 2px #848484,
+  inset -1px 0 2px #4f4f4f, inset 0 -1px 1px #2f2f2f,
+  0 0 2px rgba(0, 0, 0, 0.24);
+  background: linear-gradient(#fff, #484848);
+}
+
+.toggle-row{
+  display:flex;
+  align-items:center;
+}
+
+.button-row-container {
+  table-layout: fixed;
+  width: 90%;
+  margin: 4px 1px;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+
+.pool-spa-spillover-container{
+  margin: -8px 1px;
+}
+
+.button-spacer{
+  width: 35px;
+  margin: 0px 6px;
+}
+
+.toggle-element{
+  margin: 0px 6px;
+}
+
+.toggle-text{
+  padding-top: 2px;
+}
+
+.switch {
+  display: flex;
+  width: 160px;
+  justify-content: flex-end;
+}
