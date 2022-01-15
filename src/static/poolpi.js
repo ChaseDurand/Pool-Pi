@@ -51,8 +51,8 @@ $(document).ready(function () {
         // Parse every item in json message
         for (var i = 0, len = Object.keys(msgObj).length; i < len; ++i) {
             attributeName = Object.keys(msgObj)[i];
-            // Parse sendingMessage flag (no version)
-            if (attributeName == 'sendingMessage') {
+            // Parse sending_message flag (no version)
+            if (attributeName == 'sending_message') {
                 if (msgObj[attributeName] == true) {
                     document.getElementsByClassName('overlay')[0].style.display = 'flex'
                 }
