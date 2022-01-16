@@ -22,6 +22,8 @@ class PoolModel:
         self.datetime = 'WAITING FOR DATETIME'
         self.salinity = 'WAITING FOR SALINITY'
         self.checksystem = 'WAITING FOR CHECKSYSTEM'
+        self.systemoff = 'WAITING FOR SYSTEMOFF'
+        self.superchlorinate = 'WAITING FOR SUPERCHLORINATE'
         for parameter in button_toggle:
             setattr(self, parameter, {'state': 'INIT', 'version': 0})
         self.flag_data_changed = False  #True if there is new data for web, false if no new data

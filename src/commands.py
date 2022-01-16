@@ -53,9 +53,7 @@ button_toggle = {
     'aux11': b'\x00\x00\x40\x00',
     'aux12': b'\x00\x00\x80\x00',
     'aux13': b'\x00\x00\x00\x01',
-    'aux14': b'\x00\x00\x00\x02',
-    'systemoff': b'',
-    'superchlorinate': b''
+    'aux14': b'\x00\x00\x00\x02'
 }
 
 buttons_menu = {
