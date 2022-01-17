@@ -1,6 +1,6 @@
 # Setup
 
-## Requirements
+## Project Requirements
 * Goldline/Hayward Aqualogic control board (tested on Main Software Revision 2.86)
 * Raspberry Pi with Wifi
 * Adjustable DC-DC step down buck boost converter
@@ -16,7 +16,7 @@
 
 Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 
-## Software setup
+## Software Setup
 * Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access [(example tutorial from Avram Piltch on Tom's Hardware)](https://www.tomshardware.com/reviews/raspberry-pi-headless-setup-how-to,6028.html).
 * Connect to the Pi via SSH and clone this repository.
 
@@ -26,13 +26,13 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
         cd Pool-Pi
         pip3 install -r src/requirements.txt
 * Complete the hardware setup steps outlined below.
-* Run pool-pi.py
+* Run pool-pi.py.
 
         python3 src/pool-pi.py
-* From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000)
+* From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000) to access the GUI.
 <!-- TODO configure GUI to match local aqualogic system -->
 
-## Hardware setup
+## Hardware Setup
 The system taps into the Aqualogic's power and serial busses via the "REMOTE DISPLAY" connections on the top left of the board. If these are occupied, the J9 WIRELESS ANTENNA or J13 pins can be used.
 * RED 1 = ~11V
 * BLK 2 = RS485 DATA A (-)
@@ -41,7 +41,7 @@ The system taps into the Aqualogic's power and serial busses via the "REMOTE DIS
 
 <img width="535" alt="Pins on Aqualogic board" src="./media/wiring_1.jpg">  
 
-Connect the DC-DC converter to the ground and 11V pins on the Aqualogic and adjust the converter output to 5V. Make the connections as shown below. Read enable (RE) is innacurately labeled and is actually ~RE. The Raspberry Pi Zero W doesn't include a fuse on the micro USB PWR IN, which is directly tied to all 5V pins. If a different Raspberry Pi model that contains a fused power input is used, then power should be supplied through the USB port instead of a 5V pin.   
+Connect the DC-DC converter to the ground and 11V pins on the Aqualogic and adjust the converter output to 5V. Make the connections as shown below. On my RS485 adapter, read enable (RE) is innacurately labeled and is actually ~RE. The Raspberry Pi Zero W doesn't include a fuse on the micro USB PWR IN, which is directly tied to all 5V pins. If a different Raspberry Pi model that contains a fused power input is used, then power should be supplied through the USB port instead of a 5V pin.   
   
 <img width="535" alt="Pins on Aqualogic board" src="./media/wiring_2.png">   
 

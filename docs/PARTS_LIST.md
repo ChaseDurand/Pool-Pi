@@ -1,6 +1,6 @@
 # Parts List
 
-This list reflects the parts that I used for my specific installation, not exact part requirements.
+This list reflects the parts that I used for my specific installation, not exact part requirements. The total cost was ~$60.
 
 | Name | Manufacturer | Model | Quantity |
 | :--- | :---| :--- | ---: |
