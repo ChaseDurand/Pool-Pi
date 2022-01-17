@@ -26,7 +26,7 @@ $(document).ready(function () {
     function noConnection() {
         document.getElementsByClassName('overlay')[0].style.display = 'flex';
         document.getElementById('display1').innerHTML = '   NO CONNECTION    ';
-        document.getElementById('display2').innerHTML = ' '.repeat(20);
+        document.getElementById('display2').innerHTML = ' FROM RASPBERRY PI  '.repeat(20);
     }
 
     // Timeout ID for disconnect timer
@@ -141,7 +141,6 @@ $(document).ready(function () {
     $('.button-menu').click(function () {
         buttonID = $(this).attr('id');
         socket.emit('command_event', { 'id': buttonID, 'data': 'na', 'version': '0', 'confirm': '0' });
-        console.log(buttonID, 'na', '0', '0');
     });
 
     // Handler for toggle buttons
@@ -204,7 +203,6 @@ $(document).ready(function () {
                 targetState = 'OFF';
             }
         }
-        console.log(buttonID, targetState, buttonVersion, '1');
         socket.emit('command_event', { 'id': buttonID, 'data': targetState, 'version': buttonVersion, 'confirm': '1' });
     });
 });
