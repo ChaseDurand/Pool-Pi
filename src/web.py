@@ -2,6 +2,7 @@ from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 from threading import Lock
 import uuid
+import logging
 
 async_mode = None
 app = Flask(__name__)
@@ -9,18 +10,6 @@ app.config['SECRET_KEY'] = uuid.uuid4().hex
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
-
-#TODO implement heartbeat/connection functionality for front end
-#def background_thread():
-#    '''Example of how to send server generated events to clients.'''
-#    count = 0
-#    while True:
-#        socketio.sleep(10)
-#        count += 1
-#        socketio.emit('my_response', {
-#            'data': 'Server generated event',
-#            'count': count
-#        })
 
 
 @app.route('/')
@@ -47,7 +36,7 @@ def command_event(message):
     f = open('command_queue.txt', 'a')
     command = str(message['id'] + ',' + str(message['data']) + ',' +
                   message['version'] + ',' + message['confirm'])
-    print(command)
+    logging.info(f'Recevied command from user: {command}')
     f.write(command)
     f.close()
     emit('my_response', {
@@ -60,12 +49,5 @@ def command_event(message):
 @socketio.event
 def connect():
     global thread
-    #    with thread_lock:
-    #        if thread is None:
-    #            thread = socketio.start_background_task(background_thread)
     emit('my_response', {'data': 'Connected', 'count': 0})
-
-
-@socketio.on('disconnect')
-def test_disconnect():
-    print('Client disconnected', request.sid)
+    logging.info(f'Client connected.')

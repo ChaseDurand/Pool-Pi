@@ -1,5 +1,6 @@
 from commands import *
 from colorama import Fore, Style
+import logging
 
 
 def parseDisplay(data, poolModel):
@@ -8,8 +9,7 @@ def parseDisplay(data, poolModel):
     if data[-1] == 0:
         data = data[:-1]
     else:
-        print(f'{Fore.RED}Display didn\'t end with null!{Style.RESET_ALL}')
-        print(f'{Fore.RED}Display ended with: {Style.RESET_ALL}', data[-1])
+        logging.error(f'Display data did\t end with null: {data}')
 
     # Check characters for 7th bit for blinking
     poolModel.display_mask.clear()
@@ -51,9 +51,8 @@ def parseDisplay(data, poolModel):
     try:
         poolModel.display = data.decode('utf-8')
     except (UnicodeDecodeError, Exception) as e:
-        print(e)
-        print(data)
-    print(poolModel.display)
+        logging.error(f'Error while decoding display update {data}: {e}')
+    logging.info(f'Display: {poolModel.display}')
     poolModel.flag_data_changed = True
     return
 
@@ -73,8 +72,7 @@ def parseAirTemp(data, poolModel):
     try:
         newAirTemp = data.decode('utf-8').split()[2]
     except UnicodeDecodeError as e:
-        print(e)
-        print(data)
+        logging.error(f'Error while decoding air temp update {data}: {e}')
         newAirTemp = 'Error'
     if newAirTemp != previousAirTemp:
         poolModel.flag_data_changed = True
@@ -109,6 +107,8 @@ def parseSalinity(data, poolModel):
 def parseLEDs(data, poolModel):
     poolModel.updateTime()  # Record when we recieved this LED update
     print('LED update:')
+    ledsON = []
+    ledsBLINK = []
     #Look at corrosponding LED bit flags to determine which LEDs are on
     for i in range(0, 4):
         for item in LED_MASK[i]:
@@ -117,14 +117,20 @@ def parseLEDs(data, poolModel):
                 if item[0] & data[i + 4]:
                     newState = 'BLINK'
                     print('     ', item[1], 'blink')
+                    ledsBLINK.append(item[1])
                 else:
                     newState = 'ON'
                     print('     ', item[1], 'on')
+                    ledsON.append(item[1])
             else:
                 newState = 'OFF'
             if poolModel.getParameterState(item[1]) != newState:
                 poolModel.updateParameter(item[1], newState)
                 poolModel.flag_data_changed = True  # Raise flag if any model parameter has changed
+    if len(ledsBLINK) == 0:
+        logging.info(f'LED update: {ledsON} on and {ledsBLINK} blinking.')
+    else:
+        logging.info(f'LED update: {ledsON} on.')
     return
 
 
@@ -142,6 +148,7 @@ def confirmChecksum(message):
     if checksum == target_checksum:
         return True
     else:
-        print('Target: ', target_checksum)
-        print('Caclulated: ', checksum)
+        logging.error(
+            f'Checksum mismatch: Target {target_checksum}, calculated {checksum}.'
+        )
         return False

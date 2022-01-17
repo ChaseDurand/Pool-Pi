@@ -4,6 +4,7 @@ from gpiozero import LED
 import time
 from colorama import Fore, Style
 from commands import *
+import logging
 
 
 # Records the current states of the pool through LED and display updates
@@ -97,7 +98,7 @@ class SerialHandler:
         self.send_enable.on()
         self.ser.write(msg)
         self.ser.flush()
-        print(msg)
+        logging.info(f'Sent: {msg}')
         self.send_enable.off()
 
     def read(self):
@@ -157,10 +158,10 @@ class CommandHandler:
         # Return false and stop command sending if we have exceeded max send attempts
         if self.send_attempts >= MAX_SEND_ATTEMPTS:
             # Command failed
-            print(f'{Fore.RED}Command failed.{Style.RESET_ALL}')
+            logging.error(
+                f'Command failed after {MAX_SEND_ATTEMPTS} attempts.')
             self.sending_message = False
             return False
         self.send_attempts += 1
-        print(f'{Fore.YELLOW}Send attempt:	{Style.RESET_ALL}',
-              self.send_attempts)
+        logging.info(f'Command send attempt {self.send_attempts}.')
         return True

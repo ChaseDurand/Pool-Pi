@@ -73,12 +73,10 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
         # Ensure no erroneous start/stop within frame
         if b'\x10\x02' in frame[2:-2]:
             logging.error(f'DLE STX in frame: {frame}')
-            # print(f'{Fore.RED}DLE STX in frame! {Style.RESET_ALL}', frame)
             serialHandler.reset()
             return
         if b'\x10\x03' in frame[2:-2]:
             logging.error(f'DLE ETX in frame: {frame}')
-            # print(f'{Fore.RED}DLE ETX in frame! {Style.RESET_ALL}', frame)
             serialHandler.reset()
             return
 
@@ -86,8 +84,6 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
         if (confirmChecksum(frame) == False):
             # If checksum doesn't match, message is invalid.
             # Clear buffer and don't attempt parsing.
-            logging.error(f'Checksum mismatch: {frame}')
-            # print(f'{Fore.RED}Checksum mismatch! {Style.RESET_ALL}', frame)
             serialHandler.reset()
             return
 
@@ -96,7 +92,6 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
 
         # Use frame type to determine parsing function
         if frameType == FRAME_TYPE_KEEPALIVE:
-            logging.info(f'Found frame: {frame}')
             # Check to see if we have a command to send
             if serialHandler.ready_to_send == True:
                 if commandHandler.keep_alive_count == 1:
@@ -118,7 +113,7 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
             elif frameType == FRAME_TYPE_LEDS:
                 parseLEDs(data, poolModel)
             else:
-                print(frameType, data)
+                logging.info(f'Unkown update: {frameType}, {data}')
         # Clear buffer and reset flags
         serialHandler.reset()
 
@@ -142,7 +137,7 @@ def checkCommand(poolModel, serialHandler, commandHandler):
         if poolModel.getParameterState(
                 commandHandler.parameter) == commandHandler.target_state:
             # Model matches
-            print(f'{Fore.GREEN}Command success!{Style.RESET_ALL}')
+            logging.info(f'Command success.')
             commandHandler.sending_message = False
             poolModel.sending_message = False
             poolModel.flag_data_changed = True
@@ -183,8 +178,9 @@ def getCommand(poolModel, serialHandler, commandHandler):
                     # If valid, add to send queue
                     # If not, provide feedback to user
                     if poolModel.getParameterState(commandID) == 'INIT':
-                        print(
-                            'Invalid command! Target command is in init state')
+                        logging.error(
+                            f'Invalid command: Target parameter {commandID} is in INIT state.'
+                        )
                         f.close()
                         return
                     else:
@@ -194,13 +190,14 @@ def getCommand(poolModel, serialHandler, commandHandler):
                             #Extra check to ensure we are not already in our desired state
                             if commandDesiredState == poolModel.getParameterState(
                                     commandID):
-                                print('Invalid command! State mismatch',
-                                      poolModel.getParameterState(commandID),
-                                      commandDesiredState)
+                                logging.error(
+                                    f'Invalid command: Target parameter {commandID} is already in target state {commandDesiredState}.'
+                                )
                             else:
                                 # Command is valid
-                                print('Valid command', commandID,
-                                      commandDesiredState, commandVersion)
+                                logging.info(
+                                    f'Valid command: {commandID} {commandDesiredState}, version {commandVersion}'
+                                )
                                 #Push to command handler
                                 commandHandler.initiateSend(
                                     commandID, commandDesiredState,
@@ -208,9 +205,9 @@ def getCommand(poolModel, serialHandler, commandHandler):
                                 poolModel.sending_message = True
 
                         else:
-                            print('Invalid command! Version mismatch',
-                                  poolModel.getParameterVersion(commandID),
-                                  commandVersion)
+                            logging.error(
+                                f'Invalid command: Target parameter {commandID} version is {poolModel.getParameterVersion(commandID)} but command version is {commandVersion}.'
+                            )
                 else:
                     # Command is a menu button
                     # No confirmation needed. Only send once.
@@ -220,9 +217,11 @@ def getCommand(poolModel, serialHandler, commandHandler):
                                                 commandConfirm)
                     serialHandler.ready_to_send = True
             else:
-                print("Command error, invalid structure: ", line)
+                logging.error(
+                    f'Invalid command: Command structure is invalid: {line}')
         except Exception as e:
-            print("Command error: ", line, e)
+            logging.error(
+                f'Invalid command: Error parsing command: {line}, {e}')
         # Clear file contents
         f.truncate(0)
         f.close()
@@ -242,10 +241,6 @@ def main():
     poolModel = PoolModel()
     serialHandler = SerialHandler()
     commandHandler = CommandHandler()
-    logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S',
-                        filename='pool-pi.log',
-                        level=logging.INFO)
     if exists('command_queue.txt') == True:
         if stat('command_queue.txt').st_size != 0:
             f = open('command_queue.txt', 'r+')
@@ -273,6 +268,11 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S',
+                        filename='pool-pi.log',
+                        level=logging.INFO)
+    logging.info('Started pool-pi.py')
     Thread(
         target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
     Thread(target=main).start()
