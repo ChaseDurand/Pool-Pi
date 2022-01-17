@@ -23,13 +23,14 @@ def readSerialBus(serialHandler):
     '''
 
     if (serialHandler.in_waiting() == 0
-        ):  #Check is we have serial data to read
+        ):  #Check if we have serial data to read
         return
     if (serialHandler.buffer_full == True
-        ):  #Check if we already have a full buffer
+        ):  #Check if we already have a full frame in buffer
         return
     serChar = serialHandler.read()
     if serialHandler.looking_for_start:
+        # We are looking for DLE STX to find beginning of frame
         if serChar == DLE:
             serChar = serialHandler.read()
             if serChar == STX:
@@ -43,16 +44,17 @@ def readSerialBus(serialHandler):
                 # We have found DLE but not DLE STX
                 return
         else:
+            # Non-DLE character
             # We are only interested in DLE to find potential start
             return
     else:
+        # We have already found the start of the frame
         # We are adding to buffer while looking for DLE ETX
         serialHandler.buffer += serChar
         # Check if we have found DLE ETX
-        if ((serChar == ETX) and (serialHandler.buffer[-2] == int.from_bytes(
-                DLE,
-                'big'))):  #TODO refresh this- looks like im converting twice?
-            # We have found DLE ETX
+        if ((serChar == ETX)
+                and (serialHandler.buffer[-2] == int.from_bytes(DLE, 'big'))):
+            # We have found a full frame
             serialHandler.buffer_full = True
             serialHandler.looking_for_start = True
             return
@@ -61,16 +63,6 @@ def readSerialBus(serialHandler):
 def parseBuffer(poolModel, serialHandler, commandHandler):
     # If we have a full frame in buffer, parse it.
     # If frame is keep alive, check to see if we are ready to send a command and if so send it.
-    '''
-    Frame structure:
-    | Start  | Frame Type |     Data     | Checksum  |  End   |
-    | x10x02 | <2 bytes>  | <0-? bytes>  | <2 bytes> | x10x03 |
-
-    The Start, Frame Type, and Data fields are added together to provide the 2-byte Checksum. If 
-    any of the bytes of the Frame Type, Data fields, or Checksum are equal to the DLE character (x10), a 
-    NULL character (x00) is inserted into the transmitted data stream immediately after that byte. That 
-    NULL character must be removed by the receiver.
-    '''
     if (serialHandler.buffer_full):
         frame = serialHandler.buffer
         # Remove any extra x00 after x10

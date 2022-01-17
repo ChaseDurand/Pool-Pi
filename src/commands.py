@@ -1,4 +1,4 @@
-MAX_SEND_ATTEMPTS = 10  # Max number of times command will be sent if not confirmed
+MAX_SEND_ATTEMPTS = 10  # Max number of times command will be attempted
 
 DLE = b'\x10'
 STX = b'\x02'

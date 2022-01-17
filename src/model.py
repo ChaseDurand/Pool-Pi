@@ -5,12 +5,8 @@ import time
 from colorama import Fore, Style
 from commands import *
 
-command_start = b'\x10\x02'
-command_sender = b'\x00\x02'  #TODO see if this matters or can be anything
-command_end = b'\x10\x03'
 
-
-# Records states of the pool
+# Records the current states of the pool through LED and display updates
 class PoolModel:
     def __init__(self):
         self.display = 'WAITING FOR DISPLAY'
@@ -80,6 +76,7 @@ class PoolModel:
         return json.dumps(jsonItems)
 
 
+# Interface for serial operations
 class SerialHandler:
     def __init__(self):
         self.buffer = bytearray()  #Buffer to store serial frame
@@ -110,12 +107,15 @@ class SerialHandler:
         return self.ser.in_waiting
 
     def reset(self):
+        # Clear serial input and get ready to look for start
+        # Called after a full message is parsed or when a message is invalid due to error
         self.buffer.clear()
         self.looking_for_start = True
         self.buffer_full = False
         return
 
 
+# Manages flow when sending buttons
 class CommandHandler:
     parameter = ''  # Name of parameter command is changing
     target_state = ''  # State we want parameter to be in
