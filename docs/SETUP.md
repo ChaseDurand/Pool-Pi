@@ -20,10 +20,10 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 * Connect DC-DC converter to pool control board and adjust to reduce input voltage (~10.7-11V) to 5V.
 * Connect Raspberry Pi and RS485 adapter.
 
-<img width="535" alt="Example installation of system" src="media/install_1.jpg">
+<img width="535" alt="Example installation of system" src="./media/install_1.jpg">
 
 ## Software setup
-* Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access.
+* Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access [(example tutorial from Avram Piltch on Tom's Hardware)](https://www.tomshardware.com/reviews/raspberry-pi-headless-setup-how-to,6028.html).
 * Clone this repository to the Pi.
 
         git clone git@github.com:ChaseDurand/Pool-Pi.git
