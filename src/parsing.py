@@ -128,9 +128,9 @@ def parseLEDs(data, poolModel):
                 poolModel.updateParameter(item[1], newState)
                 poolModel.flag_data_changed = True  # Raise flag if any model parameter has changed
     if len(ledsBLINK) == 0:
-        logging.info(f'LED update: {ledsON} on and {ledsBLINK} blinking.')
-    else:
         logging.info(f'LED update: {ledsON} on.')
+    else:
+        logging.info(f'LED update: {ledsON} on and {ledsBLINK} blinking.')
     return
 
 

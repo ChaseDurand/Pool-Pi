@@ -36,7 +36,7 @@ def command_event(message):
     f = open('command_queue.txt', 'a')
     command = str(message['id'] + ',' + str(message['data']) + ',' +
                   message['version'] + ',' + message['confirm'])
-    logging.info(f'Recevied command from user: {command}')
+    logging.info(f'Recevied command from user: {message}')
     f.write(command)
     f.close()
     emit('my_response', {
