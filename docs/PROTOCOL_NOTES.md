@@ -94,6 +94,9 @@ Example Aux 1 button toggle frame: x10x02x00x02x00x02x00x00x00x02x00x00x00x1Cx10
 ## Variable Speed Pump Control
 Aqualogic supports Hayward variable speed pumps that send their own frame type with speed and power information. I don't have a Hawyard VSP, so I am not able to implement support.
 
+## Configuration Menu
+The configuration menu is used for the Aqualogic's initial setup and when connecting new pool equipment. The configuration menu is unlocked by holding the left and right menu buttons for a few seconds. Because this sub-menu is seldom used and would only be used when the user is physically present with the Aqualogic, I did not implemenet it.
+
 ## Bonus On/Off Commands
 While commands from the PS-4/8/16 series are the same for on/off, older controllers such as the AQL-SS-RF and AQL-P-4 use slightly modified commands with separate on/off capabilities. The frame type is x00x05. The commands are repeated twice and end with x7F before the checksum. While using these commands would make programming far easier, these on/off commands only cover a subset of the PS-4/8/16 controls. Because my setup involves commands outside of this subset and I achieved high reliability with only the toggle commands, I did not implement them.
 
