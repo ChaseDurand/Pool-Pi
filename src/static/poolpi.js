@@ -26,7 +26,7 @@ $(document).ready(function () {
     function noConnection() {
         document.getElementsByClassName('overlay')[0].style.display = 'flex';
         document.getElementById('display1').innerHTML = '   NO CONNECTION    ';
-        document.getElementById('display2').innerHTML = ' FROM RASPBERRY PI  '.repeat(20);
+        document.getElementById('display2').innerHTML = ' FROM RASPBERRY PI  ';
     }
 
     // Timeout ID for disconnect timer
