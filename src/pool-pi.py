@@ -61,8 +61,10 @@ def readSerialBus(serialHandler):
 
 
 def parseBuffer(poolModel, serialHandler, commandHandler):
-    # If we have a full frame in buffer, parse it.
-    # If frame is keep alive, check to see if we are ready to send a command and if so send it.
+    '''
+    If we have a full frame in buffer, parse it.
+    If frame is keep alive, check to see if we are ready to send a command and if so send it.
+    '''
     if (serialHandler.buffer_full):
         frame = serialHandler.buffer
         # Remove any extra x00 after x10
@@ -118,9 +120,11 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
 
 
 def checkCommand(poolModel, serialHandler, commandHandler):
-    # If we are trying to send a message, wait for a new pool model to get pool states
-    # If necessary, queue message to be sent after second keep alive
-    # Are we currently trying to send a command?
+    '''
+    If we are trying to send a message, wait for a new pool model to get pool states
+    If necessary, queue message to be sent after second keep alive
+    Are we currently trying to send a command?
+    '''
     if commandHandler.sending_message == False:
         # We aren't trying to send a command
         return
@@ -146,8 +150,10 @@ def checkCommand(poolModel, serialHandler, commandHandler):
 
 
 def getCommand(poolModel, serialHandler, commandHandler):
-    # If we're not currently sending a command, check if there are new commands.
-    # Get new command from command_queue, validate, and initiate send with commandHandler.
+    '''
+    If we're not currently sending a command, check if there are new commands.
+    Get new command from command_queue, validate, and initiate send with commandHandler.
+    '''
     #TODO figure out threading issue or move command_queue to tmp directory
     if commandHandler.sending_message == True:
         #We are currently trying to send a command, don't need to check for others
@@ -158,55 +164,61 @@ def getCommand(poolModel, serialHandler, commandHandler):
         f = open('command_queue.txt', 'r+')
         line = f.readline()
         # TODO check if this if statement is necessary or if it's redundant with st_size check
-        if line is not '':
-            # Extract csv command info
-            commandID = line.split(',')[0]
-            commandDesiredState = line.split(',')[1]
-            commandVersion = int(line.split(',')[2])
-            commandConfirm = line.split(',')[3]
+        try:
+            if len(line.split(',')) == 4:
+                # Extract csv command info
+                commandID = line.split(',')[0]
+                commandDesiredState = line.split(',')[1]
+                commandVersion = int(line.split(',')[2])
+                commandConfirm = line.split(',')[3]
 
-            if commandConfirm == '1':
-                # Command is not a menu button.
-                # Confirmation if command was successful is needed
-                # Check against model to see if command state and version are valid
-                # If valid, add to send queue
-                # If not, provide feedback to user
-                if poolModel.getParameterState(commandID) == 'INIT':
-                    print('Invalid command! Target command is in init state')
-                    f.close()
-                    return
-                else:
-                    if commandVersion == poolModel.getParameterVersion(
-                            commandID):
-                        #Front end and back end versions are synced
-                        #Extra check to ensure we are not already in our desired state
-                        if commandDesiredState == poolModel.getParameterState(
-                                commandID):
-                            print('Invalid command! State mismatch',
-                                  poolModel.getParameterState(commandID),
-                                  commandDesiredState)
-                        else:
-                            # Command is valid
-                            print('Valid command', commandID,
-                                  commandDesiredState, commandVersion)
-                            #Push to command handler
-                            commandHandler.initiateSend(
-                                commandID, commandDesiredState, commandConfirm)
-                            poolModel.sending_message = True
-
+                if commandConfirm == '1':
+                    # Command is not a menu button.
+                    # Confirmation if command was successful is needed
+                    # Check against model to see if command state and version are valid
+                    # If valid, add to send queue
+                    # If not, provide feedback to user
+                    if poolModel.getParameterState(commandID) == 'INIT':
+                        print(
+                            'Invalid command! Target command is in init state')
+                        f.close()
+                        return
                     else:
-                        print('Invalid command! Version mismatch',
-                              poolModel.getParameterVersion(commandID),
-                              commandVersion)
-            else:
-                # Command is a menu button
-                # No confirmation needed. Only send once.
-                # No check against model states/versions needed.
-                # Immediately load for sending.
-                commandHandler.initiateSend(commandID, commandDesiredState,
-                                            commandConfirm)
-                serialHandler.ready_to_send = True
+                        if commandVersion == poolModel.getParameterVersion(
+                                commandID):
+                            #Front end and back end versions are synced
+                            #Extra check to ensure we are not already in our desired state
+                            if commandDesiredState == poolModel.getParameterState(
+                                    commandID):
+                                print('Invalid command! State mismatch',
+                                      poolModel.getParameterState(commandID),
+                                      commandDesiredState)
+                            else:
+                                # Command is valid
+                                print('Valid command', commandID,
+                                      commandDesiredState, commandVersion)
+                                #Push to command handler
+                                commandHandler.initiateSend(
+                                    commandID, commandDesiredState,
+                                    commandConfirm)
+                                poolModel.sending_message = True
 
+                        else:
+                            print('Invalid command! Version mismatch',
+                                  poolModel.getParameterVersion(commandID),
+                                  commandVersion)
+                else:
+                    # Command is a menu button
+                    # No confirmation needed. Only send once.
+                    # No check against model states/versions needed.
+                    # Immediately load for sending.
+                    commandHandler.initiateSend(commandID, commandDesiredState,
+                                                commandConfirm)
+                    serialHandler.ready_to_send = True
+            else:
+                print("Command error, invalid structure: ", line)
+        except Exception as e:
+            print("Command error: ", line, e)
         # Clear file contents
         f.truncate(0)
         f.close()
