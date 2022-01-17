@@ -11,9 +11,6 @@ Pool-Pi is a system for interfacing with Goldline/Hayward Aqualogic pool control
 ## Setup
 Project requirements and instructions can be found in [docs/SETUP.md](/docs/SETUP.md).
 
-## Example Installation
-<img width="535" alt="Example installation of system" src="/docs/media/install_1.jpg">
-
 ## Acknowledgements
 Special thanks to other people who have put their own resources/solutions for solving this problem online, including [draythomp](http://www.desert-home.com/), [swilson](https://github.com/swilson/aqualogic), and Pete Tompkins.
 
