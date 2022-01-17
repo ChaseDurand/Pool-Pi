@@ -16,12 +16,6 @@
 
 Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 
-## Hardware setup
-* Connect DC-DC converter to pool control board and adjust to reduce input voltage (~10.7-11V) to 5V.
-* Connect Raspberry Pi and RS485 adapter.
-
-<img width="535" alt="Example installation of system" src="./media/install_1.jpg">
-
 ## Software setup
 * Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access [(example tutorial from Avram Piltch on Tom's Hardware)](https://www.tomshardware.com/reviews/raspberry-pi-headless-setup-how-to,6028.html).
 * Connect to the Pi via SSH and clone this repository.
@@ -31,11 +25,33 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 
         cd Pool-Pi
         pip3 install -r src/requirements.txt
+* Complete the hardware setup steps outlined below.
 * Run pool-pi.py
 
         python3 src/pool-pi.py
 * From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000)
 <!-- TODO configure GUI to match local aqualogic system -->
+
+## Hardware setup
+The system taps into the Aqualogic's power and serial busses via the "REMOTE DISPLAY" connections on the top left of the board. If these are occupied, the J9 WIRELESS ANTENNA or J13 pins can be used.
+* RED 1 = ~11V
+* BLK 2 = RS485 DATA A (-)
+* YEL 3 = RS485 DATA B (+)
+* GRN 4 = Ground 0V
+
+<img width="535" alt="Pins on Aqualogic board" src="./media/wiring_1.jpg">  
+
+Connect the DC-DC converter to the ground and 11V pins on the Aqualogic and adjust the converter output to 5V. Make the connections as shown below. Read enable (RE) is innacurately labeled and is actually ~RE. The Raspberry Pi Zero W doesn't include a fuse on the micro USB PWR IN, which is directly tied to all 5V pins. If a different Raspberry Pi model that contains a fused power input is used, then power should be supplied through the USB port instead of a 5V pin.   
+  
+<img width="535" alt="Pins on Aqualogic board" src="./media/wiring_2.png">   
+
+Mount DC-DC converter, Raspberry Pi, and RS485 adapter inside weather proof enclosure using mil-spec cardboard and hot glue.
+
+<img width="535" alt="Components mounted in weather proof enclosure" src="./media/wiring_3.jpg">    
+
+Mount enclosure to exterior wall using concrete screws or appropriate fasterners. Use weatherproof sealant to fix the improperly sized hole you drilled. Route x2 low voltage wires and x2 RS485 wires through weatherproof conduit into Aqualogic enclosure. Enter service mode by pushing the red button on the local display, then connect the wires to the appropriate Aqualogic pins. Push the red service button twice to exit service mode and return to normal operation.
+
+<img width="535" alt="Example installation of system" src="./media/install_1.jpg">   
 
 ## Troubleshooting
 Communication Error can appear when multiple devices attempt to drive the serial bus simultaneously.
