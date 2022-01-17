@@ -72,11 +72,13 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
 
         # Ensure no erroneous start/stop within frame
         if b'\x10\x02' in frame[2:-2]:
-            print(f'{Fore.RED}DLE STX in frame! {Style.RESET_ALL}', frame)
+            logging.error(f'DLE STX in frame: {frame}')
+            # print(f'{Fore.RED}DLE STX in frame! {Style.RESET_ALL}', frame)
             serialHandler.reset()
             return
         if b'\x10\x03' in frame[2:-2]:
-            print(f'{Fore.RED}DLE ETX in frame! {Style.RESET_ALL}', frame)
+            logging.error(f'DLE ETX in frame: {frame}')
+            # print(f'{Fore.RED}DLE ETX in frame! {Style.RESET_ALL}', frame)
             serialHandler.reset()
             return
 
@@ -84,7 +86,8 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
         if (confirmChecksum(frame) == False):
             # If checksum doesn't match, message is invalid.
             # Clear buffer and don't attempt parsing.
-            print(f'{Fore.RED}Checksum mismatch! {Style.RESET_ALL}', frame)
+            logging.error(f'Checksum mismatch: {frame}')
+            # print(f'{Fore.RED}Checksum mismatch! {Style.RESET_ALL}', frame)
             serialHandler.reset()
             return
 
@@ -93,6 +96,7 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
 
         # Use frame type to determine parsing function
         if frameType == FRAME_TYPE_KEEPALIVE:
+            logging.info(f'Found frame: {frame}')
             # Check to see if we have a command to send
             if serialHandler.ready_to_send == True:
                 if commandHandler.keep_alive_count == 1:
@@ -241,7 +245,6 @@ def main():
     logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         filename='pool-pi.log',
-                        encoding='utf-8',
                         level=logging.INFO)
     if exists('command_queue.txt') == True:
         if stat('command_queue.txt').st_size != 0:
