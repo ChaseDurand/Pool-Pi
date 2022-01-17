@@ -26,6 +26,7 @@ $(document).ready(function () {
 
     // Disconnect timer function to notify user if connection has been lost
     function resetTimeout() {
+        clearTimeout(timeoutID)
         console.log("Timer reset!")
         timeoutID = window.setTimeout(
             function () {
