@@ -116,11 +116,9 @@ def parseLEDs(data, poolModel):
                 #LED is either on or blinking
                 if item[0] & data[i + 4]:
                     newState = 'BLINK'
-                    print('     ', item[1], 'blink')
                     ledsBLINK.append(item[1])
                 else:
                     newState = 'ON'
-                    print('     ', item[1], 'on')
                     ledsON.append(item[1])
             else:
                 newState = 'OFF'

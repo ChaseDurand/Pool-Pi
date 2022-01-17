@@ -9,9 +9,6 @@ import logging
 
 #TODO start this on pi startup
 
-#TODO proper logging/text output
-# possibly with binascii hexlify to avoid ascii conversions for non-screen updates
-
 
 def readSerialBus(serialHandler):
     '''
