@@ -25,13 +25,15 @@ $(document).ready(function () {
     var timeoutID;
 
     // Disconnect timer function to notify user if connection has been lost
+    // Reset when the model update is received
     function resetTimeout() {
         clearTimeout(timeoutID)
-        console.log("Timer reset!")
         timeoutID = window.setTimeout(
             function () {
-                document.body.style.backgroundColor = 'black'
-            }, 5000); // TODO change to message+ loading overlay
+                document.getElementsByClassName('overlay')[0].style.display = 'flex';
+                document.getElementById('display1').innerHTML = '  LOST CONNECTION   ';
+                document.getElementById('display1').innerHTML = ' '.repeat(20);
+            }, 8000);
     }
 
     // Handler for the model update
