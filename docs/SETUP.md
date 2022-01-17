@@ -45,7 +45,7 @@ Connect the DC-DC converter to the ground and 11V pins on the Aqualogic and adju
   
 <img width="535" alt="Pins on Aqualogic board" src="./media/wiring_2.png">   
 
-Mount DC-DC converter, Raspberry Pi, and RS485 adapter inside weather proof enclosure using mil-spec cardboard and hot glue.
+Mount DC-DC converter, Raspberry Pi, and RS485 adapter inside weather proof enclosure using mil-spec cardboard and hot glue. I mounted the DC-DC converter and RS485 adapter on a solderable breadboard for ease of wiring and attached M3 standoffs under the breadboard and Raspberry Pi.
 
 <img width="535" alt="Components mounted in weather proof enclosure" src="./media/wiring_3.jpg">    
 
