@@ -228,8 +228,8 @@ def getCommand(poolModel, serialHandler, commandHandler):
 def sendModel(poolModel):
     # If we have new date for the front end, send data as JSON
     if poolModel.flag_data_changed == True:
-        print('Sent model!')
         socketio.emit('model', poolModel.toJSON())
+        logging.info('Sent model')
         poolModel.flag_data_changed = False
     return
 
@@ -238,7 +238,11 @@ def main():
     poolModel = PoolModel()
     serialHandler = SerialHandler()
     commandHandler = CommandHandler()
-    # logger = logging.getLogger('poolpi-logger')
+    logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S',
+                        filename='pool-pi.log',
+                        encoding='utf-8',
+                        level=logging.INFO)
     if exists('command_queue.txt') == True:
         if stat('command_queue.txt').st_size != 0:
             f = open('command_queue.txt', 'r+')
