@@ -21,6 +21,14 @@ $(document).ready(function () {
             cb();
     });
 
+    // Diconnect callback function
+    // This is called by the timeout function if a model hasn't been received recently
+    function noConnection() {
+        document.getElementsByClassName('overlay')[0].style.display = 'flex';
+        document.getElementById('display1').innerHTML = '   NO CONNECTION    ';
+        document.getElementById('display2').innerHTML = ' '.repeat(20);
+    }
+
     // Timeout ID for disconnect timer
     var timeoutID;
 
@@ -30,9 +38,7 @@ $(document).ready(function () {
         clearTimeout(timeoutID)
         timeoutID = window.setTimeout(
             function () {
-                document.getElementsByClassName('overlay')[0].style.display = 'flex';
-                document.getElementById('display1').innerHTML = '  LOST CONNECTION   ';
-                document.getElementById('display1').innerHTML = ' '.repeat(20);
+                noConnection();
             }, 8000);
     }
 
@@ -45,6 +51,7 @@ $(document).ready(function () {
         document.getElementById('display1').innerHTML = '';
         document.getElementById('display2').innerHTML = '';
 
+        // Parse top row of display
         for (var i = 0; i < len / 2; ++i) {
             if (msgObj['display_mask'][i] == '1') {
                 document.getElementById('display1').innerHTML += '<span class=' + 'blinkingText' + '>' + msgObj['display'].charAt(i) + '</span>';
@@ -53,6 +60,7 @@ $(document).ready(function () {
                 document.getElementById('display1').innerHTML += msgObj['display'].charAt(i);
             }
         }
+        // Parse bottom row of display
         for (var i = len / 2; i < len; ++i) {
             if (msgObj['display_mask'][i] == '1') {
                 document.getElementById('display2').innerHTML += '<span class=' + 'blinkingText' + '>' + msgObj['display'].charAt(i) + '</span>';
