@@ -21,8 +21,21 @@ $(document).ready(function () {
             cb();
     });
 
+    // Timeout ID for disconnect timer
+    var timeoutID;
+
+    // Disconnect timer function to notify user if connection has been lost
+    function resetTimeout() {
+        console.log("Timer reset!")
+        timeoutID = window.setTimeout(
+            function () {
+                document.body.style.backgroundColor = 'black'
+            }, 5000); // TODO change to message+ loading overlay
+    }
+
     // Handler for the model update
     socket.on('model', function (msg) {
+        resetTimeout();
         msgObj = JSON.parse(msg);
         // Parse display into two lines and blink if necessary
         len = msgObj['display_mask'].length;

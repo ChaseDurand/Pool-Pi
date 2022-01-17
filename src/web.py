@@ -3,9 +3,6 @@ from flask_socketio import SocketIO, emit
 from threading import Lock
 import uuid
 
-# Set this variable to 'threading', 'eventlet' or 'gevent' to test the
-# different async modes, or leave it set to None for the application to choose
-# the best option based on installed packages.
 async_mode = None
 app = Flask(__name__)
 app.config['SECRET_KEY'] = uuid.uuid4().hex
