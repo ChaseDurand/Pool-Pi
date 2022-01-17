@@ -24,7 +24,7 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 
 ## Software setup
 * Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access [(example tutorial from Avram Piltch on Tom's Hardware)](https://www.tomshardware.com/reviews/raspberry-pi-headless-setup-how-to,6028.html).
-* Connect to the Pi vai SSH and clone this repository.
+* Connect to the Pi via SSH and clone this repository.
 
         git clone git@github.com:ChaseDurand/Pool-Pi.git
 * Navigate to repo and install requirements.
