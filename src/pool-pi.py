@@ -277,9 +277,9 @@ if __name__ == '__main__':
     formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
     handler = TimedRotatingFileHandler('logs/pool-pi.log',
-                                       when="s",
+                                       when='midnight',
                                        interval=5)
-    handler.suffix = "%Y-%m-%d_%H-%M-%S"
+    handler.suffix = '%Y-%m-%d_%H-%M-%S'
     handler.setFormatter(formatter)
     logging.getLogger().handlers.clear()
     logging.getLogger().addHandler(handler)
