@@ -24,6 +24,8 @@ def parseDisplay(data, poolModel):
     data = data.replace(
         b'\x5f', b'\xc2\xb0')  #Degree symbol ° is encoded as underscore x5f
 
+    # TODO refresh these to ignore menu displays
+    # TODO replace print statements with logging
     if DISPLAY_AIRTEMP in data:
         parseAirTemp(data, poolModel)
     elif DISPLAY_POOLTEMP in data:
