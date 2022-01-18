@@ -49,7 +49,7 @@ Mount DC-DC converter, Raspberry Pi, and RS485 adapter inside weather proof encl
 <p align='center'>
 <img width="535" alt="Components mounted in weather proof enclosure" src="./media/wiring_3.jpg">    
 </p>
-Mount enclosure to exterior wall using concrete screws or appropriate fasterners. Use weatherproof sealant to fix the improperly sized hole you drilled. Route x2 low voltage wires and x2 RS485 wires through weatherproof conduit into Aqualogic enclosure. Enter service mode by pushing the red button on the local display, then connect the wires to the appropriate Aqualogic pins. Push the red service button twice to exit service mode and return to normal operation.
+Mount enclosure to exterior wall using concrete screws or appropriate fasterners. Use weatherproof sealant to fix the improperly sized hole you drilled. Route x2 low voltage wires and x2 RS485 wires through weatherproof conduit into Aqualogic enclosure. Enter service mode by pushing the red service button on the local display, then connect the wires to the appropriate Aqualogic pins. Push the service button twice to exit service mode and return to normal operation.
 <p align='center'>
 <img width="535" alt="Example installation of system" src="./media/install_1.jpg">   
 </p>
