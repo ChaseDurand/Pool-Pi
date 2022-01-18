@@ -94,6 +94,9 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
                 if commandHandler.keep_alive_count == 1:
                     # If this is the second sequential keep alive frame, send command
                     serialHandler.send(commandHandler.full_command)
+                    logging.info(
+                        f'Sent: {commandHandler.parameter}, {commandHandler.full_command}'
+                    )
                     if commandHandler.confirm == False:
                         commandHandler.sending_message = False
                     serialHandler.ready_to_send = False

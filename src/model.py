@@ -98,7 +98,6 @@ class SerialHandler:
         self.send_enable.on()
         self.ser.write(msg)
         self.ser.flush()
-        logging.info(f'Sent: {msg}')
         self.send_enable.off()
 
     def read(self):
