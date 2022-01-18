@@ -4,6 +4,7 @@ from threading import Thread
 from model import *
 from web import *
 from parsing import *
+from os import makedirs
 from os.path import exists
 from os import stat
 import logging
@@ -270,9 +271,14 @@ def main():
 
 
 if __name__ == '__main__':
+    # Create log file directory if not already existing
+    if not exists('logs'):
+        makedirs('logs')
     formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
-    handler = TimedRotatingFileHandler('pool-pi.log', when="s", interval=5)
+    handler = TimedRotatingFileHandler('logs/pool-pi.log',
+                                       when="s",
+                                       interval=5)
     handler.suffix = "%Y-%m-%d_%H-%M-%S"
     handler.setFormatter(formatter)
     logging.getLogger().handlers.clear()
