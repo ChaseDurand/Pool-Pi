@@ -4,8 +4,12 @@ Pool-Pi is a system for interfacing with Goldline/Hayward Aqualogic pool control
 <p align='center'>
 <img width="535" alt="GUI screenshot" src="/docs/media/gui.png">
 </p>
-<!-- TODO add video -->
 
+
+## Demo Video
+This video shows multiple clients interfacing with the unit and demonstrates display updates, button presses, menu controls, blinking display characters, and LED updates.
+
+https://user-images.githubusercontent.com/50851884/149863222-32523871-b4b8-4c59-9fa8-fe185a0315eb.mov
 
 
 ## Setup
