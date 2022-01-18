@@ -274,10 +274,10 @@ if __name__ == '__main__':
                                   datefmt='%Y-%m-%d %H:%M:%S')
     handler = TimedRotatingFileHandler('pool-pi.log', when="s", interval=5)
     handler.suffix = "%Y-%m-%d_%H-%M-%S"
-    handler.setLevel(logging.INFO)
     handler.setFormatter(formatter)
     logging.getLogger().handlers.clear()
     logging.getLogger().addHandler(handler)
+    logging.getLogger().setLevel(logging.INFO)
     logging.info('Started pool-pi.py')
     Thread(
         target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
