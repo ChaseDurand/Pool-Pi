@@ -1,8 +1,8 @@
 # <img width="24" alt="GUI screenshot" src="/src/static/favicon.ico"> Pool-Pi
 
-Pool-Pi is a system for interfacing with Goldline/Hayward Aqualogic pool control boards over WiFi via a Raspberry Pi. It adds wireless capabilities to non-wireless control boards and a web interface for viewing updates and sending commands. The web interface emulates a local display, allowing for the same controls accessible from the physical unit.
+Pool-Pi is a system for interfacing with Goldline/Hayward Aqualogic pool control boards over WiFi via a Raspberry Pi. It adds wireless capabilities to non-wireless control boards and a web interface for viewing updates and sending commands.
 <p align='center'>
-<img width="535" alt="GUI screenshot" src="/docs/media/gui.png">
+<img width="535" alt="GUI screenshot" src="/docs/media/gui_1.png">
 </p>
 
 
@@ -11,9 +11,14 @@ This video shows multiple clients interfacing with the unit and demonstrates dis
 
 https://user-images.githubusercontent.com/50851884/149863222-32523871-b4b8-4c59-9fa8-fe185a0315eb.mov
 
-
 ## Setup
 Project requirements and instructions can be found in [docs/SETUP.md](/docs/SETUP.md).
+
+## Features
+Pool-Pi provides a web interface which emulates a local PS-8 display, allowing for the same controls accessible from the physical unit. The system also adds logging, which is unavailable on the OEM unit. A simplified GUI is available to show the most frequently used commands.
+<p align='center'>
+<img width="535" alt="GUI screenshot" src="/docs/media/gui_2.png">
+</p>
 
 ## Acknowledgements
 Special thanks to other people who have put their own resources/solutions for solving this problem online, including [draythomp](http://www.desert-home.com/), [swilson](https://github.com/swilson/aqualogic), and Pete Tompkins.
