@@ -272,13 +272,15 @@ def main():
 if __name__ == '__main__':
     formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
-    handler = TimedRotatingFileHandler('logs/pool-pi.log',
-                                       when="s",
-                                       interval=5)
+    handler = TimedRotatingFileHandler('pool-pi.log', when="s", interval=5)
     handler.suffix = "%Y-%m-%d_%H-%M-%S"
     handler.setLevel(logging.INFO)
-    logging.Logger.addHandler(handler)
-    logging.info('Started pool-pi.py')
+    handler.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
+    logger.info('Started pool-pi.py')
+    logger.info('test')
     Thread(
         target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
     Thread(target=main).start()
