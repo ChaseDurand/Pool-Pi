@@ -1,5 +1,4 @@
 from commands import *
-from colorama import Fore, Style
 import logging
 
 

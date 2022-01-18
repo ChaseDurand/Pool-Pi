@@ -2,5 +2,4 @@ flask
 flask_socketio
 serial
 gpiozero
-colorama
 simple-websocket

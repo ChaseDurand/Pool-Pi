@@ -2,7 +2,6 @@ import json
 import serial
 from gpiozero import LED
 import time
-from colorama import Fore, Style
 from commands import *
 import logging
 
