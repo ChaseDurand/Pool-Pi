@@ -229,7 +229,7 @@ def sendModel(poolModel):
     # If we have new date for the front end, send data as JSON
     if poolModel.flag_data_changed == True:
         socketio.emit('model', poolModel.toJSON())
-        logging.info('Sent model')
+        logging.debug('Sent model')
         poolModel.flag_data_changed = False
     return
 
