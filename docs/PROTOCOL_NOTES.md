@@ -15,7 +15,7 @@ Frames are structured with DLE STX (x10x02), two bytes indicating the origin dev
 ## Aqualogic to Controller
 The Aqualogic board acts as a master unit providing a heartbeat/keep alive packet, screen updates, and LED updates.
 
-A keep alive frame is sent every 100ms with a frame type of x01x01 and zero data bytes. If any serial device has a message to send, it must respond immediately after the keep alive frame. OEM controllers and display devices begin responding 0.5ms after the end of the keep alive frame. The aqualogic sends any other commands 40ms after the end of the keep alive packet.
+A keep alive frame is sent every 100ms with a frame type of x01x01 and zero data bytes. If any serial device has a message to send, it must respond immediately after the keep alive frame. OEM controllers and display devices begin responding 0.5ms after the end of the keep alive frame. The Aqualogic sends any other commands 40ms after the end of the keep alive packet.
 
 Keep alive frame: x10x02x01x01x00x14x10x03
 
