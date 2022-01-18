@@ -33,32 +33,32 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 <!-- TODO configure GUI to match local aqualogic system -->
 
 ## Hardware Setup
-The system taps into the Aqualogic's power and serial busses via the "REMOTE DISPLAY" connections on the top left of the board. If these are occupied, the J9 WIRELESS ANTENNA or J13 pins can be used.
+The system taps into the Aqualogic's power and serial busses via the 'REMOTE DISPLAY' connections on the top left of the board. If these are occupied, the J9 WIRELESS ANTENNA or J13 pins can be used.
 * RED 1 = ~11V
 * BLK 2 = RS485 DATA A (-)
 * YEL 3 = RS485 DATA B (+)
 * GRN 4 = Ground 0V
 
 <p align='center'>
-<img width="535" alt="Pins on Aqualogic board" src="./media/wiring_1.jpg">  
+<img width='535' alt='Pins on Aqualogic board' src='media/wiring_1.jpg'>  
 </p>
 
 Connect the DC-DC converter to the ground and 11V pins on the Aqualogic and adjust the converter output to 5V. Make the connections as shown below. On my RS485 adapter, read enable (RE) is innacurately labeled and is actually ~RE. The Raspberry Pi Zero W doesn't include a fuse on the micro USB PWR IN, which is directly tied to all 5V pins. If a different Raspberry Pi model that contains a fused power input is used, then power should be supplied through the USB port instead of a 5V pin.   
 
 <p align='center'>
-<img width="100%" alt="Wiring diagram" src="./media/wiring_2.png">   
+<img width='100%' alt='Wiring diagram' src='media/wiring_2.png'>   
 </p>
 
 Mount DC-DC converter, Raspberry Pi, and RS485 adapter inside weather proof enclosure using mil-spec cardboard and hot glue. I mounted the DC-DC converter and RS485 adapter on a solderable breadboard for ease of wiring and attached M3 standoffs under the breadboard and Raspberry Pi.
 
 <p align='center'>
-<img width="535" alt="Components mounted in weather proof enclosure" src="./media/wiring_3.jpg">    
+<img width='535' alt='Components mounted in weather proof enclosure' src='media/wiring_3.jpg'>    
 </p>
 
 Mount enclosure to exterior wall using concrete screws or appropriate fasterners. Use weatherproof sealant to fix the improperly sized hole you drilled. Route x2 low voltage wires and x2 RS485 wires through weatherproof conduit into Aqualogic enclosure. Enter service mode by pushing the red service button on the local display, then connect the wires to the appropriate Aqualogic pins. Push the service button twice to exit service mode and return to normal operation.
 
 <p align='center'>
-<img width="535" alt="Example installation of system" src="./media/install_1.jpg">   
+<img width='535' alt='Example installation of system' src='media/install_1.jpg'>   
 </p>
 
 ## Troubleshooting
