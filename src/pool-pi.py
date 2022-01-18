@@ -1,3 +1,4 @@
+from distutils.log import INFO
 from commands import *
 from threading import Thread
 from model import *
@@ -6,6 +7,7 @@ from parsing import *
 from os.path import exists
 from os import stat
 import logging
+from logging.handlers import TimedRotatingFileHandler
 
 #TODO start this on pi startup
 
@@ -268,10 +270,14 @@ def main():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S',
-                        filename='pool-pi.log',
-                        level=logging.INFO)
+    formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s',
+                                  datefmt='%Y-%m-%d %H:%M:%S')
+    handler = TimedRotatingFileHandler('logs/pool-pi.log',
+                                       when="s",
+                                       interval=5)
+    handler.suffix = "%Y-%m-%d_%H-%M-%S"
+    handler.setLevel(logging.INFO)
+    logging.Logger.addHandler(handler)
     logging.info('Started pool-pi.py')
     Thread(
         target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
