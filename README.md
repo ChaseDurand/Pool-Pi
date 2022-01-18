@@ -11,14 +11,15 @@ This video shows multiple clients interfacing with the unit and demonstrates dis
 
 https://user-images.githubusercontent.com/50851884/149863222-32523871-b4b8-4c59-9fa8-fe185a0315eb.mov
 
-## Setup
-Project requirements and instructions can be found in [docs/SETUP.md](/docs/SETUP.md).
 
 ## Features
-Pool-Pi provides a web interface which emulates a local PS-8 display, allowing for the same controls accessible from the physical unit. The system also adds logging, which is unavailable on the OEM unit. A simplified GUI is available to show the most frequently used commands.
+Pool-Pi provides a web interface which emulates a local PS-8 display, allowing for the same controls accessible from the physical unit. An RS485 adapter is used to read and send messages in accordance with the [Aqualogic serial communication protocol](/docs/PROTOCOL_NOTES.md), mimicking an OEM device. The system also adds logging, which is unavailable on the OEM unit. A simplified GUI is available to show the most frequently used commands.
 <p align='center'>
 <img width='535' alt='GUI screenshot' src='docs/media/gui_2.png'>
 </p>
+
+## Setup
+Project requirements and instructions can be found in [docs/SETUP.md](/docs/SETUP.md).
 
 ## Acknowledgements
 Special thanks to other people who have put their own resources/solutions for solving this problem online, including [draythomp](http://www.desert-home.com/), [swilson](https://github.com/swilson/aqualogic), and Pete Tompkins.
