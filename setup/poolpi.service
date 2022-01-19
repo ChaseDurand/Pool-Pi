@@ -1,0 +1,12 @@
+[Unit]
+Description=Pool-Pi Service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/Pool-Pi/src/pool-pi.py
+WorkingDirectory=/home/pi/Pool-Pi
+User=pi
+
+[Install]
+WantedBy=multi-user.target

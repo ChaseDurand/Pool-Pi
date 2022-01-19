@@ -18,17 +18,13 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 
 ## Software Setup
 * Setup a Raspberry Pi headless with WiFi, a static IP, and SSH access [(example tutorial from Avram Piltch on Tom's Hardware)](https://www.tomshardware.com/reviews/raspberry-pi-headless-setup-how-to,6028.html).
-* Connect to the Pi via SSH and clone this repository.
+* Connect to the Pi via SSH and clone this repository into the home directory.
 
         git clone --depth 1 git@github.com:ChaseDurand/Pool-Pi.git
-* Navigate to repo and install requirements.
+* Run setup.sh to install python modules and configure systemd to start pool-pi on startup. The Raspberry Pi will automatically restart when complete.
 
-        cd Pool-Pi
-        pip3 install -r src/requirements.txt
+        sudo /home/pi/Pool-Pi/setup/setup.sh
 * Complete the hardware setup steps outlined below.
-* Run pool-pi.py.
-
-        python3 src/pool-pi.py
 * From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000) to access the GUI.
 <!-- TODO configure GUI to match local aqualogic system -->
 
