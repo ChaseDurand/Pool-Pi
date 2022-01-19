@@ -89,7 +89,14 @@ Example Aux 1 button toggle frame: x10x02x00x02x00x02x00x00x00x02x00x00x00x1Cx10
 | Aux4               | x00x10x00x00<sup>[1](#footnote1)</sup> |
 | Aux5               | x00x20x00x00                           |
 | Aux6               | x00x40x00x00                           |
-<!-- TODO add remaining commands -->
+| Aux7               | x00x80x00x00                           |
+| Aux8               | x00x00x08x00                           |
+| Aux9               | x00x00x10x00<sup>[1](#footnote1)</sup> |
+| Aux10              | x00x00x20x00                           |
+| Aux11              | x00x00x40x00                           |
+| Aux12              | x00x00x80x00                           |
+| Aux13              | x00x00x00x01                           |
+| Aux14              | x00x00x00x02                           |
 
 ## Variable Speed Pump Control
 Aqualogic supports Hayward variable speed pumps that send their own frame type with speed and power information. I don't have a Hawyard VSP, so I am not able to implement support.
