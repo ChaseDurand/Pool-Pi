@@ -24,9 +24,14 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 * Run setup.sh to install python modules and configure systemd to start pool-pi on startup. The Raspberry Pi will automatically restart when complete.
 
         sudo /home/pi/Pool-Pi/setup/setup.sh
+* Confirm the status of the service.
+
+        sudo systemctl status poolpi.service
+* Confirm log file creation in /home/pi/Pool-Pi/logs.
 * Complete the hardware setup steps outlined below.
 * From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000) to access the GUI.
 <!-- TODO configure GUI to match local aqualogic system -->
+
 
 ## Hardware Setup
 The system taps into the Aqualogic's power and serial busses via the 'REMOTE DISPLAY' connections on the top left of the board. If these are occupied, the J9 WIRELESS ANTENNA or J13 pins can be used.
