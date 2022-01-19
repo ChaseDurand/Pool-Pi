@@ -26,7 +26,7 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
         sudo /home/pi/Pool-Pi/setup/setup.sh
 * Confirm the status of the service.
 
-        sudo systemctl status poolpi.service
+        systemctl status poolpi.service
 * Confirm log file creation in /home/pi/Pool-Pi/logs.
 * Complete the hardware setup steps outlined below.
 * From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000) to access the GUI.
