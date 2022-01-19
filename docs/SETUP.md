@@ -21,13 +21,22 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 * Connect to the Pi via SSH and clone this repository into the home directory.
 
         git clone --depth 1 git@github.com:ChaseDurand/Pool-Pi.git
-* Run setup.sh to install python modules and configure systemd to start pool-pi on startup. The Raspberry Pi will automatically restart when complete.
+* Set the Pi's timezone for accurate time stamps in log file.
+   * View timezone options.
+
+           timedatectl list-timezones     
+   * Set timezone.
+
+           sudo timedatectl set-timezone YOUR_TIME_ZONE
+* Run setup.sh to install python modules and configure systemd to run pool-pi.py on startup. The Raspberry Pi will automatically restart when complete.
 
         sudo /home/pi/Pool-Pi/setup/setup.sh
 * Confirm the status of the service.
 
         systemctl status poolpi.service
-* Confirm log file creation in /home/pi/Pool-Pi/logs.
+* Confirm log file creation.
+
+        tail /home/pi/Pool-Pi/logs/pool-pi.log
 * Complete the hardware setup steps outlined below.
 * From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000) to access the GUI.
 <!-- TODO configure GUI to match local aqualogic system -->
