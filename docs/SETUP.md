@@ -46,7 +46,7 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 
         tail /home/pi/Pool-Pi/logs/pool-pi.log
 * Complete the hardware setup steps outlined below.
-* From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000) to access the GUI.
+* From a device on the same network, navigate to your Pi's IP address on port 5000 (ex. 192.168.###.###:5000) to access the GUI. To access the simplified GUI, add /simple.
 <!-- TODO configure GUI to match local aqualogic system -->
 
 
