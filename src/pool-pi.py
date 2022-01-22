@@ -10,8 +10,6 @@ from os import stat
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
-#TODO start this on pi startup
-
 
 def readSerialBus(serialHandler):
     '''
