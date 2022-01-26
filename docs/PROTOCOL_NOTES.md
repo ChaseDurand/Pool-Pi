@@ -25,6 +25,8 @@ Blinking characters are used to indicate selections on menus and time. To indica
 
 The degree symbol ° is encoded as an underscore (x5F) and must be replaced with xC2xB0.
 
+In service mode, regular screen updates have the frame type of x02x03, with display updates containing info about service mode have the frame type of x03x03.
+
 LED updates have the frame type x01x02. The first 4 bytes indicate on/off, and the second 4 bytes indicate blinking (if the corresponding on/off bit is also on). Within the bytes, a single bit corresponds to a specific LED.
 
 | Start | Frame Type | LEDs1 | LEDs2 | LEDs3 | LEDs4 | Blink LEDs1 | Blink LEDs2 | Blink LEDs3 | Blink LEDs4 | Checksum | End |
@@ -44,7 +46,7 @@ Example LED frame with Pool, Filter, and Aux4 On: x10x02x01x02x28x08x00x00x00x00
 | LEDs1 | 4 | 1<<4 | Spa |
 | LEDs1 | 5 | 1<<5 | Filter |
 | LEDs1 | 6 | 1<<6 | Lights |
-| LEDs2 | 7 | 1<<7 | Aux1 |
+| LEDs1 | 7 | 1<<7 | Aux1 |
 | LEDs2 | 0 | 1<<0 | Aux2 |
 | LEDs2 | 1 | 1<<1 | Service |
 | LEDs2 | 2 | 1<<2 | Aux3 |
