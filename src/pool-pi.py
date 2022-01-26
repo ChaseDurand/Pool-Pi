@@ -115,7 +115,7 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
             elif frameType == FRAME_TYPE_DISPLAY_SERVICE:
                 parseDisplay(data, poolModel)
             elif frameType == FRAME_TYPE_SERVICE_MODE:
-                parseDisplay(data, poolModel)
+                logging.info(f'Service Mode update: {frameType}, {data}')
             else:
                 logging.info(f'Unkown update: {frameType}, {data}')
         # Clear buffer and reset flags
