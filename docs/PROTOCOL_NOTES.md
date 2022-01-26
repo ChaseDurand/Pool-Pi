@@ -25,7 +25,7 @@ Blinking characters are used to indicate selections on menus and time. To indica
 
 The degree symbol ° is encoded as an underscore (x5F) and must be replaced with xC2xB0.
 
-In service mode, regular screen updates have the frame type of x02x03, with display updates containing info about service mode have the frame type of x03x03.
+In service mode, regular screen updates have the frame type of x02x03 and are immediately followed with display updates containing info about service mode with frame type of x03x03. The local display only displays the initial x02x03 update. The x03x03 service mode update is logged.
 
 LED updates have the frame type x01x02. The first 4 bytes indicate on/off, and the second 4 bytes indicate blinking (if the corresponding on/off bit is also on). Within the bytes, a single bit corresponds to a specific LED.
 
