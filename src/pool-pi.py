@@ -116,6 +116,8 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
                 parseDisplay(data, poolModel)
             elif frameType == FRAME_TYPE_SERVICE_MODE:
                 logging.info(f'Service Mode update: {frameType}, {data}')
+            # TODO add parsing and logging for local display commands
+            # not sent by Pool-Pi (\x00\x02)
             else:
                 logging.info(f'Unkown update: {frameType}, {data}')
         # Clear buffer and reset flags
