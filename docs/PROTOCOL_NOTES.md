@@ -109,7 +109,7 @@ The configuration menu is used for the Aqualogic's initial setup and when connec
 ## Exposing Additional Aux Relays
 The PS-4/8/16 boards use the same PCB, so each board can support up to 14 aux relays regardless of local interface. Because Pool-Pi can expose all of the available aux controls, additional relays could be added and controlled without purchasing a new PS-8/16 local display.
 
-## Bonus On/Off Commands
+## Legacy On/Off Commands
 While commands from the PS-4/8/16 series are the same for on/off, older controllers such as the AQL-SS-RF and AQL-P-4 use slightly modified commands with separate on/off capabilities. The frame type is x00x05. The commands are repeated twice and end with x7F before the checksum. While using these commands would make programming far easier, these on/off commands only cover a subset of the PS-4/8/16 controls. Because my setup involves commands outside of this subset and I achieved high reliability with only the toggle commands, I did not implement them.
 
 Example Aux 2 On frame: x10x02x00x05x08x00x08x00x7Fx00xA6x10x03. If Aux 2 is off, this will turn it on. If Aux 2 is already on, this has no effect.
