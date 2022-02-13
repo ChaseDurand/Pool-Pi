@@ -12,7 +12,7 @@ This list reflects the parts that I used for my specific installation, not exact
 | 1/2" Conduit (6' Kit) | Southwire | 58004507 | 1 |
 | 1/2" 1-Hole Strap | Halex | 26151 | 1 |
 | 1/4" Concrete Screws | Tapcon | 24330 | 3 |
-| Solid Wire | Unknown | Unknown | 36' |
+| Stranded Wire | Consolidated | 16 AWG Stranded | 36' |
 
 <!-- TODO figure out wire gauge -->
 
