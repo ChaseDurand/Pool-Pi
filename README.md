@@ -1,4 +1,4 @@
-# <img width='24' alt='GUI screenshot' src='src/static/favicon.ico'> Pool-Pi
+# <img width='24' alt='Logo icon' src='src/static/favicon.ico'> Pool-Pi
 
 Pool-Pi is a system for interfacing with Goldline/Hayward Aqualogic pool control boards over WiFi via a Raspberry Pi. It adds wireless capabilities to non-wireless control boards and a web interface for viewing updates and sending commands.
 <p align='center'>
