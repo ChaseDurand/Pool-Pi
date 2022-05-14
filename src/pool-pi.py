@@ -281,7 +281,7 @@ if __name__ == '__main__':
                                   datefmt='%Y-%m-%d %H:%M:%S')
     handler = TimedRotatingFileHandler('logs/pool-pi.log',
                                        when='midnight',
-                                       interval=5)
+                                       backupCount=60)
     handler.suffix = '%Y-%m-%d_%H-%M-%S'
     handler.setFormatter(formatter)
     logging.getLogger().handlers.clear()
