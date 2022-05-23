@@ -4,13 +4,6 @@ document.addEventListener("DOMContentLoaded", function() {
     //     http[s]://<domain>:<port>[/<namespace>]
     var socket = io();
 
-    // Event handler for new connections.
-    // The callback function is invoked when a connection with the
-    // server is established.
-    socket.on('connect', function () {
-        socket.emit('my_event', { data: 'I\'m connected!' });
-    });
-
     // Diconnect callback function
     // This is called by the timeout function if a model hasn't been received recently
     function noConnection() {
@@ -128,10 +121,10 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Handler for menu buttons
-    document.querySelector('.button-menu').addEventListener('click', function() {
+    document.querySelectorAll('.button-menu').forEach(element => element.addEventListener('click', function() {
         buttonID = this.getAttribute('id');
         socket.emit('command_event', { 'id': buttonID, 'data': 'na', 'version': '0', 'confirm': '0' });
-    });
+    }));
 
     // Handler for toggle buttons
     document.querySelectorAll('.button-toggle').forEach(element => element.addEventListener('click', function() {
