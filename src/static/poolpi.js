@@ -1,4 +1,4 @@
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function() {
     // Connect to the Socket.IO server.
     // The connection URL has the following format, relative to the current page:
     //     http[s]://<domain>:<port>[/<namespace>]
@@ -9,16 +9,6 @@ $(document).ready(function () {
     // server is established.
     socket.on('connect', function () {
         socket.emit('my_event', { data: 'I\'m connected!' });
-    });
-
-    // Event handler for server sent data.
-    // The callback function is invoked whenever the server emits data
-    // to the client. The data is then displayed in the 'Received'
-    // section of the page.
-    socket.on('my_response', function (msg, cb) {
-        $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
-        if (cb)
-            cb();
     });
 
     // Diconnect callback function
@@ -138,20 +128,20 @@ $(document).ready(function () {
     });
 
     // Handler for menu buttons
-    $('.button-menu').click(function () {
-        buttonID = $(this).attr('id');
+    document.querySelector('.button-menu').addEventListener('click', function() {
+        buttonID = this.getAttribute('id');
         socket.emit('command_event', { 'id': buttonID, 'data': 'na', 'version': '0', 'confirm': '0' });
     });
 
     // Handler for toggle buttons
-    $('.button-toggle').click(function () {
+    document.querySelectorAll('.button-toggle').forEach(element => element.addEventListener('click', function() {
         // Double check that overlay is not present
         if (document.getElementsByClassName('overlay')[0].style.display != 'none') {
             return
         }
         document.getElementsByClassName('overlay')[0].style.display = 'flex';
-        buttonID = $(this).attr('id');
-        buttonVersion = $(this).attr('version');
+        buttonID = this.getAttribute('id');
+        buttonVersion = this.getAttribute('version');
 
         if (buttonID == 'pool-spa-spillover') {
             // Need to check which pool/spa/spillover is lit
@@ -204,5 +194,5 @@ $(document).ready(function () {
             }
         }
         socket.emit('command_event', { 'id': buttonID, 'data': targetState, 'version': buttonVersion, 'confirm': '1' });
-    });
+    }));
 });
