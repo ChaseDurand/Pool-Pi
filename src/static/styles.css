@@ -174,6 +174,7 @@ body h1 {
   box-shadow: inset 0 2px 2px #d1d1d1, inset 1px 0 3px #a9abac,
     inset -1px 0 3px #a3b2b6, inset 0 -2px 2px #6e7b80,
     0 0 3px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
 }
 .button-menu-oval:active {
   background: linear-gradient(#a7a7a7, #585858);
@@ -221,6 +222,7 @@ body h1 {
     inset 0 3px 0 #7ca6e6, inset 0 5px 0 #5f9bcc, inset 1px 0 3px #2d88dc,
     inset -1px 0 3px #2d6adc, inset 0 -2px 2px #3d4888,
     0 0 3px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
 }
 .button-toggle-blue-oval:active {
   background: linear-gradient(#377bbb, #02459c);
@@ -273,6 +275,7 @@ body h1 {
     inset 0 3px 0 #e67c7c, inset 0 5px 0 #cc5f5f, inset 1px 0 3px #dc2d2d,
     inset -1px 0 3px #dc2d2d, inset 0 -2px 2px #883d3d,
     0 0 3px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
 }
 .button-toggle-red-oval:active {
   background: linear-gradient(#bb3737, #9c0202);

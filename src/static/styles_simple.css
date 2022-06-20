@@ -147,6 +147,7 @@ body h1 {
     inset 0 3px 0 #7ca6e6, inset 0 5px 0 #5f9bcc, inset 1px 0 3px #2d88dc,
     inset -1px 0 3px #2d6adc, inset 0 -2px 2px #3d4888,
     0 0 3px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
 }
 .button-toggle-blue-oval:active {
   background: linear-gradient(#377bbb, #02459c);
