@@ -36,7 +36,7 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
    * Set timezone.
 
            sudo timedatectl set-timezone YOUR_TIME_ZONE
-* Run setup.sh to install python modules and configure systemd to run pool-pi.py on startup. The Raspberry Pi will automatically restart when complete.
+* Run setup.sh to install python modules and configure systemd to run pool-pi.py on startup.
 
         sudo /home/pi/Pool-Pi/setup/setup.sh
 * Confirm the status of the service.
