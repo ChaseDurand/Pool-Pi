@@ -61,13 +61,13 @@ The system taps into the Aqualogic's power and serial busses via the 'REMOTE DIS
 <img width='535' alt='Pins on Aqualogic board' src='media/wiring_1.jpg'>  
 </p>
 
-Connect the DC-DC converter to the ground and 11V pins on the Aqualogic and adjust the converter output to 5V. Make the connections as shown below. On my RS485 adapter, read enable (RE) is innacurately labeled and is actually ~RE. The Raspberry Pi Zero W doesn't include a fuse on the micro USB PWR IN, which is directly tied to all 5V pins. If a different Raspberry Pi model that contains a fused power input is used, then power should be supplied through the USB port instead of a 5V pin.   
+Connect the DC-DC converter to the ground and 11V pins on the Aqualogic and adjust the converter output to 5V. Make the connections as shown below. On my RS485 adapter, read enable (RE) is innacurately labeled and is actually ~RE. If your RS485 adapter board includes pull ups on DE, they must be overriden with a pull down to prevent the board from trying to transmit while the Pi is booting. The Raspberry Pi Zero W doesn't include a fuse on the micro USB PWR IN, which is directly tied to all 5V pins. If a different Raspberry Pi model that contains a fused power input is used, then power should be supplied through the USB port instead of a 5V pin.   
 
 <p align='center'>
 <img width='100%' alt='Wiring diagram' src='media/wiring_2.png'>   
 </p>
 
-Mount DC-DC converter, Raspberry Pi, and RS485 adapter inside weather proof enclosure using mil-spec cardboard and hot glue. I mounted the DC-DC converter and RS485 adapter on a solderable breadboard for ease of wiring and attached M3 standoffs under the breadboard and Raspberry Pi.
+Mount DC-DC converter, Raspberry Pi, and RS485 adapter inside weather proof enclosure using mil-spec cardboard and hot glue. I mounted the DC-DC converter and RS485 adapter on a solderable breadboard for ease of wiring and attached M3 standoffs under the breadboard and Raspberry Pi. Note that the 1K pulldown from DE to ground is absent in this picture.
 
 <p align='center'>
 <img width='535' alt='Components mounted in weather proof enclosure' src='media/wiring_3.jpg'>    
