@@ -12,19 +12,20 @@ from logging.handlers import TimedRotatingFileHandler
 
 
 def readSerialBus(serialHandler):
-    '''
+    """
     Read data from the serial bus to build full frame in buffer.
     Serial frames begin with DLE STX and terminate with DLE ETX.
-    With the exception of searching for the two start bytes, this function only reads one byte to prevent blocking other processes.
+    With the exception of searching for the two start bytes,
+    this function only reads one byte to prevent blocking other processes.
     When looking for start of frame, looking_for_start is True.
-    When buffer is filled with a full frame and ready to be parseed, set buffer_full to True.
-    '''
-
-    if (serialHandler.in_waiting() == 0
-        ):  #Check if we have serial data to read
+    When buffer is filled with a full frame and ready to be parseed,
+    buffer_full is set to True to signal parseBuffer.
+    """
+    if serialHandler.in_waiting() == 0:  # Check if we have serial data to read
         return
-    if (serialHandler.buffer_full == True
-        ):  #Check if we already have a full frame in buffer
+    if (
+        serialHandler.buffer_full == True
+    ):  # Check if we already have a full frame in buffer
         return
     serChar = serialHandler.read()
     if serialHandler.looking_for_start:
@@ -50,8 +51,9 @@ def readSerialBus(serialHandler):
         # We are adding to buffer while looking for DLE ETX
         serialHandler.buffer += serChar
         # Check if we have found DLE ETX
-        if ((serChar == ETX)
-                and (serialHandler.buffer[-2] == int.from_bytes(DLE, 'big'))):
+        if (serChar == ETX) and (
+            serialHandler.buffer[-2] == int.from_bytes(DLE, "big")
+        ):
             # We have found a full frame
             serialHandler.buffer_full = True
             serialHandler.looking_for_start = True
@@ -59,32 +61,34 @@ def readSerialBus(serialHandler):
 
 
 def parseBuffer(poolModel, serialHandler, commandHandler):
-    '''
+    """
+    Check if we have full frame in buffer.
     If we have a full frame in buffer, parse it.
     If frame is keep alive, check to see if we are ready to send a command and if so send it.
-    '''
-    if (serialHandler.buffer_full):
+    """
+    if serialHandler.buffer_full:
         frame = serialHandler.buffer
         # Remove any extra x00 after x10
-        frame = frame.replace(b'\x10\x00', b'\x10')
+        frame = frame.replace(b"\x10\x00", b"\x10")
 
         # Ensure no erroneous start/stop within frame
-        if b'\x10\x02' in frame[2:-2]:
-            logging.error(f'DLE STX in frame: {frame}')
+        if b"\x10\x02" in frame[2:-2]:
+            logging.error(f"DLE STX in frame: {frame}")
             serialHandler.reset()
             return
-        if b'\x10\x03' in frame[2:-2]:
-            logging.error(f'DLE ETX in frame: {frame}')
+        if b"\x10\x03" in frame[2:-2]:
+            logging.error(f"DLE ETX in frame: {frame}")
             serialHandler.reset()
             return
 
         # Compare calculated checksum to frame checksum
-        if (confirmChecksum(frame) == False):
+        if confirmChecksum(frame) == False:
             # If checksum doesn't match, message is invalid.
             # Clear buffer and don't attempt parsing.
             serialHandler.reset()
             return
 
+        # Extract type and data from frame
         frameType = frame[2:4]
         data = frame[4:-4]
 
@@ -96,7 +100,7 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
                     # If this is the second sequential keep alive frame, send command
                     serialHandler.send(commandHandler.full_command)
                     logging.info(
-                        f'Sent: {commandHandler.parameter}, {commandHandler.full_command}'
+                        f"Sent: {commandHandler.parameter}, {commandHandler.full_command}"
                     )
                     if commandHandler.confirm == False:
                         commandHandler.sending_message = False
@@ -115,119 +119,112 @@ def parseBuffer(poolModel, serialHandler, commandHandler):
             elif frameType == FRAME_TYPE_DISPLAY_SERVICE:
                 parseDisplay(data, poolModel)
             elif frameType == FRAME_TYPE_SERVICE_MODE:
-                logging.info(f'Service Mode update: {frameType}, {data}')
+                logging.info(f"Service Mode update: {frameType}, {data}")
             # TODO add parsing and logging for local display commands
             # not sent by Pool-Pi (\x00\x02)
             else:
-                logging.info(f'Unkown update: {frameType}, {data}')
+                logging.info(f"Unkown update: {frameType}, {data}")
         # Clear buffer and reset flags
         serialHandler.reset()
 
 
 def checkCommand(poolModel, serialHandler, commandHandler):
-    '''
+    """
     If we are trying to send a message, wait for a new pool model to get pool states
     If necessary, queue message to be sent after second keep alive
-    Are we currently trying to send a command?
-    '''
+    """
     if commandHandler.sending_message == False:
-        # We aren't trying to send a command
+        # We aren't trying to send a command, nothing to do
         return
 
     if serialHandler.ready_to_send == True:
         # We are already ready to send, awaiting keep alive
         return
 
-    if poolModel.last_update_time >= commandHandler.last_model_time:
+    if poolModel.timestamp >= commandHandler.last_model_timestamp_seen:
         # We have a new poolModel
-        if poolModel.getParameterState(
-                commandHandler.parameter) == commandHandler.target_state:
-            # Model matches
-            logging.info(f'Command success.')
+        if (
+            poolModel.getParameterState(commandHandler.parameter)
+            == commandHandler.target_state
+        ):
+            # Model matches, command was successful.
+            # Reset sending state.
+            logging.info(f"Command success.")
             commandHandler.sending_message = False
             poolModel.sending_message = False
             poolModel.flag_data_changed = True
         else:
-            # New poolModel doesn't match
-            if commandHandler.checkSendAttempts() == True:
-                commandHandler.last_model_time = time.time()
+            # New poolModel doesn't match, command not successful.
+            if commandHandler.sendAttemptsRemain() == True:
+                commandHandler.last_model_timestamp_seen = time.time()
                 serialHandler.ready_to_send = True
 
 
 def getCommand(poolModel, serialHandler, commandHandler):
-    '''
+    """
     If we're not currently sending a command, check if there are new commands.
     Get new command from command_queue, validate, and initiate send with commandHandler.
-    '''
-    #TODO figure out threading issue or move command_queue to tmp directory
+    """
+    # TODO figure out threading issue or move command_queue to tmp directory
     if commandHandler.sending_message == True:
-        #We are currently trying to send a command, don't need to check for others
+        # We are currently trying to send a command, don't need to check for others
         return
-    if exists('command_queue.txt') == False:
+    if exists("command_queue.txt") == False:
         return
-    if stat('command_queue.txt').st_size != 0:
-        f = open('command_queue.txt', 'r+')
+    if stat("command_queue.txt").st_size != 0:
+        f = open("command_queue.txt", "r+")
         line = f.readline()
         # TODO check if this if statement is necessary or if it's redundant with st_size check
         try:
-            if len(line.split(',')) == 4:
+            if len(line.split(",")) == 4:
                 # Extract csv command info
-                commandID = line.split(',')[0]
-                commandDesiredState = line.split(',')[1]
-                commandVersion = int(line.split(',')[2])
-                commandConfirm = line.split(',')[3]
+                commandID = line.split(",")[0]
+                commandDesiredState = line.split(",")[1]
+                commandVersion = int(line.split(",")[2])
+                commandConfirm = line.split(",")[3]
 
-                if commandConfirm == '1':
+                if commandConfirm == "1":
                     # Command is not a menu button.
                     # Confirmation if command was successful is needed
                     # Check against model to see if command state and version are valid
                     # If valid, add to send queue
                     # If not, provide feedback to user
-                    if poolModel.getParameterState(commandID) == 'INIT':
+                    if poolModel.getParameterState(commandID) == "INIT":
                         logging.error(
-                            f'Invalid command: Target parameter {commandID} is in INIT state.'
+                            f"Invalid command: Target parameter {commandID} is in INIT state."
                         )
                         f.close()
                         return
                     else:
-                        if commandVersion == poolModel.getParameterVersion(
-                                commandID):
-                            #Front end and back end versions are synced
-                            #Extra check to ensure we are not already in our desired state
-                            if commandDesiredState == poolModel.getParameterState(
-                                    commandID):
-                                logging.error(
-                                    f'Invalid command: Target parameter {commandID} is already in target state {commandDesiredState}.'
-                                )
-                            else:
-                                # Command is valid
-                                logging.info(
-                                    f'Valid command: {commandID} {commandDesiredState}, version {commandVersion}'
-                                )
-                                #Push to command handler
-                                commandHandler.initiateSend(
-                                    commandID, commandDesiredState,
-                                    commandConfirm)
-                                poolModel.sending_message = True
-
+                        if commandVersion == poolModel.getParameterVersion(commandID):
+                            # Front end and back end versions are synced
+                            # TODO move next state logic from front end to here
+                            # Command is valid
+                            logging.info(
+                                f"Valid command: {commandID} {commandDesiredState}, version {commandVersion}"
+                            )
+                            # Push to command handler
+                            commandHandler.initiateSend(
+                                commandID, commandDesiredState, commandConfirm
+                            )
+                            poolModel.sending_message = True
                         else:
                             logging.error(
-                                f'Invalid command: Target parameter {commandID} version is {poolModel.getParameterVersion(commandID)} but command version is {commandVersion}.'
+                                f"Invalid command: Target parameter {commandID} version is {poolModel.getParameterVersion(commandID)} but command version is {commandVersion}."
                             )
                 else:
                     # Command is a menu button
                     # No confirmation needed. Only send once.
                     # No check against model states/versions needed.
                     # Immediately load for sending.
-                    commandHandler.initiateSend(commandID, commandDesiredState,
-                                                commandConfirm)
+                    commandHandler.initiateSend(
+                        commandID, commandDesiredState, commandConfirm
+                    )
                     serialHandler.ready_to_send = True
             else:
-                logging.error(
-                    f'Invalid command: Command structure is invalid: {line}')
+                logging.error(f"Invalid command: Command structure is invalid: {line}")
         except Exception as e:
-            logging.error(
-                f'Invalid command: Error parsing command: {line}, {e}')
+            logging.error(f"Invalid command: Error parsing command: {line}, {e}")
         # Clear file contents
         f.truncate(0)
         f.close()
@@ -235,10 +232,12 @@ def getCommand(poolModel, serialHandler, commandHandler):
 
 
 def sendModel(poolModel):
-    # If we have new date for the front end, send data as JSON
+    """
+    Check if we have new date for the front end. If so, send data as JSON.
+    """
     if poolModel.flag_data_changed == True:
-        socketio.emit('model', poolModel.toJSON())
-        logging.debug('Sent model')
+        socketio.emit("model", poolModel.toJSON())
+        logging.debug("Sent model")
         poolModel.flag_data_changed = False
     return
 
@@ -247,12 +246,12 @@ def main():
     poolModel = PoolModel()
     serialHandler = SerialHandler()
     commandHandler = CommandHandler()
-    if exists('command_queue.txt') == True:
-        if stat('command_queue.txt').st_size != 0:
-            f = open('command_queue.txt', 'r+')
+    if exists("command_queue.txt") == True:
+        if stat("command_queue.txt").st_size != 0:
+            f = open("command_queue.txt", "r+")
             f.truncate(0)
             f.close()
-    while (True):
+    while True:
         # Read Serial Bus
         # If new serial data is available, read from the buffer
         readSerialBus(serialHandler)
@@ -273,21 +272,25 @@ def main():
         getCommand(poolModel, serialHandler, commandHandler)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Create log file directory if not already existing
-    if not exists('logs'):
-        makedirs('logs')
-    formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s',
-                                  datefmt='%Y-%m-%d %H:%M:%S')
-    handler = TimedRotatingFileHandler('logs/pool-pi.log',
-                                       when='midnight',
-                                       backupCount=60)
-    handler.suffix = '%Y-%m-%d_%H-%M-%S'
+    if not exists("logs"):
+        makedirs("logs")
+    formatter = logging.Formatter(
+        "%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    handler = TimedRotatingFileHandler(
+        "logs/pool-pi.log", when="midnight", backupCount=60
+    )
+    handler.suffix = "%Y-%m-%d_%H-%M-%S"
     handler.setFormatter(formatter)
     logging.getLogger().handlers.clear()
     logging.getLogger().addHandler(handler)
     logging.getLogger().setLevel(logging.INFO)
-    logging.info('Started pool-pi.py')
+    logging.info("Started pool-pi.py")
     Thread(
-        target=lambda: socketio.run(app, debug=False, host='0.0.0.0')).start()
+        target=lambda: socketio.run(
+            app, debug=False, host="0.0.0.0", allow_unsafe_werkzeug=True
+        )
+    ).start()
     Thread(target=main).start()

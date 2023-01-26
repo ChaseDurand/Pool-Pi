@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     // Connect to the Socket.IO server.
     // The connection URL has the following format, relative to the current page:
     //     http[s]://<domain>:<port>[/<namespace>]
@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('display1').innerHTML = '   NO CONNECTION    ';
         document.getElementById('display2').innerHTML = ' FROM RASPBERRY PI  ';
     }
+
 
     // Timeout ID for disconnect timer
     var timeoutID;
@@ -54,6 +55,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         delete msgObj['display'];
         delete msgObj['display_mask'];
+
+        // TODO can this be cleaned up?
 
         // Parse every item in json message
         for (var i = 0, len = Object.keys(msgObj).length; i < len; ++i) {
@@ -121,13 +124,13 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Handler for menu buttons
-    document.querySelectorAll('.button-menu').forEach(element => element.addEventListener('click', function() {
+    document.querySelectorAll('.button-menu').forEach(element => element.addEventListener('click', function () {
         buttonID = this.getAttribute('id');
         socket.emit('command_event', { 'id': buttonID, 'data': 'na', 'version': '0', 'confirm': '0' });
     }));
 
     // Handler for toggle buttons
-    document.querySelectorAll('.button-toggle').forEach(element => element.addEventListener('click', function() {
+    document.querySelectorAll('.button-toggle').forEach(element => element.addEventListener('click', function () {
         // Double check that overlay is not present
         if (document.getElementsByClassName('overlay')[0].style.display != 'none') {
             return
