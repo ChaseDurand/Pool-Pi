@@ -73,7 +73,7 @@ Example LED frame with Pool, Filter, and Aux4 On: x10x02x01x02x28x08x00x00x00x00
 | LEDs4 | 7 | 1<<7 | (unused) |
 
 ## Controller to Aqualogic
-Even though the PS-4/8/16 remotes know the state of the pool system through LED messages, all commands from this series act as toggle switches and are independent of the current state. There are no separate on/off commands for this series of remotes. The frame type from a local PS-8 is x00x02.
+Even though the PS-4/8/16 remotes know the state of the pool system through LED messages, all commands from this series act as toggle switches and are independent of the current state; There are no separate on/off commands for this series of remotes. The frame type from a local PS-8 is x00x02.
 
 Example Aux 1 button toggle frame: x10x02x00x02x00x02x00x00x00x02x00x00x00x1Cx10x03. If Aux 1 is off, this will turn it on. If Aux 1 is on, this will turn it off.
 
@@ -107,7 +107,7 @@ Aqualogic supports Hayward variable speed pumps that send their own frame type w
 The configuration menu is used for the Aqualogic's initial setup and when connecting new pool equipment. The configuration menu is unlocked by holding the left and right menu buttons for a few seconds. Because this sub-menu is seldom used and would only be used when the user is physically present with the Aqualogic, I did not implemenet it.
 
 ## Exposing Additional Aux Relays
-The PS-4/8/16 boards use the same PCB, so each board can support up to 14 aux relays regardless of local interface. Because Pool-Pi can expose all of the available aux controls, additional relays could be added and controlled without purchasing a new PS-8/16 local display.
+The PS-4/8/16 boards use the same PCB, so each board can support up to 14 aux relays regardless of local interface. Because Pool-Pi can expose all of the available aux controls, additional relays could be added and controlled without purchasing a larger PS-8/16 local display.
 
 ## Legacy On/Off Commands
 While commands from the PS-4/8/16 series are the same for on/off, older controllers such as the AQL-SS-RF and AQL-P-4 use slightly modified commands with separate on/off capabilities. The frame type is x00x05. The commands are repeated twice and end with x7F before the checksum. While using these commands would make programming far easier, these on/off commands only cover a subset of the PS-4/8/16 controls. Because my setup involves commands outside of this subset and I achieved high reliability with only the toggle commands, I did not implement them.
