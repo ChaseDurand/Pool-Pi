@@ -26,10 +26,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 8000);
     }
 
+    // Model version
+    var modelVersion;
+
     // Handler for the model update
     socket.on('model', function (msg) {
         resetTimeout();
         msgObj = JSON.parse(msg);
+
+        // Parse version
+        modelVersion = msgObj['modelVersion'];
+        delete msgObj['modelVersion'];
+
         // Parse display into two lines and blink if necessary
         len = msgObj['display_mask'].length;
         document.getElementById('display1').innerHTML = '';
@@ -117,9 +125,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById(attributeName).parentElement.children['led'].className = 'LED off' + ' toggle-element';
                 }
             }
-
-            // Update version
-            document.getElementById(attributeName).setAttribute('version', msgObj[attributeName].version);
         }
     });
 
@@ -137,58 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         document.getElementsByClassName('overlay')[0].style.display = 'flex';
         buttonID = this.getAttribute('id');
-        buttonVersion = this.getAttribute('version');
-
-        if (buttonID == 'pool-spa-spillover') {
-            // Need to check which pool/spa/spillover is lit
-            // Pool->Spa->Spillover
-            if (!(document.getElementById('pool-spa-spillover').parentElement.parentElement.children['pool'].children['led'].classList.contains('off'))) {
-                // Pool is on, need spa on
-                buttonID = 'spa'
-                targetState = 'ON';
-            }
-            else if (!(document.getElementById('pool-spa-spillover').parentElement.parentElement.children['spa'].children['led'].classList.contains('off'))) {
-                // Spa is on, need spillover on
-                buttonID = 'spillover'
-                targetState = 'ON';
-            }
-            else if (!(document.getElementById('pool-spa-spillover').parentElement.parentElement.children['spillover'].children['led'].classList.contains('off'))) {
-                // Spillover is on, need pool on
-                buttonID = 'pool'
-                targetState = 'ON';
-            }
-            else {
-                // We haven't initialized yet
-                targetState = 'INIT';
-            }
-
-        }
-        else if (buttonID == 'service') {
-            // Need to check if on/off/blinking
-            if (document.getElementById(buttonID).parentElement.children['led'].classList.contains('off')) {
-                // Currently off, need on
-                targetState = 'ON';
-            }
-            else if (document.getElementById(buttonID).parentElement.children['led'].classList.contains('blink')) {
-                // Currently blinking, target off
-                targetState = 'OFF';
-            }
-            else {
-                // Currently on, need blinking
-                targetState = 'BLINK';
-            }
-        }
-        else {
-            // Need to check if on/off
-            if (document.getElementById(buttonID).parentElement.children['led'].classList.contains('off')) {
-                // Button is off, we need it on
-                targetState = 'ON';
-            }
-            else {
-                // Button is on, we need it off
-                targetState = 'OFF';
-            }
-        }
-        socket.emit('command_event', { 'id': buttonID, 'data': targetState, 'version': buttonVersion, 'confirm': '1' });
+        socket.emit('command_event', { 'id': buttonID, 'modelVersion': modelVersion });
     }));
 });

@@ -34,6 +34,7 @@ class PoolModel:
             0,
             0,
         ]  # 1 if blinking, 0 if not
+        self.version = 0
         self.checksystem = "WAITING FOR CHECKSYSTEM"
         self.systemoff = "WAITING FOR SYSTEMOFF"
         self.superchlorinate = "WAITING FOR SUPERCHLORINATE"
@@ -51,14 +52,10 @@ class PoolModel:
             # Attribute is dict and has version
             if attribute["state"] != data:
                 attribute["state"] = data
-                attribute["version"] += 1
         if isinstance(attribute, str):
             # Attribute is string and does not require a version
             if attribute != data:
                 setattr(self, parameter, data)
-
-    def getParameterVersion(self, parameter):
-        return getattr(self, parameter)["version"]
 
     def getParameterState(self, parameter):
         attribute = getattr(self, parameter)
@@ -159,11 +156,10 @@ class CommandHandler:
     confirm = True  # True if command needs to be confirmed, false if not (menu command)
 
     def initiateSend(self, commandID, commandState, commandConfirm):
-        if commandConfirm == "1":
-            self.confirm = True
+        self.confirm = commandConfirm
+        if self.confirm == True:
             commandData = button_toggle[commandID]
         else:
-            self.confirm = False
             commandData = buttons_menu[commandID]
         # Form full frame to send from start tx, frame type, command, checksum, and end tx.
         partialFrame = (

@@ -36,22 +36,26 @@ def parseLEDs(data, poolModel):
     ledsBLINK = []
     # Look at corrosponding LED bit flags to determine which LEDs are on
     for i in range(0, 4):
-        for item in LED_MASK[i]:
-            if item[0] & data[i]:
+        for LED in LED_MASK[i]:
+            if LED[0] & data[i]:
                 # LED is either on or blinking
-                if item[0] & data[i + 4]:
+                if LED[0] & data[i + 4]:
                     newState = "BLINK"
-                    ledsBLINK.append(item[1])
+                    ledsBLINK.append(LED[1])
                 else:
                     newState = "ON"
-                    ledsON.append(item[1])
+                    ledsON.append(LED[1])
             else:
                 newState = "OFF"
-            if poolModel.getParameterState(item[1]) != newState:
-                poolModel.updateParameter(item[1], newState)
+            if poolModel.getParameterState(LED[1]) != newState:
+                poolModel.updateParameter(LED[1], newState)
                 poolModel.flag_data_changed = (
                     True  # Raise flag if any model parameter has changed
                 )
+    # If a model parameter has changed, increment the model version
+    if poolModel.flag_data_changed == True:
+        poolModel.version += 1
+    # Logging
     if len(ledsBLINK) == 0:
         logging.info(f"LED update: {ledsON} on.")
     else:

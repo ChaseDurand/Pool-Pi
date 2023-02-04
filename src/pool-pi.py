@@ -174,52 +174,74 @@ def getCommand(poolModel, serialHandler, commandHandler):
     if stat("command_queue.txt").st_size != 0:
         f = open("command_queue.txt", "r+")
         line = f.readline()
-        # TODO check if this if statement is necessary or if it's redundant with st_size check
         try:
-            if len(line.split(",")) == 4:
+            if len(line.split(",")) == 2:
                 # Extract csv command info
                 commandID = line.split(",")[0]
-                commandDesiredState = line.split(",")[1]
-                commandVersion = int(line.split(",")[2])
-                commandConfirm = line.split(",")[3]
+                frontEndVersion = int(line.split(",")[1])
 
-                if commandConfirm == "1":
+                if frontEndVersion != poolModel.version:
+                    logging.error(
+                        f"Invalid command: Back end version is {poolModel.version} but front end version is {frontEndVersion}."
+                    )
+                    f.truncate(0)
+                    f.close()
+                    return
+
+                # Determine if command requires confirmation
+                if commandID in button_toggle:
+                    commandConfirm = True
+                elif commandID in buttons_menu:
+                    commandConfirm = False
+                else:
+                    # commandID has no match in commands.py
+                    logging.error(
+                        f"Invalid command: Error parsing command: {commandID}"
+                    )
+                    # Clear file contents
+                    f.truncate(0)
+                    f.close()
+                    return
+
+                if commandConfirm == True:
                     # Command is not a menu button.
                     # Confirmation if command was successful is needed
-                    # Check against model to see if command state and version are valid
-                    # If valid, add to send queue
-                    # If not, provide feedback to user
+                    # Check we aren't in INIT state
                     if poolModel.getParameterState(commandID) == "INIT":
                         logging.error(
                             f"Invalid command: Target parameter {commandID} is in INIT state."
                         )
                         f.close()
                         return
-                    else:
-                        if commandVersion == poolModel.getParameterVersion(commandID):
-                            # Front end and back end versions are synced
-                            # TODO move next state logic from front end to here
-                            # Command is valid
-                            logging.info(
-                                f"Valid command: {commandID} {commandDesiredState}, version {commandVersion}"
-                            )
-                            # Push to command handler
-                            commandHandler.initiateSend(
-                                commandID, commandDesiredState, commandConfirm
-                            )
-                            poolModel.sending_message = True
+                    # Determine next desired state
+                    currentState = poolModel.getParameterState(commandID)
+                    # Service tristate ON->BLINK->OFF
+                    if commandID == "service":
+                        if currentState == "ON":
+                            desiredState = "BLINK"
+                        elif currentState == "BLINK":
+                            desiredState = "OFF"
                         else:
-                            logging.error(
-                                f"Invalid command: Target parameter {commandID} version is {poolModel.getParameterVersion(commandID)} but command version is {commandVersion}."
-                            )
+                            desiredState = "ON"
+                    # All other buttons
+                    else:
+                        if currentState == "ON":
+                            desiredState = "OFF"
+                        else:
+                            desiredState = "ON"
+
+                    logging.info(
+                        f"Valid command: {commandID} {desiredState}, version {frontEndVersion}"
+                    )
+                    # Push to command handler
+                    commandHandler.initiateSend(commandID, desiredState, commandConfirm)
+                    poolModel.sending_message = True
+
                 else:
                     # Command is a menu button
                     # No confirmation needed. Only send once.
-                    # No check against model states/versions needed.
                     # Immediately load for sending.
-                    commandHandler.initiateSend(
-                        commandID, commandDesiredState, commandConfirm
-                    )
+                    commandHandler.initiateSend(commandID, "NA", commandConfirm)
                     serialHandler.ready_to_send = True
             else:
                 logging.error(f"Invalid command: Command structure is invalid: {line}")
