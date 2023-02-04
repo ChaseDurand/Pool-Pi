@@ -29,7 +29,7 @@ def command_event(message):
     """
     # TODO don't use file to get command to non-web thread.
     f = open("command_queue.txt", "a")
-    command = str(message["id"] + "," + message["modelVersion"])
+    command = str(message["id"] + "," + str(message["modelVersion"]))
     logging.info(f"Recevied command from user: {message}")
     f.write(command)
     f.close()
