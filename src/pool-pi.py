@@ -223,6 +223,18 @@ def getCommand(poolModel, serialHandler, commandHandler):
                             desiredState = "OFF"
                         else:
                             desiredState = "ON"
+                    # Pool spa spillover is single button- need to get individual commandID
+                    # For pool/spa only systmes, this section must be modified
+                    elif commandID == "pool-spa-spillover":
+                        if poolModel.getParameterState("pool") == "ON":
+                            commandID = "spa"
+                            desiredState = "ON"
+                        elif poolModel.getParameterState("spa") == "ON":
+                            commandID = "spillover"
+                            desiredState = "ON"
+                        else:
+                            commandID = "pool"
+                            desiredState = "ON"
                     # All other buttons
                     else:
                         if currentState == "ON":
