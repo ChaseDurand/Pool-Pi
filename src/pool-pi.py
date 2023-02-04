@@ -189,7 +189,7 @@ def getCommand(poolModel, serialHandler, commandHandler):
                     return
 
                 # Determine if command requires confirmation
-                if commandID in button_toggle:
+                if (commandID in button_toggle) or (commandID == "pool-spa-spillover"):
                     commandConfirm = True
                 elif commandID in buttons_menu:
                     commandConfirm = False
