@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
         msgObj = JSON.parse(msg);
 
         // Parse version
-        modelVersion = msgObj['modelVersion'];
-        delete msgObj['modelVersion'];
+        modelVersion = msgObj['version'];
+        delete msgObj['version'];
 
         // Parse display into two lines and blink if necessary
         len = msgObj['display_mask'].length;
