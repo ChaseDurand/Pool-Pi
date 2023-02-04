@@ -206,6 +206,16 @@ def getCommand(poolModel, serialHandler, commandHandler):
                 if commandConfirm == True:
                     # Command is not a menu button.
                     # Confirmation if command was successful is needed
+
+                    # Pool spa spillover is single button- need to get individual commandID
+                    if commandID == "pool-spa-spillover":
+                        if poolModel.getParameterState("pool") == "ON":
+                            commandID = "pool"
+                        elif poolModel.getParameterState("spa") == "ON":
+                            commandID = "spa"
+                        else:
+                            commandID = "spillover"
+
                     # Check we aren't in INIT state
                     if poolModel.getParameterState(commandID) == "INIT":
                         logging.error(
@@ -222,18 +232,6 @@ def getCommand(poolModel, serialHandler, commandHandler):
                         elif currentState == "BLINK":
                             desiredState = "OFF"
                         else:
-                            desiredState = "ON"
-                    # Pool spa spillover is single button- need to get individual commandID
-                    # For pool/spa only systmes, this section must be modified
-                    elif commandID == "pool-spa-spillover":
-                        if poolModel.getParameterState("pool") == "ON":
-                            commandID = "spa"
-                            desiredState = "ON"
-                        elif poolModel.getParameterState("spa") == "ON":
-                            commandID = "spillover"
-                            desiredState = "ON"
-                        else:
-                            commandID = "pool"
                             desiredState = "ON"
                     # All other buttons
                     else:
