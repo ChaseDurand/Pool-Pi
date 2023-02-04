@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handler for menu buttons
     document.querySelectorAll('.button-menu').forEach(element => element.addEventListener('click', function () {
         buttonID = this.getAttribute('id');
-        socket.emit('command_event', { 'id': buttonID, 'data': 'na', 'version': '0', 'confirm': '0' });
+        socket.emit('command_event', { 'id': buttonID, 'modelVersion': modelVersion });
     }));
 
     // Handler for toggle buttons
