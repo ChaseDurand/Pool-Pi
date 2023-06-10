@@ -1,5 +1,5 @@
 flask
 flask_socketio
-serial
+pyserial
 gpiozero
 simple-websocket
