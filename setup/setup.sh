@@ -5,7 +5,7 @@ echo "Setting up pool-pi."
 echo "Creating venv."
 pip3 install virtualenv
 virtualenv ${BASEDIR}"/src/.venv"
-python3 source ${BASEDIR}"/src/.venv/bin/activate"
+source ${BASEDIR}"/src/.venv/bin/activate"
 echo "Installing required python packages."
 pip3 install -r /home/pi/Pool-Pi/setup/requirements.txt
 echo "Configuring systemd."
