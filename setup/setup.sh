@@ -4,7 +4,7 @@ BASEDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")"; cd .. ; pwd -P)
 echo "Setting up pool-pi."
 echo "Creating venv."
 pip3 install virtualenv
-vertualenv ${BASEDIR}"/src/.venv"
+virtualenv ${BASEDIR}"/src/.venv"
 python3 source ${BASEDIR}"/src/.venv/bin/activate"
 echo "Installing required python packages."
 pip3 install -r /home/pi/Pool-Pi/setup/requirements.txt
