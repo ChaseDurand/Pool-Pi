@@ -62,7 +62,7 @@ def checkOutbox():
         socketio.sleep(0.001)
 
 
-def webBackendEntry():
+def webBackendMain():
     logging.info(f"Starting web backend.")
     socketio.start_background_task(checkOutbox)
     socketio.run(app)
