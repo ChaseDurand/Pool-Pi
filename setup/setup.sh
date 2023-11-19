@@ -1,8 +1,11 @@
 #!/bin/bash
+# This assumes setup.sh is located in */Pool-Pi/setup
+BASEDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")"; cd .. ; pwd -P)
 echo "Setting up pool-pi."
 echo "Creating venv."
 pip3 install virtualenv
-vertualenv .venv
+vertualenv ${BASEDIR}"/src/.venv"
+python3 source ${BASEDIR}"/src/.venv/bin/activate"
 echo "Installing required python packages."
 pip3 install -r /home/pi/Pool-Pi/setup/requirements.txt
 echo "Configuring systemd."
