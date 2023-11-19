@@ -6,9 +6,13 @@ from web import *
 from parsing import *
 from os import makedirs
 from os.path import exists
-from os import stat
 import logging
 from logging.handlers import TimedRotatingFileHandler
+
+socketio = SocketIO(message_queue="redis://127.0.0.1:6379")
+r = redis.Redis(charset="utf-8", decode_responses=True)
+pubsub = r.pubsub()
+pubsub.subscribe("inbox")
 
 
 def readSerialBus(serialHandler):
@@ -165,124 +169,97 @@ def getCommand(poolModel, serialHandler, commandHandler):
     If we're not currently sending a command, check if there are new commands.
     Get new command from command_queue, validate, and initiate send with commandHandler.
     """
-    # TODO figure out threading issue or move command_queue to tmp directory
     if commandHandler.sending_message == True:
-        # We are currently trying to send a command, don't need to check for others
+        # We are currently trying to send a command, don't check for others.
         return
-    if exists("command_queue.txt") == False:
-        return
-    if stat("command_queue.txt").st_size != 0:
-        f = open("command_queue.txt", "r+")
-        line = f.readline()
-        try:
-            if len(line.split(",")) == 2:
-                # Extract csv command info
-                commandID = line.split(",")[0]
-                frontEndVersion = int(line.split(",")[1])
+    message = pubsub.get_message()
+    if message:
+        # Extract csv command info
+        commandID = message["id"]
+        frontEndVersion = message["modelVersion"]
 
-                if frontEndVersion != poolModel.version:
-                    logging.error(
-                        f"Invalid command: Back end version is {poolModel.version} but front end version is {frontEndVersion}."
-                    )
-                    f.truncate(0)
-                    f.close()
-                    return
+        if frontEndVersion != poolModel.version:
+            logging.error(
+                f"Invalid command: Back end version is {poolModel.version} but front end version is {frontEndVersion}."
+            )
 
-                # Determine if command requires confirmation
-                if (commandID in button_toggle) or (commandID == "pool-spa-spillover"):
-                    commandConfirm = True
-                elif commandID in buttons_menu:
-                    commandConfirm = False
+        # Determine if command requires confirmation
+        if (commandID in button_toggle) or (commandID == "pool-spa-spillover"):
+            commandConfirm = True
+        elif commandID in buttons_menu:
+            commandConfirm = False
+        else:
+            # commandID has no match in commands.py
+            logging.error(f"Invalid command: Error parsing command: {commandID}")
+            return
+
+        if commandConfirm == True:
+            # Command is not a menu button.
+            # Confirmation if command was successful is needed
+
+            # Pool spa spillover is single button- need to get individual commandID
+            if commandID == "pool-spa-spillover":
+                if poolModel.getParameterState("pool") == "ON":
+                    commandID = "pool"
+                elif poolModel.getParameterState("spa") == "ON":
+                    commandID = "spa"
                 else:
-                    # commandID has no match in commands.py
-                    logging.error(
-                        f"Invalid command: Error parsing command: {commandID}"
-                    )
-                    # Clear file contents
-                    f.truncate(0)
-                    f.close()
-                    return
+                    commandID = "spillover"
 
-                if commandConfirm == True:
-                    # Command is not a menu button.
-                    # Confirmation if command was successful is needed
-
-                    # Pool spa spillover is single button- need to get individual commandID
-                    if commandID == "pool-spa-spillover":
-                        if poolModel.getParameterState("pool") == "ON":
-                            commandID = "pool"
-                        elif poolModel.getParameterState("spa") == "ON":
-                            commandID = "spa"
-                        else:
-                            commandID = "spillover"
-
-                    # Check we aren't in INIT state
-                    if poolModel.getParameterState(commandID) == "INIT":
-                        logging.error(
-                            f"Invalid command: Target parameter {commandID} is in INIT state."
-                        )
-                        f.close()
-                        return
-                    # Determine next desired state
-                    currentState = poolModel.getParameterState(commandID)
-                    # Service tristate ON->BLINK->OFF
-                    if commandID == "service":
-                        if currentState == "ON":
-                            desiredState = "BLINK"
-                        elif currentState == "BLINK":
-                            desiredState = "OFF"
-                        else:
-                            desiredState = "ON"
-                    # All other buttons
-                    else:
-                        if currentState == "ON":
-                            desiredState = "OFF"
-                        else:
-                            desiredState = "ON"
-
-                    logging.info(
-                        f"Valid command: {commandID} {desiredState}, version {frontEndVersion}"
-                    )
-                    # Push to command handler
-                    commandHandler.initiateSend(commandID, desiredState, commandConfirm)
-                    poolModel.sending_message = True
-
+            # Check we aren't in INIT state
+            if poolModel.getParameterState(commandID) == "INIT":
+                logging.error(
+                    f"Invalid command: Target parameter {commandID} is in INIT state."
+                )
+            # Determine next desired state
+            currentState = poolModel.getParameterState(commandID)
+            # Service tristate ON->BLINK->OFF
+            if commandID == "service":
+                if currentState == "ON":
+                    desiredState = "BLINK"
+                elif currentState == "BLINK":
+                    desiredState = "OFF"
                 else:
-                    # Command is a menu button
-                    # No confirmation needed. Only send once.
-                    # Immediately load for sending.
-                    commandHandler.initiateSend(commandID, "NA", commandConfirm)
-                    serialHandler.ready_to_send = True
+                    desiredState = "ON"
+            # All other buttons
             else:
-                logging.error(f"Invalid command: Command structure is invalid: {line}")
-        except Exception as e:
-            logging.error(f"Invalid command: Error parsing command: {line}, {e}")
-        # Clear file contents
-        f.truncate(0)
-        f.close()
+                if currentState == "ON":
+                    desiredState = "OFF"
+                else:
+                    desiredState = "ON"
+
+            logging.info(
+                f"Valid command: {commandID} {desiredState}, version {frontEndVersion}"
+            )
+            # Push to command handler
+            commandHandler.initiateSend(commandID, desiredState, commandConfirm)
+            poolModel.sending_message = True
+
+        else:
+            # Command is a menu button
+            # No confirmation needed. Only send once.
+            # Immediately load for sending.
+            commandHandler.initiateSend(commandID, "NA", commandConfirm)
+            serialHandler.ready_to_send = True
     return
 
 
 def sendModel(poolModel):
     """
-    Check if we have new date for the front end. If so, send data as JSON.
+    Check if we have new model for the front end. If so, send JSON data to redis.
     """
     if poolModel.flag_data_changed == True:
-        socketio.emit("model", poolModel.toJSON())
-        logging.debug("Sent model")
+        r.publish("outbox", poolModel.toJSON())
+        # socketio.emit("model", poolModel.toJSON())
+        logging.debug("Published model to outbox.")
         poolModel.flag_data_changed = False
     return
 
 
-def main():
+def serialBackendMain():
     poolModel = PoolModel()
     serialHandler = SerialHandler()
     commandHandler = CommandHandler()
-    if exists("command_queue.txt") == True:
-        if stat("command_queue.txt").st_size != 0:
-            f = open("command_queue.txt", "r+")
-            f.truncate(0)
-            f.close()
     while True:
         # Read Serial Bus
         # If new serial data is available, read from the buffer
@@ -320,9 +297,7 @@ if __name__ == "__main__":
     logging.getLogger().addHandler(handler)
     logging.getLogger().setLevel(logging.INFO)
     logging.info("Started pool-pi.py")
-    Thread(
-        target=lambda: socketio.run(
-            app, debug=False, host="0.0.0.0", allow_unsafe_werkzeug=True
-        )
-    ).start()
-    Thread(target=main).start()
+
+    thread_web = Thread(target=webBackendMain, daemon=True)
+    thread_web.start()
+    serialBackendMain()

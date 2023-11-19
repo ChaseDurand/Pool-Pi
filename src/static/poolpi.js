@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handler for menu buttons
     document.querySelectorAll('.button-menu').forEach(element => element.addEventListener('click', function () {
         buttonID = this.getAttribute('id');
-        socket.emit('command_event', { 'id': buttonID, 'modelVersion': modelVersion });
+        socket.emit('webCommand', { 'id': buttonID, 'modelVersion': modelVersion });
     }));
 
     // Handler for toggle buttons
@@ -142,6 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         document.getElementsByClassName('overlay')[0].style.display = 'flex';
         buttonID = this.getAttribute('id');
-        socket.emit('command_event', { 'id': buttonID, 'modelVersion': modelVersion });
+        socket.emit('webCommand', { 'id': buttonID, 'modelVersion': modelVersion });
     }));
 });

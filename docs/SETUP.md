@@ -28,6 +28,10 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
         sudo apt update
         sudo apt install git
 
+* Install redis.
+
+        sudo apt install redis
+
 * Clone this repository into the home directory.
 
         git clone --depth 1 git@github.com:ChaseDurand/Pool-Pi.git

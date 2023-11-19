@@ -3,13 +3,21 @@ from flask_socketio import SocketIO, emit
 from threading import Lock
 import uuid
 import logging
+import eventlet
+import redis
 
-async_mode = None
+eventlet.monkey_patch()
+async_mode = "eventlet"
 app = Flask(__name__)
 app.config["SECRET_KEY"] = uuid.uuid4().hex
 socketio = SocketIO(app, async_mode=async_mode)
-thread = None
-thread_lock = Lock()
+
+r = redis.Redis(charset="utf-8", decode_responses=True)
+
+
+@socketio.event
+def connect():
+    logging.info(f"Client connected.")
 
 
 @app.route("/")
@@ -23,19 +31,38 @@ def simple():
 
 
 @socketio.event
-def command_event(message):
+def webCommand(message):
     """
-    Receive command from front end.
+    Publish command from front end to redis channel.
     """
-    # TODO don't use file to get command to non-web thread.
-    f = open("command_queue.txt", "a")
-    command = str(message["id"] + "," + str(message["modelVersion"]))
-    logging.info(f"Recevied command from user: {message}")
-    f.write(command)
-    f.close()
+    r.publish("inbox", message)
+
+    # # TODO don't use file to get command to non-web thread.
+    # f = open("command_queue.txt", "a")
+    # command = str(message["id"] + "," + str(message["modelVersion"]))
+    # logging.info(f"Recevied command from user: {message}")
+    # f.write(command)
+    # f.close()
 
 
-@socketio.event
-def connect():
-    global thread
-    logging.info(f"Client connected.")
+def checkOutbox():
+    logging.info(f"Starting checkOutbox")
+    """
+    Subscribe to redis channel for messages to relay to front end.
+    Used for sending pool model showing current state of the pool.
+    """
+    pubsub = r.pubsub()
+    pubsub.subscribe("outbox")
+    while True:
+        message = pubsub.get_message()
+        if message:
+            print(message["data"])
+            socketio.emit("model", message)
+            # socketio.emit('update_data', {'data': message['data']})
+        socketio.sleep(0.001)
+
+
+def webBackendEntry():
+    logging.info(f"Starting web backend.")
+    socketio.start_background_task(checkOutbox)
+    socketio.run(app)

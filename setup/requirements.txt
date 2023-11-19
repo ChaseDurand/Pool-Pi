@@ -3,3 +3,5 @@ flask_socketio
 pyserial
 gpiozero
 simple-websocket
+eventlet
+redis
