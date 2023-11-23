@@ -173,10 +173,11 @@ def getCommand(poolModel, serialHandler, commandHandler):
         # We are currently trying to send a command, don't check for others.
         return
     message = pubsub.get_message()
-    if message:
-        # Extract csv command info
-        commandID = message["id"]
-        frontEndVersion = message["modelVersion"]
+    if message and (message["type"] == "message"):
+        messageData = json.loads(message["data"])
+        # Extract command info
+        commandID = messageData["id"]
+        frontEndVersion = messageData["modelVersion"]
 
         if frontEndVersion != poolModel.version:
             logging.error(

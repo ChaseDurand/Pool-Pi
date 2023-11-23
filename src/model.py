@@ -102,7 +102,7 @@ class SerialHandler:
             True  # Flag to indicate if we are awaiting frame start (DLE STX)
         )
         self.ser = serial.Serial(
-            port="/dev/ttyAMA0",
+            port="/dev/serial0",
             baudrate=19200,
             parity=serial.PARITY_NONE,
             stopbits=serial.STOPBITS_TWO,

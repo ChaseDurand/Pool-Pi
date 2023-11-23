@@ -5,3 +5,4 @@ gpiozero
 simple-websocket
 eventlet
 redis
+RPi.GPIO

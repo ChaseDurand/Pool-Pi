@@ -28,13 +28,17 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
         sudo apt update
         sudo apt install git
 
+* Install pip.
+
+        sudo apt install python3-pip
+
 * Install redis.
 
         sudo apt install redis
 
 * Clone this repository into the home directory.
 
-        git clone --depth 1 git@github.com:ChaseDurand/Pool-Pi.git
+        git clone --depth 1 https://github.com/ChaseDurand/Pool-Pi.git
 * Set the Pi's timezone for accurate time stamps in log file.
    * View timezone options.
 

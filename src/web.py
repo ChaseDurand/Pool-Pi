@@ -55,7 +55,7 @@ def checkOutbox():
     pubsub.subscribe("outbox")
     while True:
         message = pubsub.get_message()
-        if message:
+        if message and (message["type"] == "message"):
             print(message["data"])
             socketio.emit("model", message)
             # socketio.emit('update_data', {'data': message['data']})
