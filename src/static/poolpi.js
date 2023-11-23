@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handler for the model update
     socket.on('model', function (msg) {
         resetTimeout();
-        msgObj = JSON.parse(msg);
+        msgObj = JSON.parse(msg["data"]);
 
         // Parse version
         modelVersion = msgObj['version'];

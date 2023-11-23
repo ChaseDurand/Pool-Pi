@@ -37,13 +37,6 @@ def webCommand(message):
     """
     r.publish("inbox", message)
 
-    # # TODO don't use file to get command to non-web thread.
-    # f = open("command_queue.txt", "a")
-    # command = str(message["id"] + "," + str(message["modelVersion"]))
-    # logging.info(f"Recevied command from user: {message}")
-    # f.write(command)
-    # f.close()
-
 
 def checkOutbox():
     logging.info(f"Starting checkOutbox")
@@ -58,11 +51,10 @@ def checkOutbox():
         if message and (message["type"] == "message"):
             print(message["data"])
             socketio.emit("model", message)
-            # socketio.emit('update_data', {'data': message['data']})
-        socketio.sleep(0.001)
+        socketio.sleep(0.01)
 
 
 def webBackendMain():
     logging.info(f"Starting web backend.")
     socketio.start_background_task(checkOutbox)
-    socketio.run(app)
+    socketio.run(app, host="0.0.0.0")
