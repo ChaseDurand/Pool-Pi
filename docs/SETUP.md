@@ -36,6 +36,14 @@ Exact parts used can be found in the [parts list](./PARTS_LIST.md).
 
         sudo apt install redis
 
+* Enable UART.
+
+        sudo raspi-config
+        
+    From the interface, navigate to 5 Interfacting Options, P6 Serial. No login shell, Yes serial port enabled.
+
+        sudo reboot
+
 * Clone this repository into the home directory.
 
         git clone --depth 1 https://github.com/ChaseDurand/Pool-Pi.git
