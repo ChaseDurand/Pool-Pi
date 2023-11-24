@@ -51,7 +51,6 @@ def checkOutbox():
     while True:
         message = pubsub.get_message()
         if message and (message["type"] == "message"):
-            print(message["data"])
             socketio.emit("model", message)
         socketio.sleep(0.01)
 
