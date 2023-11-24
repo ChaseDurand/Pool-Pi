@@ -3,11 +3,13 @@ from flask_socketio import SocketIO, emit
 from threading import Lock
 import uuid
 import logging
-import eventlet
-import redis
 
-eventlet.monkey_patch()
-async_mode = "eventlet"
+# import eventlet
+import redis
+import json
+
+# eventlet.monkey_patch()
+async_mode = None
 app = Flask(__name__)
 app.config["SECRET_KEY"] = uuid.uuid4().hex
 socketio = SocketIO(app, async_mode=async_mode)
@@ -35,7 +37,7 @@ def webCommand(message):
     """
     Publish command from front end to redis channel.
     """
-    r.publish("inbox", message)
+    r.publish("inbox", json.dumps(message))
 
 
 def checkOutbox():
