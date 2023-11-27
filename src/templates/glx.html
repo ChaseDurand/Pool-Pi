@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+<!-- This page offers an interface that emulates a GLX-P-4 local display -->
+<!-- TODO add easy label swaps for AUX# -->
+<!-- TODO add toggles for unused switches-->
+
+<head>
+    <title>Pool-Pi</title>
+    <link rel="icon" href="../static/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="../static/apple-touch-icon.png">
+    <link rel="stylesheet" href="../static/styles.css">
+    <script src='../static/socket.io.js'></script>
+    <script src='../static/poolpi.js'></script>
+</head>
+
+<body>
+    <div class="header">
+        <img src='../static/favicon.ico' width="35px">
+        <h1>Pool-Pi</h1>
+    </div>
+
+    <div class="panel">
+        <div class="overlay">
+            <div class="loading">
+                <img class="loading-image" src='../static/loading.gif' alt="Loading..." />
+            </div>
+        </div>
+        <div class="topPanel">
+            <div class="topLeft">
+                <div class="display">
+                    <div id="display1">AWAITING CONNECTION </div>
+                    <div id="display2"> FROM RASPBERRY PI </div>
+                </div>
+            </div>
+            <div class="topRight">
+                <div class="buttonContainer">
+                    <div class="buttonRow">
+                        <div id="plus" class="button-menu button-menu-oval noSelect">
+                            <p class="button-menu-text">+</p>
+                        </div>
+                    </div>
+                    <div class="buttonRow">
+                        <div id="left" class="button-menu button-menu-oval noSelect">
+                            <p class="button-menu-text">Left</p>
+                        </div>
+                        <div id="menu" class="button-menu button-menu-oval noSelect">
+                            <p class="button-menu-text">Menu</p>
+                        </div>
+                        <div id="right" class="button-menu button-menu-oval noSelect">
+                            <p class="button-menu-text">Right</p>
+                        </div>
+                    </div>
+                    <div class="buttonRow">
+                        <div id="minus" class="button-menu button-menu-oval noSelect">
+                            <p class="button-menu-text">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="check-system-row">
+            <div>
+                <div>CHECK</div>
+                <div>SYSTEM</div>
+            </div>
+            <div id="checksystem" class="LED off" style="margin: 0px 10px;"></div>
+        </div>
+        <div class="toggle-row">
+            <div class="button-row-container">
+                <div class="toggle-element toggle-text">SERVICE</div>
+                <div id="led" class="LED off toggle-element"></div>
+                <div id="service" class="button-toggle button-toggle-red button-toggle-red-oval
+            noSelect toggle-element"></div>
+            </div>
+        </div>
+        <div class="toggle-row">
+            <div style="margin: 12px 0px;">
+                <div id="pool" class="button-row-container pool-spa-spillover-container">
+                    <div class="toggle-element toggle-text">POOL</div>
+                    <div id="led" class="LED off toggle-element"></div>
+                    <div class="button-spacer"></div>
+                </div>
+                <div id="spa" class="button-row-container pool-spa-spillover-container">
+                    <div class="toggle-element toggle-text">SPA</div>
+                    <div id="led" class="LED off toggle-element"></div>
+                    <div id="pool-spa-spillover" class="button-toggle button-toggle-blue button-toggle-blue-oval
+                    noSelect toggle-element"></div>
+                </div>
+            </div>
+        </div>
+        <div class="toggle-row">
+            <div class="button-row-container">
+                <div class="toggle-element toggle-text">FILTER</div>
+                <div id="led" class="LED off toggle-element"></div>
+                <div id="filter" class="button-toggle button-toggle-blue button-toggle-blue-oval
+            noSelect toggle-element"></div>
+            </div>
+        </div>
+        <div class="toggle-row">
+            <div class="button-row-container">
+                <div class="toggle-element toggle-text">LIGHTS</div>
+                <div id="led" class="LED off toggle-element"></div>
+                <div id="lights" class="button-toggle button-toggle-blue button-toggle-blue-oval
+            noSelect toggle-element"></div>
+            </div>
+        </div>
+        <div class="toggle-row">
+            <div class="button-row-container">
+                <div class="toggle-element toggle-text">HEATER1</div>
+                <div id="led" class="LED off toggle-element"></div>
+                <!-- <div id="heater1" class="button-toggle button-toggle-blue button-toggle-blue-oval
+            noSelect toggle-element"></div> -->
+            </div>
+            <div class="button-row-container">
+                <div class="toggle-element toggle-text">AUX 1</div>
+                <div id="led" class="LED off toggle-element"></div>
+                <div id="aux1" class="button-toggle button-toggle-blue button-toggle-blue-oval
+                noSelect toggle-element"></div>
+            </div>
+        </div>
+        <div class="toggle-row">
+            <div class="button-row-container">
+                <div class="toggle-element toggle-text">VALVE3</div>
+                <div id="led" class="LED off toggle-element"></div>
+                <!-- <div id="valve3" class="button-toggle button-toggle-blue button-toggle-blue-oval
+            noSelect toggle-element"></div> -->
+            </div>
+            <div class="button-row-container">
+                <div class="toggle-element toggle-text">AUX 2</div>
+                <div id="led" class="LED off toggle-element"></div>
+                <div id="aux2" class="button-toggle button-toggle-blue button-toggle-blue-oval
+                noSelect toggle-element"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
