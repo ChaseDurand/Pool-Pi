@@ -1,7 +1,7 @@
-flask
-flask_socketio
-pyserial
-gpiozero
-simple-websocket
-redis
-RPi.GPIO
+flask==3.0.0
+Flask-SocketIO==5.3.6
+pyserial==3.5
+gpiozero==2.0
+simple-websocket==1.0.0
+redis==5.0.1
+RPi.GPIO==0.7.1
