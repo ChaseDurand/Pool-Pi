@@ -58,4 +58,4 @@ def checkOutbox():
 def webBackendMain():
     logging.info(f"Starting web backend.")
     socketio.start_background_task(checkOutbox)
-    socketio.run(app, host="0.0.0.0")
+    socketio.run(app, host="0.0.0.0", allow_unsafe_werkzeug=True)
