@@ -13,27 +13,23 @@ fi
 
 export BASEDIR=$(dirname $(dirname "$(realpath $0)"))
 
-#Perform these operations as non-root
 sudo -u $SUDO_USER echo "Setting up pool-pi."
 
 sudo -u $SUDO_USER echo "Installing venv."
-sudo -u $SUDO_USER -H pip3 install virtualenv
+apt install python3-venv
 
 sudo -u $SUDO_USER echo "Creating venv."
-sudo -u $SUDO_USER -E -H virtualenv ${BASEDIR}"/src/.venv"
+sudo -u $SUDO_USER -E -H python3 -m venv ${BASEDIR}"/src/.venv"
 
 sudo -u $SUDO_USER echo "Installing requirements."
 sudo -u $SUDO_USER -E -H bash -c 'source ${BASEDIR}"/src/.venv/bin/activate" && pip3 install -r ${BASEDIR}/setup/requirements.txt'
 
 sudo -u $SUDO_USER echo "Configuring systemd."
-
-#Perform these operations as root
 cp ${BASEDIR}/setup/poolpi.service /etc/systemd/system/poolpi.service
 chmod 644 /etc/systemd/system/poolpi.service
 systemctl daemon-reload
 systemctl enable redis-server
 systemctl enable --now poolpi.service
 
-#Perform these operations as non-root
 sudo -u $SUDO_USER echo "Setup script complete."
 exit 0
